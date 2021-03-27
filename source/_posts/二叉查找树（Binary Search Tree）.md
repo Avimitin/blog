@@ -1,4 +1,14 @@
-# 二叉查找树（Binary Search Tree）
+---
+title: 二叉查找树（Binary Search Tree）
+date: 2021-03-27 11:02
+categories:
+	- [coding, algorithms]
+	- [coding, c]
+tags:
+	- coding
+	- c
+	- algorithms
+---
 
 ## 概念
 
@@ -10,11 +20,11 @@
 
 ```c
 typedef struct node {
-    KeyType		key;
-    ValType		val;
-    NodeType	left;
-    NodeType	right;
-    int 		N
+  KeyType  key;
+  ValType  val;
+  NodeType left;
+  NodeType right;
+  int      N
 } NodeType;
 ```
 

@@ -1,5 +1,6 @@
 ---
 title: Systemd User Guide
+date: 2020-04-03 15:52
 categories:
 	- [system, linux]
 tag:
