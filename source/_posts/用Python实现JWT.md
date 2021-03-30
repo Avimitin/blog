@@ -1,4 +1,14 @@
-# 使用 Python 实现 JSON Web Token
+---
+title: 使用 Python 实现 JSON Web Token
+date: 2020-09-19 18:48
+categories:
+	- [coding, jwt]
+	- [coding, python]
+tags:
+	- python
+	- web
+	- jwt
+---
 
 ## 前言
 

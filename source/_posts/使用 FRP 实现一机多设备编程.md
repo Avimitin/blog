@@ -1,5 +1,11 @@
 ---
 title: 使用 FRP 实现一机多设备编程
+date: 2020-10-25 09:20
+categories:
+	- tools
+tags:
+	- frp
+	- cooporate
 ---
 
 

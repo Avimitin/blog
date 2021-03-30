@@ -1,3 +1,13 @@
+---
+title: 使用CloudFlare CDN
+date: 2020-04-19 10:20
+categories:
+	- [web, cdn]
+tag:
+	- cloudflare
+	- cdn
+	- sites
+---
 # 前言
 
 CloudFlare是真的减速器，假如服务器在香港可能上了CF会很慢，所以假如像我一样用完延迟从60ms蹦到500ms的，就不要搞CF了。

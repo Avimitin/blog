@@ -1,4 +1,14 @@
-# 在Linux系统下玩Minecraft
+---
+title: 在Linux系统下玩Minecraft
+date:  2019-08-11 12:10
+categories:
+	- [game, minecraft]
+	- [system, linux]
+tag:
+	- linux
+	- minecraft
+	- java
+---
 
 ## Java环境安装
 
