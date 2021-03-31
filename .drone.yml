@@ -1,0 +1,35 @@
+kind: pipeline
+name: hexo build
+type: docker
+
+steps:
+  - name: generate blog
+    image: nodejs:alpine3.10
+    environment:
+      ssh_priv:
+        from_secret: priv_key
+    commands:
+      - "echo ===FETCH DEPENDENCY==="
+      - "npm --version"
+      - "npm install -g hexo"
+      - "npm install"
+      - "apk add --no-cache git"
+      - "git version"
+      - "echo ===GENERATING==="
+      - "hexo generate"
+      - "mkdir /data"
+      - "cp -r public /data"
+
+  - name: publish
+    image: appleboy/drone-git-push
+    settings:
+      branch: master
+      remote: git@github.com:Avimitin/avimitin.github.io.git
+      ssh_key:
+        from_secret: ssh_priv_key
+      path: /data/public
+      force: true
+      commit: true
+      commit_message: 'updated blog'
+      author_name: 'avimitin'
+      author_email: 'avimitin@gmail.com'
