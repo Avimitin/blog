@@ -21,6 +21,8 @@ steps:
       - "echo ===GENERATING==="
       - "hexo generate"
       - "cp -r public /data"
+      - "cd /data/public"
+      - "git init && git add --all && git commit -m 'updated blog'"
 
   - name: publish
     image: appleboy/drone-git-push
@@ -34,8 +36,6 @@ steps:
         from_secret: ssh_priv_key
       path: /data/public
       force: true
-      commit: true
-      commit_message: 'updated blog'
       author_name: 'avimitin'
       author_email: 'avimitin@gmail.com'
 
