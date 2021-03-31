@@ -5,6 +5,9 @@ type: docker
 steps:
   - name: generate blog
     image: node:alpine3.10
+    volumes:
+      - name: cache
+        path: /data
     environment:
       ssh_priv:
         from_secret: priv_key
@@ -22,6 +25,9 @@ steps:
 
   - name: publish
     image: appleboy/drone-git-push
+    volumes:
+      - name: cache
+        path: /data
     settings:
       branch: master
       remote: git@github.com:Avimitin/avimitin.github.io.git
@@ -33,3 +39,7 @@ steps:
       commit_message: 'updated blog'
       author_name: 'avimitin'
       author_email: 'avimitin@gmail.com'
+
+volumes:
+  - name: cache
+    temp: {}
