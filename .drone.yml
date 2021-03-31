@@ -4,7 +4,7 @@ type: docker
 
 steps:
   - name: generate blog
-    image: nodejs:alpine3.10
+    image: node:alpine3.10
     environment:
       ssh_priv:
         from_secret: priv_key
