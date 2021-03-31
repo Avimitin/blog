@@ -20,7 +20,6 @@ steps:
       - "git version"
       - "echo ===GENERATING==="
       - "hexo generate"
-      - "mkdir /data"
       - "cp -r public /data"
 
   - name: publish
