@@ -1,0 +1,3 @@
+[submodule "minima"]
+	path = themes/minima
+	url = git@github.com:Avimitin/hexo-theme-minima.git
