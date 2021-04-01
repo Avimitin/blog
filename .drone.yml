@@ -18,6 +18,7 @@ steps:
       - "npm install"
       - "apk add --no-cache git"
       - "git version"
+      - "git submodule init && git submodule update"
       - "echo ===GENERATING==="
       - "hexo generate"
       - "cp -r public /data"
