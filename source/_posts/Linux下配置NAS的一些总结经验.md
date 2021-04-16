@@ -43,32 +43,18 @@ tldr: "配置组合使用 Samba + Aria2 + Transmission 来实现 NAS 功能"
 
 二、创建SAMBA配置文件
 
-* 备份原配置文件：` sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.bak`
 * 创建共享目录：`sudo mkdir -p /你的共享文件夹路径` `#mkdir -p 用来创建路径中不存在的路径。`
-* 更新目录权限：`sudo chmod -R 777 /你的共享文件夹路径` `#chmod -R 可以给你共享的目录和该目录下所有文件和子目录进行相同的权限变更。777即所有用户对该目录都有读写权。`
 * 修改配置文件：`sudo vim /etc/samba/smb.conf`  #没有vim的请输入命令`sudo apt-get vim ` [vim的使用方法](https://www.runoob.com/linux/linux-vim.html) 
 
 进入配置文件之后，按i进入编辑模式，把所有字段全部删除，输入以下配置(#号后注释文字要删除）：
 
 ```bash
-[global] #这里是全局设置
-workgroup = WORKGROUP #与Windows的工作组名保持一致
-security = user #这里是访问安全级别，user为最低安全等级，需要输入用户名和密码。(网上的教程中的的share权限在更新之后已经关闭了，输入share权限默认最高安全等级。)
-usershare owner only = false #给予其他设备访问权限
-public = yes
-browseable = yes
-[你的NAS Name] #这里是分享路径配置
+[你的配置名] #这里是分享路径配置
 comment = User's NAS #这一段是标记，对配置没有影响。
 path = /你的共享文件夹路径 #写上你自己的共享路径
 read only = no #是否只读
-writeable = yes #是否可写
 browseable = yes #是否可浏览
-guest ok = yes #是否可以给其他用户使用
-public = yes #是否公开
-create mask = 0777 #创建权限
-directory mask= 0777 #目录权限
-vaild users = user #输入当前用户名 
-[你的NAS名字]
+[另一个配置名]
 #如果同一台机子你想分开共享路径，就把上面的配置复制到这里。
 ```
 
@@ -86,32 +72,33 @@ vaild users = user #输入当前用户名
 
 * 输入命令 
 
-` sudo systemctl restart smbd ` 
+` sudo systemctl restart smb`
 
 五、检查SAMBA服务是否正在运行
 
 * 要检查samba 服务是否正在运行，请输入命令：
 
-` systemctl status smbd `
+` systemctl status smb`
 
-` systemctl status nmbd `
+` systemctl status nmb`
 
 * 要启用这两个服务，请运行以下命令：
 
-` sudo systemctl start smbd `
+` sudo systemctl start smb`
 
-` sudo systemctl start nmbd `
+` sudo systemctl start nmb`
 
 开始运行后，smbd将在139和445端口上侦听，若有无法访问，可以检查是否为端口封锁。
 
-PS：Manjaro等Arch用户使用以下命令启用samba服务
+开机自启动:
 ```bash
 systemctl enable smb nmb
 systemctl start smb nmb
 ```
 
 六、从其他设备访问SAMBA文件夹
-* 在同一网络的Windows 设备上，打开此电脑，点击上方选项卡**计算机** ，选择选项__映射网络驱动器__，在文件栏输入\\Host ip #你的NAS ip地址\\你的共享文件夹名 (此处可以不输入根目录）
+* 在同一网络的Windows 设备上，打开此电脑，点击上方选项卡**计算机** ，选择选项__映射网络驱动器__，
+在文件栏输入 `\\ip\配置文件名`
 
 然后就可以直接使用了。
 
