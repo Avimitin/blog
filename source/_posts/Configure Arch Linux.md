@@ -23,6 +23,7 @@ tldr: "I will show you how to configure the raw arch linux to a beatiful and eas
 * [安装桌面环境](#安装桌面环境)
 	* [Install Display manager](#install-display-manager)
 	* [自启动](#自启动)
+	* [HiDPI](#hidpi)
 	* [安装 DWM 窗口管理(可选)](#安装-dwm-窗口管理可选)
 	* [下载](#下载)
 	* [安装](#安装-1)
@@ -249,6 +250,16 @@ sudo systemctl start lightdm
 
 lightdm 启动的时候会执行 `~/.xprofile` , `~/.xsession`, `~/.Xresources`, 可以把脚本添加进去，
 启动时执行。启动脚本如何写我会在后面的软件章写。
+
+### HiDPI
+
+如果需要设置 dpi，在 `~/.Xresources` 里写入：
+
+```text
+Xft.dpi = 192
+```
+
+150% 放大填 144, 200% 放大填 192。
 
 ### 安装 DWM 窗口管理(可选)
 
