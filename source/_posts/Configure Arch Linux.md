@@ -1,5 +1,5 @@
 ---
-title: Arch Linux Configuration Guide
+title: 如何配置 Arch Linux
 date: 2021-02-21 17:28
 categories:
 - [system, linux]
@@ -11,7 +11,42 @@ tnalt: "my desktop screenshot"
 tldr: "I will show you how to configure the raw arch linux to a beatiful and easy for work desktop environment"
 ---
 
-#  Configure Arch Linux
+<!-- vim-markdown-toc GFM -->
+
+* [Network](#network)
+* [Update](#update)
+* [安装必要的软件](#安装必要的软件)
+* [添加用户](#添加用户)
+* [在 VMWare 上装 Arch 的设置（可选）](#在-vmware-上装-arch-的设置可选)
+	* [添加驱动](#添加驱动)
+	* [安装](#安装)
+* [安装桌面环境](#安装桌面环境)
+	* [Install Display manager](#install-display-manager)
+	* [自启动](#自启动)
+	* [安装 DWM 窗口管理(可选)](#安装-dwm-窗口管理可选)
+	* [下载](#下载)
+	* [安装](#安装-1)
+	* [添加进 Session](#添加进-session)
+* [分辨率](#分辨率)
+* [装点别的](#装点别的)
+	* [输入法](#输入法)
+	* [Network manager](#network-manager)
+	* [字体](#字体)
+	* [终端](#终端)
+	* [壁纸](#壁纸)
+	* [半透明](#半透明)
+	* [Git](#git)
+	* [Firefox](#firefox)
+	* [yay](#yay)
+	* [TLP](#tlp)
+	* [SSH](#ssh)
+	* [Lazygit](#lazygit)
+	* [FZF](#fzf)
+	* [Fish Shell](#fish-shell)
+	* [neovim](#neovim)
+	* [Python](#python)
+
+<!-- vim-markdown-toc -->
 
 ## Network
 
@@ -58,13 +93,13 @@ sudo systemctl enable systemd-networkd
 pacman -Syu
 ```
 
-## Install Needed Binaries
+## 安装必要的软件
 
 ```bash
 pacman -S man base-devel
 ```
 
-## Add a new user for yourself
+## 添加用户
 
 ```bash
 useradd -m -G wheel TOM
@@ -90,9 +125,14 @@ visudo
 
 保存文件退出之后，就可以输入 `exit` 退出当前用户，登录刚加入的用户了。
 
-## 在 VMWare 上装 Arch
+## 在 VMWare 上装 Arch 的设置（可选）
 
-首先建议你看一遍 wiki：[VMware/Install Arch Linux as guest](https://wiki.archlinux.org/index.php/VMware/Install_Arch_Linux_as_a_guest) 和 [VMware Tools for Linux Guests](https://www.vmware.com/support/ws5/doc/ws_newguest_tools_linux.html#wp1118025)
+如果不是用 VMware 装的虚拟机 arch 可以跳过这段。
+
+首先建议你看一遍 wiki：
+[VMware/Install Arch Linux as guest](https://wiki.archlinux.org/index.php/VMware/Install_Arch_Linux_as_a_guest) 
+和 
+[VMware Tools for Linux Guests](https://www.vmware.com/support/ws5/doc/ws_newguest_tools_linux.html#wp1118025)
 
 ### 添加驱动
 
@@ -165,7 +205,7 @@ WantedBy=multi-user.target
 systemctl enable vmwaretools.service
 ```
 
-## Install Desktop Environment
+## 安装桌面环境
 
 我目前先用 X 不用 Wayland：
 
@@ -176,6 +216,8 @@ sudo pacman -S xorg xorg-server
 然后选择什么桌面就自己挑了，KDE，GNOME，i3WM，或者 Deepin，选自己喜欢的装。
 
 ### Install Display manager
+
+Display manager，也可以称作登录管理器，是一个图形用户界面，帮助你登录进系统并启动桌面。
 
 ```bash
 sudo pacman -S light-dm
@@ -201,9 +243,17 @@ sudo systemctl enable lightdm
 sudo systemctl start lightdm
 ```
 
-### 安装 DWM 窗口管理
+启动之后选择自己需要的桌面，然后登录就能进入桌面了。
 
-[dwm](https://dwm.suckless.org/) 是我正在尝试使用的一个窗户管理器，因为之前有用过很久的 i3wm，如果没有相应的使用经验我建议还是去用 GNOME 这种经典的用鼠标的窗口管理，对标签式管理有一定了解之后再来尝试。
+### 自启动
+
+lightdm 启动的时候会执行 `~/.xprofile` , `~/.xsession`, `~/.Xresources`, 可以把脚本添加进去，
+启动时执行。启动脚本如何写我会在后面的软件章写。
+
+### 安装 DWM 窗口管理(可选)
+
+[dwm](https://dwm.suckless.org/) 是我正在尝试使用的一个窗户管理器，因为之前有用过很久的 i3wm，
+如果没有相应的使用经验我建议还是去用 GNOME 这种经典的用鼠标的窗口管理，对标签式管理有一定了解之后再来尝试。
 
 ### 下载
 
@@ -233,7 +283,8 @@ Type=Application
 # +---end of edit---+
 ```
 
-可以到 dwm 官网的 patches 页面下载安装插件，也可以用已经打好补丁的版本：[Theniceboy/dwm](https://github.com/theniceboy/dwm)，进入文件夹输入命令 `sudo make clean install` 重启即可。自定义的部分在 `config.h` 里，懂一丢丢 C 语言应该就能看的懂配置文件的意思的了，（不会编程的感觉也不会看这个？）
+可以到 dwm 官网的 patches 页面下载安装插件，也可以用已经打好补丁的版本：[Theniceboy/dwm](https://github.com/theniceboy/dwm)，
+进入文件夹输入命令 `sudo make clean install` 重启即可。自定义的部分在 `config.h` 里，懂一丢丢 C 语言应该就能看的懂配置文件的意思的了，（不会编程的感觉也不会看这个？）
 
 ## 分辨率
 
@@ -289,11 +340,50 @@ xrandr --output Virtual1 --mode 1920x1080_60.00
 cvt -r 1920 1080
 ```
 
+可以把上面的脚本写入 `~/.xprofile` 启动时自动执行。
+
 > 更多配置方法参阅：https://wiki.archlinux.org/index.php/Xrandr#Configuration
 
 ## 装点别的
 
 **如果你不认识下面的软件，我很希望你能先去 Arch Wiki 和 GitHub 查询过之后再来安装，毕竟 Arch 就是一个完全让你自定义的系统，不要照搬**
+
+### 输入法
+
+安装： `yay -S fcitx fcitx-rime fcitx-configtool`
+
+在 `~/.xprofile` 中写入:
+
+```bash
+#!/bin/sh
+export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+export XMODIFIERS="@im=fcitx"
+```
+
+同时也可以再加一句 `fcitx &` 来开机自启动 fcitx：
+
+```bash
+#!/bin/sh
+
+# fcitx settings
+export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+export XMODIFIERS="@im=fcitx"
+
+fcitx &
+```
+
+用 `fcitx-configtool` 来启动 fcitx 管理界面。然后把 rime 勾选上, 第一个放 `Keyboard-English`， 
+rime 放在第二位。
+
+### Network manager
+
+Network Manager 可以帮你更轻松的管理网络设置, 以及附带的 GUI 也更加友善。
+
+执行 `yay -S networkmanager networkmanager-applet` 安装。
+
+然后在 `~/.xprofile` 中写入 `nm-applet &` 来开机自启动
 
 ### 字体
 
@@ -370,9 +460,10 @@ sudo pacman -S git
 sudo pacman -S firefox
 ```
 
-### AUR
+### yay
 
-follow [Jguer/yay](https://github.com/Jguer/yay) installation
+你也可以用 `pacman -S yay` 或者跟着 [Jguer/yay](https://github.com/Jguer/yay) 的 readme 自行 build。
+
 
 ### TLP
 
