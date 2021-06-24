@@ -20,7 +20,7 @@ jobs:
       uses: actions/setup-node@v2
 
     - name: install hexo
-      run: npm install -g hexo
+      run: sudo npm install -g hexo
 
     - name: setup build environment
       run: npm install
