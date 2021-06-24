@@ -1,0 +1,42 @@
+name: blog
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: install theme
+      run: git submodule init && git submodule update
+
+    - name: setup node
+      uses: actions/setup-node@v2
+
+    - name: install hexo
+      run: npm install -g hexo
+
+    - name: setup build environment
+      run: npm install
+
+    - name: build
+      run: hexo generate
+
+    - name: deploy
+      env:
+        USER: 'avimitin'
+        EMAIL: 'avimitin@gmail.com'
+        REPO: 'github.com/Avimitin/blog'
+        TOKEN: ${{ secrets.GH_TOKEN }}
+      run:
+        git config --global user.name $USER
+        git config --global user.email $EMAIL
+        cd public && git init -b gh-pages && git add .
+        git commit -m "update blog"
+        git push --force "https://$TOKEN@$REPO" gh-pages:gh-pages
