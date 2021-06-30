@@ -16,3 +16,4 @@ Here store some script that I have used for long time and which are really usefu
 
 cat /etc/os-release | grep '^ID=' | awk -F= '{print $2}'
 ```
+
