@@ -1,9 +1,6 @@
 ---
 title: Solving Digital Roots
 date: 2021-02-13 18:17
-categories:
-	- [coding, algorithm]
-	- [coding, golang]
 tags:
 	- coding
 	- algorithm
