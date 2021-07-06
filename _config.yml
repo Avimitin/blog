@@ -99,7 +99,6 @@ ignore:
 ## Themes: https://hexo.io/themes/
 theme: minima
 
-# Deployment
-## Docs: https://hexo.io/docs/one-command-deployment
-deploy:
-  type: ''
+marked:
+  gfm: true
+  breaks: false
