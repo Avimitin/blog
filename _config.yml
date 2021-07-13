@@ -102,3 +102,10 @@ theme: minima
 marked:
   gfm: true
   breaks: false
+
+feed:
+  enable: true
+  type: atom
+  path: atom.xml
+  limit: 0
+  content: true
