@@ -8,7 +8,7 @@ tags:
 - linux
 thumbnail: https://cdn.jsdelivr.net/gh/Avimitin/PicStorage/pic/20210221172745.png
 tnalt: "my desktop screenshot"
-tldr: "I will show you how to configure the raw arch linux to a beatiful and easy for work desktop environment"
+description: "I will show you how to configure the raw arch linux to a beatiful and easy for work desktop environment"
 ---
 
 <!-- vim-markdown-toc GFM -->
@@ -18,73 +18,55 @@ tldr: "I will show you how to configure the raw arch linux to a beatiful and eas
 * [安装必要的软件](#安装必要的软件)
 * [添加用户](#添加用户)
 * [在 VMWare 上装 Arch 的设置（可选）](#在-vmware-上装-arch-的设置可选)
-	* [添加驱动](#添加驱动)
-	* [安装](#安装)
+  * [添加驱动](#添加驱动)
+  * [安装](#安装)
 * [安装桌面环境](#安装桌面环境)
-	* [Install Display manager](#install-display-manager)
-	* [自启动](#自启动)
-	* [HiDPI](#hidpi)
-	* [安装 DWM 窗口管理(可选)](#安装-dwm-窗口管理可选)
-	* [下载](#下载)
-	* [安装](#安装-1)
-	* [添加进 Session](#添加进-session)
+  * [Install Display manager](#install-display-manager)
+  * [自启动](#自启动)
+  * [HiDPI](#hidpi)
+  * [安装 DWM 窗口管理(可选)](#安装-dwm-窗口管理可选)
+  * [下载](#下载)
+  * [安装](#安装-1)
+  * [添加进 Session](#添加进-session)
 * [分辨率](#分辨率)
 * [装点别的](#装点别的)
-	* [输入法](#输入法)
-	* [Network manager](#network-manager)
-	* [字体](#字体)
-	* [终端](#终端)
-	* [壁纸](#壁纸)
-	* [半透明](#半透明)
-	* [Git](#git)
-	* [Firefox](#firefox)
-	* [yay](#yay)
-	* [TLP](#tlp)
-	* [SSH](#ssh)
-	* [Lazygit](#lazygit)
-	* [FZF](#fzf)
-	* [Fish Shell](#fish-shell)
-	* [neovim](#neovim)
-	* [Python](#python)
+  * [输入法](#输入法)
+  * [Network manager](#network-manager)
+  * [字体](#字体)
+  * [终端](#终端)
+  * [壁纸](#壁纸)
+  * [半透明](#半透明)
+  * [Git](#git)
+  * [Firefox](#firefox)
+  * [yay](#yay)
+  * [TLP](#tlp)
+  * [SSH](#ssh)
+  * [Lazygit](#lazygit)
+  * [FZF](#fzf)
+  * [Fish Shell](#fish-shell)
+  * [neovim](#neovim)
+  * [Python](#python)
+  * [通知系统](#通知系统)
 
 <!-- vim-markdown-toc -->
 
 ## Network
 
-登录 Root 账户之后，先 ping 一下随便一个网页，看看有网没，有网就不管了，我反正没网要设置一下。
+如果你有跟着我上一篇文章，安装了 `NetworkManager`，此时你
+可以输入命令 `nmtui` 来打开一个终端网络管理器来管理网络。
 
-先看一下网络设备：
+```console
+#启动网络管理器的 daemon
+systemctl start NetworkManager.service
+#设置为开机自启动
+systemctl enable NetworkManager.service
 
-```bash
-ip link
+#启动终端管理器
+nmtui
 ```
 
-应该会出现类似这样的文字：
-
-![](http://xahlee.info/linux/i/linux_ip_link_show_output_2017.png)
-
-如果按照图片，你就有一个叫做 `eth0` 的网络设备，编辑配置文件：
-
-```bash
-sudo vim /etc/network/20-wired.network
-
-#-----edit-----#
-[Match]
-Name=eth0
-
-[Network]
-DHCP=yes
-#-end of edit-#
-```
-
-然后执行下面这个命令启动并启用网络配置自启：
-
-```bash
-sudo systemctl start systemd-networkd
-sudo systemctl enable systemd-networkd
-```
-
-> further reading: [systemd-networkd](https://wiki.archlinux.org/index.php/Systemd-networkd)
+如果没有安装，那你可能需要把 U盘插上，mount 好分区之后
+重新 chroot，并安装需要的网络管理器。
 
 ## Update
 
@@ -102,17 +84,19 @@ pacman -S man base-devel
 
 ## 添加用户
 
+创建一个叫做 TOM 的用户（把 TOM 换成你的名字）：
+
 ```bash
 useradd -m -G wheel TOM
 ```
 
-修改 TOM 的密码
+修改 TOM 的密码：
 
 ```bash
 passwd TOM
 ```
 
-修改 `sudofile`， 没有 vi 就装一个
+修改 `sudofile`， 没有 vi 就装一个：
 
 ```bash
 visudo
@@ -211,7 +195,13 @@ systemctl enable vmwaretools.service
 我目前先用 X 不用 Wayland：
 
 ```bash
-sudo pacman -S xorg xorg-server
+sudo pacman -S xorg
+```
+
+然后寻找适合你显卡的驱动：
+
+```bash
+sudo pacman -S xf86-video
 ```
 
 然后选择什么桌面就自己挑了，KDE，GNOME，i3WM，或者 Deepin，选自己喜欢的装。
@@ -388,6 +378,12 @@ fcitx &
 用 `fcitx-configtool` 来启动 fcitx 管理界面。然后把 rime 勾选上, 第一个放 `Keyboard-English`， 
 rime 放在第二位。
 
+Fcitx 还需要一些额外的 lib 来辅助工作，但是是可选的：
+
+```bash
+yay -S nuspell hunspell hspell aspell libvoiko
+```
+
 ### Network manager
 
 Network Manager 可以帮你更轻松的管理网络设置, 以及附带的 GUI 也更加友善。
@@ -562,3 +558,8 @@ yay -S python3 python-pip
 python -m pip install --upgrade pip setuptools wheel
 ```
 
+### 通知系统
+
+```bash
+yay -S notification-daemon
+```
