@@ -24,10 +24,6 @@ description: "I will show you how to configure the raw arch linux to a beatiful 
   * [Install Display manager](#install-display-manager)
   * [自启动](#自启动)
   * [HiDPI](#hidpi)
-  * [安装 DWM 窗口管理(可选)](#安装-dwm-窗口管理可选)
-  * [下载](#下载)
-  * [安装](#安装-1)
-  * [添加进 Session](#添加进-session)
 * [分辨率](#分辨率)
 * [装点别的](#装点别的)
   * [输入法](#输入法)
@@ -35,19 +31,9 @@ description: "I will show you how to configure the raw arch linux to a beatiful 
   * [字体](#字体)
   * [终端](#终端)
   * [壁纸](#壁纸)
-  * [半透明](#半透明)
-  * [Git](#git)
-  * [Firefox](#firefox)
-  * [yay](#yay)
-  * [TLP](#tlp)
-  * [SSH](#ssh)
-  * [Lazygit](#lazygit)
-  * [FZF](#fzf)
-  * [Fish Shell](#fish-shell)
-  * [neovim](#neovim)
-  * [Python](#python)
   * [通知系统](#通知系统)
 * [主题](#主题)
+* [常见错误](#常见错误)
 
 <!-- vim-markdown-toc -->
 
@@ -252,42 +238,6 @@ Xft.dpi = 192
 
 150% 放大填 144, 200% 放大填 192。
 
-### 安装 DWM 窗口管理(可选)
-
-[dwm](https://dwm.suckless.org/) 是我正在尝试使用的一个窗户管理器，因为之前有用过很久的 i3wm，
-如果没有相应的使用经验我建议还是去用 GNOME 这种经典的用鼠标的窗口管理，对标签式管理有一定了解之后再来尝试。
-
-### 下载
-
-```bash
-git clone https://git.suckless.org/dwm
-```
-
-### 安装
-
-```bash
-sudo make clean install
-```
-
-### 添加进 Session
-
-```bash
-# 你可能需要先创建文件夹
-vim /usr/share/lightdm/sessions/dwm.desktop
-
-# +-----edit-----+
-[Desktop Entry]
-Name=dwm
-Comment=Log in using the dwm window manager
-Exec=/usr/local/bin/dwm
-TryExec=/usr/local/bin/dwm
-Type=Application
-# +---end of edit---+
-```
-
-可以到 dwm 官网的 patches 页面下载安装插件，也可以用已经打好补丁的版本：[Theniceboy/dwm](https://github.com/theniceboy/dwm)，
-进入文件夹输入命令 `sudo make clean install` 重启即可。自定义的部分在 `config.h` 里，懂一丢丢 C 语言应该就能看的懂配置文件的意思的了，（不会编程的感觉也不会看这个？）
-
 ## 分辨率
 
 一般来说应该能正常识别分辨率的，如果分辨率不对劲你可以输入 `xrandr` 来检查一下输出配置：
@@ -398,9 +348,8 @@ Network Manager 可以帮你更轻松的管理网络设置, 以及附带的 GUI 
 推荐安装：
 
 - [nerd font](https://github.com/ryanoasis/nerd-fonts/releases)
-- [powerline/fonts](https://github.com/powerline/fonts)
 
-我自己用的是 `JetbrainsMono Nerd Font`  和 `Inconsolata for Powerline` 作为 fallback。DWM 则使用的 `Ubuntu Mono derivative Powerline`
+我自己用的是 `JetbrainsMono Nerd Font` DWM 则使用的 `Ubuntu Mono Nerd Font`
 
 - 英文字体设置：
 
@@ -421,19 +370,21 @@ LC_TIME=en_US.UTF-8
 
 - Emoji 字体：
 
+可以在下述字体中选择一个安装。
+
 ```bash
-yay -S ttf-linux-libertine ttf-inconsolata ttf-joypixels ttf-twemoji-color noto-fonts-emoji ttf-liberation ttf-droid
+yay -Ss ttf-linux-libertine ttf-inconsolata ttf-joypixels ttf-twemoji-color noto-fonts-emoji ttf-liberation ttf-droid
 ```
 
 - 中文字体
 
-```bash
-yay -S wqy-bitmapfont wqy-microhei wqy-microhei-lite wqy-zenhei adobe-source-han-mono-cn-fonts adobe-source-han-sans-cn-fonts adobe-source-han-serif-cn-fonts
-```
+你可以查看 [这个页面](https://wiki.archlinux.org/title/Localization/Chinese)
+来选择一些中文字体。个人推荐 Adobe 的思源黑体。
 
 ### 终端
 
-我用的 simple terminal: [Avimitin/st](https://github.com/Avimitin/st)，参阅：[Simple Terminal 的配置](https://avimitin.com/system/simpleterminal.html)。
+我用的 simple terminal: [Avimitin/st](https://github.com/Avimitin/st)，
+参阅：[Simple Terminal 的配置](https://avimitin.com/system/simpleterminal.html)。
 
 ### 壁纸
 
@@ -447,116 +398,6 @@ Some tips and tricks:
 # move all your image to a library like: ~/Pictures/WallPapers
 feh --recursive --randomize --bg-fill ~/Pictures/WallPapers/
 # this command will show all the picture as background randomly
-```
-
-### 半透明
-
-```bash
-yay -S picom-git
-picom -b
-```
-
-### Git
-
-```bash
-sudo pacman -S git
-```
-
-### Firefox
-
-```bash
-sudo pacman -S firefox
-```
-
-### yay
-
-你也可以用 `pacman -S yay` 或者跟着 [Jguer/yay](https://github.com/Jguer/yay) 的 readme 自行 build。
-
-
-### TLP
-
-用来管理笔记本电池
-
-follow [linrunner/TLP](https://github.com/linrunner/TLP) | [ArchWiki/TLP](https://wiki.archlinux.org/index.php/TLP)
-
-### SSH
-
-```bash
-#!/bin/bash
-yay -S openssh
-ssh-keygen -t ed25519 -C "your_email@example.com"
-eval `ssh-agent -s`
-ssh-add ~/.ssh/id_ed25519
-```
-
-### Lazygit
-
-```bash
-yay -S lazygit
-```
-
-### FZF
-
-fuzzy file finder
-
-![](https://raw.githubusercontent.com/PatrickF1/fzf.fish/main/images/directory.gif)
-
-- CLI
-
-```bash
-# install
-git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-~/.fzf/install
-```
-
-- Fish
-
-```bash
-# install fd(another find)
-yay -S fd
-# install bat(another cat)
-yay -S bat
-fisher install PatrickF1/fzf.fish
-```
-
-- vim
-
-```vim
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-```
-
-### Fish Shell
-
-```bash
-yay -S fish
-
-# commands below are optional
-# plugin manager
-curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher
-fisher install matchai/spacefish
-fisher install acomagu/fish-async-prompt
-```
-
-### neovim
-
-![image-20210221171417583](https://cdn.jsdelivr.net/gh/Avimitin/PicStorage/pic/20210221171519.png)
-
-```bash
-yay -S neovim-nightly-bin
-git clone https://github.com/Avimitin/nvim.git ~/.config/nvim
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
-nvm install node
-node install -g neovim
-pip3 install pynvim
-```
-
-我的 vim 配置文件在： [Avimitin/nvim](https://github.com/Avimitin/nvim)
-
-### Python
-
-```bash
-yay -S python3 python-pip
-python -m pip install --upgrade pip setuptools wheel
 ```
 
 ### 通知系统
@@ -578,3 +419,9 @@ mkdir -p ~/.local/share/icons
 把下载好的主题放进 themes 文件夹里，图标放进 icons 文件夹里。
 然后安装 `lxapperance` 更换。
 
+## 常见错误
+
+- `Gtk-Message: Failed to load module "colorreload-gtk-module"`
+
+是正常的，但是假如你看着不舒服，可以安装 `kde-gtk-config` 包，
+里面包含必要的 Modules. 
