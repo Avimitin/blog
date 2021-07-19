@@ -47,6 +47,7 @@ description: "I will show you how to configure the raw arch linux to a beatiful 
   * [neovim](#neovim)
   * [Python](#python)
   * [通知系统](#通知系统)
+* [主题](#主题)
 
 <!-- vim-markdown-toc -->
 
@@ -563,3 +564,17 @@ python -m pip install --upgrade pip setuptools wheel
 ```bash
 yay -S notification-daemon
 ```
+
+## 主题
+
+可以在 gnome-look.org 上下载喜欢的 GTK 主题和图标，然后在本地
+创建文件夹：
+
+```console
+mkdir -p ~/.local/share/themes
+mkdir -p ~/.local/share/icons
+```
+
+把下载好的主题放进 themes 文件夹里，图标放进 icons 文件夹里。
+然后安装 `lxapperance` 更换。
+
