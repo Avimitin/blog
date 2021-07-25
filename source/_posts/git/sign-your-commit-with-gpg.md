@@ -187,6 +187,62 @@ Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit? O
 
 最后输入 save 保存退出。
 
+### 新增子密钥
+
+输入 `gpg --list-secret-keys`，你可以看到自己的私钥。
+带 Sec 开头的私钥就是你的主密钥，而你不应该日常使用主密钥。
+主密钥在 PGP 中应当只起着创建子密钥的作用。所以我们需要
+生成子密钥。
+
+输入 `gpg --edit-key YOUR_KEY`，将 YOUR_KEY 替换成你的私钥
+ID。等待 gpg 的提示符弹出后，输入 `addkey` 创建新的子密钥。
+
+虽然我并不推荐，但你可以创建无数个子密钥。一般情况来说，密钥
+有 4 个功能，分别是:
+
+- Sign Data [S]
+- Key Certification [C]
+- Encrypt [E]
+- Authentication [A]
+
+比如你的主密钥后面应该会有 [SC] 的标识，说明你的主密钥可以
+用来签名和认证。这也是为什么主密钥如此重要。
+
+下面我以 sign data 子密钥的新建为例：
+
+```gpg
+gpg> addkey
+Key is protected.
+ 
+You need a passphrase to unlock the secret key for
+user: "avimitin <avimitin@example.com>"
+4096-bit RSA key, ID 144A027B, created 2013-11-04
+ 
+Enter passphrase:
+```
+
+输入密码后，选择 RSA (sign only)，然后选择 4096 强度，
+选择年份长度之后，确认创建，并输入 `save` 保存退出。
+
+### 备份
+
+你可以选择使用一个带加密的 U 盘，将你家目录下的整个 gpg 数据库
+拷贝到 U 盘里，并放到一个自己认为绝对安全的地方。
+
+```console
+cp -r ~/.gnupg /mnt/gnupg_backup
+```
+
+### 导出子钥
+
+输入命令：
+
+```console
+gpg -a --export-secret-subkeys YOUR_KEY_ID > secret_subkeys.gpg
+```
+
+然后找一个新的 U盘，把这个子钥放进去。
+
 ### 导出公钥
 
 公钥可以用来加密信息，同时也可以用来验证你的私钥签名
@@ -213,6 +269,51 @@ gpg --fingerprint
 
 > 上述公私钥生成部分参考自：
 > [Red Hat: How to create GPG keypairs](https://www.redhat.com/sysadmin/creating-gpg-keypairs)
+
+### 生成吊销执照
+
+这一步非常重要，一份吊销执照可以通知他人你的公钥已经被弃用。
+在你的密钥丢失时，吊销执照可以帮助你收回对正在传播的公钥的认证。
+因此它也十分机密，如果给人悄悄窃取并私自发布，你的公钥就被迫
+无效了。
+
+```console
+gpg -a --gen-revoke YOUR_KEY_ID > revocation_cert.gpg
+```
+
+将生成的文件移动到和你备份的同个 U 盘或独立的 U 盘并妥善保存。
+
+### 清空数据库并导入子钥
+
+确认备份完成之后，将你的 gpg 数据库 (默认 ~/.gnupg) 完全删除。在
+新的数据库里输入：
+
+```console
+gpg --import secret_subkeys.gpg
+```
+
+导入刚刚导出的子密钥。然后使用 `trust` 修改该密钥的可信度：
+
+```console
+$ gpg --edit-key YOUR_KEY_ID
+
+gpg> trust
+```
+
+这里我选择 ultimate 信任度。
+
+保存后退出 gpg 终端，输入 `gpg --list-keys` ，你会发现在主密钥
+那一行的 `sec` 多了一个 `#`，表示主密钥不存在。平常使用子密钥
+的 key id 即可。
+
+### 使用主密钥
+
+刚刚复制到 U 盘的整个 gpg 数据库文件夹可以直接被挂载，加上参数
+即可，挂载上你的 U 盘，假设你挂载在 `/mnt` 目录：
+
+```console
+gpg --homedir=/mnt/gnupg_backup --list-keys
+```
 
 ### 签名 commit
 
@@ -271,7 +372,7 @@ key
 逻辑上说，好像我也可以在举证时再去签名，只要签名不对
 那就不是我干的。但是实际上要让社区信任公钥确实来自于
 我，也是一个很重要的步骤。如果不先把自己和公钥联系起
-来，如何证明公钥是我的呢。
+来，如何证明公钥是我的呢？
 
 Web of trust 还是基于人的信任机制，漏洞诸多。(By Blare)
 理论和应用和现实有很大差别，希望各位读者不会遇到恶意，
