@@ -419,6 +419,10 @@ mkdir -p ~/.local/share/icons
 把下载好的主题放进 themes 文件夹里，图标放进 icons 文件夹里。
 然后安装 `lxapperance` 更换。
 
+## 声音
+
+下载 `alsa-utils` 包，使用 alsamixer 切换声卡选择输出。
+
 ## 常见错误
 
 - `Gtk-Message: Failed to load module "colorreload-gtk-module"`
