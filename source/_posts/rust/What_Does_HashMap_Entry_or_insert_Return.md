@@ -43,7 +43,7 @@ hashmap now store key-value pair: {"foo": 2}
 
 这里其实我理解错了，其实 `foo` 本身已经是一个 mutable reference，查看[文档](https://doc.rust-lang.org/std/collections/hash_map/enum.Entry.html#method.or_insert)，可以看到 `or_insert()` 返回的是一个可变引用而不是值。
 
-![lib](./HashMap/lib.png)
+![lib](/images/rust/What_Does_HashMap_Entry_or_insert_Return/lib.png)
 
 所以在此处解引用指向的是哈希表里的值而不是 `foo` 本身，`or_insert()` 方法已经传回来了一个可写的引用，`foo` 的类型就是一个可写的引用。而我们修改的是哈希表里的值不是 `foo` 自己的值，所以就不需要声明 mutable 啦。
 
