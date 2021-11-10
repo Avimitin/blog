@@ -84,6 +84,9 @@ drm/kmb: Enable ADV bridge after modeset
 美观。在后续查找资料的时候，我发现 Golang 团队也有全小写的约定，我的 remix 看来也是
 能够被广泛接受的。
 
+最近我还发现有些项目会用大括号把他们的前缀包起来，也是挺一目了然的，而且只占用了两个字符。
+比如: `[awesomewm] Fix pavucontrol not floating`。
+
 同时不管是哪个项目，都不推荐在 commit 里用句号结尾，没有必要，会让标题很难看。
 
 格式确定下来之后，就是如何撰写内容了。结合 Linux 和 Golang 两个项目的习惯，我制定了自
@@ -107,6 +110,11 @@ drm/kmb: Enable ADV bridge after modeset
 emacs 的 commit 的: [torvalds/uemacs](https://github.com/torvalds/uemacs/commits/master)。
 他的主体部分详细的讲解了他当时的思路，和他具体的修改，我觉得是一个非常好的参考资料。
 
+如果你的项目有什么破坏性更改，或者弃用了什么功能，记得用 `BREAKING CHANGE`
+和 `DEPRECATED` 标注。这算是好习惯的一部分，可以帮助你方便的生成改动日志，也能让一些更新
+后出问题的用户有迹可循。如果你是在一个大的社区项目工作，而且你正在修复某个 issue，那你一
+定要记得在这里标注 #ID。比如你的 patch 修复了 233 号 issue，你可以在这里写 "Fix #233." 。
+
 ## 脚注
 
 脚注部分我参考了 Linux 项目，在末尾用 `Signed-off-by: Username <Email>` 的形式签署自己的
@@ -114,9 +122,11 @@ commit。这里的 Username 和 Email 推荐和你 git config 保持一致。这
 提前建立好一个信任链，降低被人冒名顶替的风险。其次是方便一些对项目有想法的人能快速找到你的
 联系方式，和你电邮沟通。
 
-在签名的上方，如果你的项目有什么破坏性更改，或者弃用了什么功能，记得用 `BREAKING CHANGE`
-和 `DEPRECATED` 标注。这算是好习惯的一部分，可以帮助你方便的生成改动日志，也能让一些更新
-后出问题的用户有迹可循。
+> 这一部分是我的个人习惯，不是所有的项目都需要 sign off。
+
+脚注相对来说不太重要，如果你愿意的话，可以签署上你的名字，还有所有参与了这个 commit 的社区
+成员的名字。比如 Tom 给你提出来这个部分有问题，你可以写 `Reported-by: Tom <Tom@email.com>`。
+比如 Ally 帮你测试了代码，可以写 `Tested-by: Ally <Ally@email.com>`。
 
 ## 总结
 
