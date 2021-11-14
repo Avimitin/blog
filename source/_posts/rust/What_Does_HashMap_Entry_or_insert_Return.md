@@ -3,7 +3,7 @@ title: 'HashMap::Entry 的 or_insert 返回了什么'
 author: avimitin
 date: 2021/08/21 19:52
 tag: [rust, std, reference]
-categories: rust
+categories: useless
 ---
 
 # HashMap::Entry 的 or_insert 返回了什么

@@ -2,7 +2,7 @@
 title: How to write commit
 date: 2021-10-22 21:47
 categories:
-	- git
+	- useless
 tags:
 	- git
 	- commit

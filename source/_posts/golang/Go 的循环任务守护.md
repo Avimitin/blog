@@ -2,7 +2,7 @@
 title: Golang Polling Control Flow
 date: 2021-02-21 17:28
 categories:
-	- [coding, golang]
+	- useless
 tags:
 	- golang
 	- goroutine

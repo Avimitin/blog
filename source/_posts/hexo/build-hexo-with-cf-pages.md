@@ -2,6 +2,7 @@
 title: '白嫖博客指南'
 author: avimitin
 date: 2021/06/29 19:10
+categories: useless
 tag: [hexo, blog]
 ---
 # 白嫖博客指南 #
