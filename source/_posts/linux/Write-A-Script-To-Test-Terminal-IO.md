@@ -6,7 +6,7 @@ tags:
 - terminal
 - linux
 - st
-thumbnail: ./screenshot.png
+thumbnail: /images/linux/Write-A-Script-To-Test-Terminal-IO/screenshot.png
 ---
 ## 前言
 
@@ -42,7 +42,7 @@ echo -e "\n\nTesting in terminal: $(get_terminal)"
 
 ## 结果
 
-![result](./result.png)
+![result](/images/linux/Write-A-Script-To-Test-Terminal-IO/result.png)
 
 其中 Alacritty 和 simple terminal 打得不相上下，而 kitty 稍逊一筹，konsole
 （右下） 是最慢的。后续我再比对了几次也是一样的结果。
