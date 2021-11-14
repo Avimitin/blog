@@ -24,7 +24,7 @@ fn main() {
     *foo += 1;
     println!("foo has value {}", foo);
 
-		println!("hashmap now store key-value pair: {:?}", hashmap);
+    println!("hashmap now store key-value pair: {:?}", hashmap);
 }
 ```
 
