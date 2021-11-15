@@ -147,7 +147,7 @@ Signed-off-by: MyName <name@example.com>
 
 git 提供了模版功能，在你 commit 的时候以这个文本文件为模板来生成 commit。你可以在里面注
 释长度，辅助文本，以及提前生成好格式。
-具体的内容可以查看我的模版：https://github.com/Avimitin/dotfile/blob/master/.gittemplate
+具体的内容可以查看我的模版：https://github.com/Avimitin/commmit-convention
 
 你可以自己写一份符合自己胃口的模板，保存为文本文件，然后用命令
 `git config --global commit.template PATH/TO/TEMPLATE` 设置好模板路径，下一次 commit 的
