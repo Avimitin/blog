@@ -1,163 +1,65 @@
-<!DOCTYPE html>
-
-
-
-
-
-
-
-
-
-
-
-<html lang="en-us">
-  <head>
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-
-  
-  <title>白嫖博客指南 - sh1marin&#39;s Blog</title>
-
-  
-  
-  <meta name="description" content="白嫖博客指南 因为我的机子又小又弱，顶不住 DDoS，我一直是处于怂逼 状态，不敢把博客公开，都是自己用。然后最近发现，其实 我也没什么国内访问的需要，为啥不转移到托管平台呢？ 于是这周稍微折腾了一下，把博客从 vps 的 nginx 转移 到了 CloudFlare Pages 上。
-具体思路 本地建立 hexo 环境，建立 git 仓库，把源文件 stage 到 master 分支，提交到 GitHub 时使用 Actions 编译， 然后把静态文件 stage 到别的分支。CloudFlare 监听 这个静态文件的分支，有静态文件变动就生成。最后域名 CNAME 到 CloudFlare 就可以了。
-预备需求  一个 GitHub 帐号 一个 CloudFlare 帐号 一个终端 曾经使用过 hexo (没有的话看 hexo 的文档) （可选）一个自己的域名  Hexo 安装  我因为常用 Arch Linux 所以就只基于 Arch 环境来讲 一些终端操作。如果你发现环境不一样，你可以试着开个 docker 来运行。或者你也可以到我的 仓库 issues 来询问我。
- 首先需要安装 nvm 。 跟着 README 的安装指引一步一步来就好。安装好之后 开始安装 node 和 npm" />
-  <meta name="author" content="avimitin" />
-  
-
-  
-  
-  
-  
-  
-  
-  <link rel="preload stylesheet" as="style" href="https://blog.sh1mar.in/app.min.css" />
-
-  
-  <link rel="preload stylesheet" as="style" href="https://blog.sh1mar.in/an-old-hope.min.css" />
-  <script
-    defer
-    src="https://blog.sh1mar.in/highlight.min.js"
-    onload="hljs.initHighlightingOnLoad();"
-  ></script>
-  
-
-  
-  <link rel="preload" as="image" href="https://blog.sh1mar.in/theme.png" />
-
-  
-
-  
-  <link rel="icon" href="https://blog.sh1mar.in/favicon.ico" />
-  <link rel="apple-touch-icon" href="https://blog.sh1mar.in/apple-touch-icon.png" />
-
-  
-  <meta name="generator" content="Hugo 0.91.2" />
-
-  
-  
-
-  
-  
-  
-  
-  
-  
-  
-  <meta property="og:title" content="白嫖博客指南" />
-<meta property="og:description" content="白嫖博客指南 因为我的机子又小又弱，顶不住 DDoS，我一直是处于怂逼 状态，不敢把博客公开，都是自己用。然后最近发现，其实 我也没什么国内访问的需要，为啥不转移到托管平台呢？ 于是这周稍微折腾了一下，把博客从 vps 的 nginx 转移 到了 CloudFlare Pages 上。
-具体思路 本地建立 hexo 环境，建立 git 仓库，把源文件 stage 到 master 分支，提交到 GitHub 时使用 Actions 编译， 然后把静态文件 stage 到别的分支。CloudFlare 监听 这个静态文件的分支，有静态文件变动就生成。最后域名 CNAME 到 CloudFlare 就可以了。
-预备需求  一个 GitHub 帐号 一个 CloudFlare 帐号 一个终端 曾经使用过 hexo (没有的话看 hexo 的文档) （可选）一个自己的域名  Hexo 安装  我因为常用 Arch Linux 所以就只基于 Arch 环境来讲 一些终端操作。如果你发现环境不一样，你可以试着开个 docker 来运行。或者你也可以到我的 仓库 issues 来询问我。
- 首先需要安装 nvm 。 跟着 README 的安装指引一步一步来就好。安装好之后 开始安装 node 和 npm" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://blog.sh1mar.in/post/hexo/build-hexo-with-cf-pages/" /><meta property="article:section" content="post" />
-
-
-
-
-  
-  <meta itemprop="name" content="白嫖博客指南">
-<meta itemprop="description" content="白嫖博客指南 因为我的机子又小又弱，顶不住 DDoS，我一直是处于怂逼 状态，不敢把博客公开，都是自己用。然后最近发现，其实 我也没什么国内访问的需要，为啥不转移到托管平台呢？ 于是这周稍微折腾了一下，把博客从 vps 的 nginx 转移 到了 CloudFlare Pages 上。
-具体思路 本地建立 hexo 环境，建立 git 仓库，把源文件 stage 到 master 分支，提交到 GitHub 时使用 Actions 编译， 然后把静态文件 stage 到别的分支。CloudFlare 监听 这个静态文件的分支，有静态文件变动就生成。最后域名 CNAME 到 CloudFlare 就可以了。
-预备需求  一个 GitHub 帐号 一个 CloudFlare 帐号 一个终端 曾经使用过 hexo (没有的话看 hexo 的文档) （可选）一个自己的域名  Hexo 安装  我因为常用 Arch Linux 所以就只基于 Arch 环境来讲 一些终端操作。如果你发现环境不一样，你可以试着开个 docker 来运行。或者你也可以到我的 仓库 issues 来询问我。
- 首先需要安装 nvm 。 跟着 README 的安装指引一步一步来就好。安装好之后 开始安装 node 和 npm">
-
-<meta itemprop="wordCount" content="363">
-<meta itemprop="keywords" content="" />
-  
-  <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="白嫖博客指南"/>
-<meta name="twitter:description" content="白嫖博客指南 因为我的机子又小又弱，顶不住 DDoS，我一直是处于怂逼 状态，不敢把博客公开，都是自己用。然后最近发现，其实 我也没什么国内访问的需要，为啥不转移到托管平台呢？ 于是这周稍微折腾了一下，把博客从 vps 的 nginx 转移 到了 CloudFlare Pages 上。
-具体思路 本地建立 hexo 环境，建立 git 仓库，把源文件 stage 到 master 分支，提交到 GitHub 时使用 Actions 编译， 然后把静态文件 stage 到别的分支。CloudFlare 监听 这个静态文件的分支，有静态文件变动就生成。最后域名 CNAME 到 CloudFlare 就可以了。
-预备需求  一个 GitHub 帐号 一个 CloudFlare 帐号 一个终端 曾经使用过 hexo (没有的话看 hexo 的文档) （可选）一个自己的域名  Hexo 安装  我因为常用 Arch Linux 所以就只基于 Arch 环境来讲 一些终端操作。如果你发现环境不一样，你可以试着开个 docker 来运行。或者你也可以到我的 仓库 issues 来询问我。
- 首先需要安装 nvm 。 跟着 README 的安装指引一步一步来就好。安装好之后 开始安装 node 和 npm"/>
-
-  
-  
+<!doctype html><html lang=en-us>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no">
+<title>白嫖博客指南 - sh1marin's Blog</title>
+<meta name=description content="白嫖博客指南 因为我的机子又小又弱，顶不住 DDoS，我一直是处于怂逼 状态，不敢把博客公开，都是自己用。然后最近发现，其实 我也没什么国内访问的需">
+<meta name=author content="avimitin">
+<link rel="preload stylesheet" as=style href=https://blog.sh1mar.in/app.min.css>
+<link rel="preload stylesheet" as=style href=https://blog.sh1mar.in/an-old-hope.min.css>
+<script defer src=https://blog.sh1mar.in/highlight.min.js onload=hljs.initHighlightingOnLoad()></script>
+<link rel=preload as=image href=https://blog.sh1mar.in/theme.png>
+<link rel=preload as=image href=https://blog.sh1mar.in/twitter.svg>
+<link rel=preload as=image href=https://blog.sh1mar.in/github.svg>
+<link rel=icon href=https://blog.sh1mar.in/favicon.ico>
+<link rel=apple-touch-icon href=https://blog.sh1mar.in/apple-touch-icon.png>
+<meta name=generator content="Hugo 0.91.2">
+<meta property="og:title" content="白嫖博客指南">
+<meta property="og:description" content="白嫖博客指南 因为我的机子又小又弱，顶不住 DDoS，我一直是处于怂逼 状态，不敢把博客公开，都是自己用。然后最近发现，其实 我也没什么国内访问的需">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://blog.sh1mar.in/post/hexo/build-hexo-with-cf-pages/"><meta property="article:section" content="post">
+<meta itemprop=name content="白嫖博客指南">
+<meta itemprop=description content="白嫖博客指南 因为我的机子又小又弱，顶不住 DDoS，我一直是处于怂逼 状态，不敢把博客公开，都是自己用。然后最近发现，其实 我也没什么国内访问的需">
+<meta itemprop=wordCount content="1668">
+<meta itemprop=keywords content>
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="白嫖博客指南">
+<meta name=twitter:description content="白嫖博客指南 因为我的机子又小又弱，顶不住 DDoS，我一直是处于怂逼 状态，不敢把博客公开，都是自己用。然后最近发现，其实 我也没什么国内访问的需">
 </head>
-
-
-  <body class="not-ready" data-menu="false">
-    <header class="header">
-  
-  <p class="logo">
-    <a class="site-name" href="https://blog.sh1mar.in">sh1marin&#39;s Blog</a><a class="btn-dark"></a>
-  </p>
-  
-
-  <script>
-    let bodyClx = document.body.classList;
-    let btnDark = document.querySelector('.btn-dark');
-    let sysDark = window.matchMedia('(prefers-color-scheme: dark)');
-    let darkVal = localStorage.getItem('dark');
-
-    let setDark = (isDark) => {
-      bodyClx[isDark ? 'add' : 'remove']('dark');
-      localStorage.setItem('dark', isDark ? 'yes' : 'no');
-    };
-
-    setDark(darkVal ? darkVal === 'yes' : sysDark.matches);
-    requestAnimationFrame(() => bodyClx.remove('not-ready'));
-
-    btnDark.addEventListener('click', () => setDark(!bodyClx.contains('dark')));
-    sysDark.addEventListener('change', (event) => setDark(event.matches));
-  </script>
-
-  
-  
-
-  
+<body class=not-ready data-menu=false>
+<header class=header>
+<p class=logo>
+<a class=site-name href=https://blog.sh1mar.in>sh1marin's Blog</a><a class=btn-dark></a>
+</p>
+<script>let bodyClx=document.body.classList,btnDark=document.querySelector('.btn-dark'),sysDark=window.matchMedia('(prefers-color-scheme: dark)'),darkVal=localStorage.getItem('dark'),setDark=a=>{bodyClx[a?'add':'remove']('dark'),localStorage.setItem('dark',a?'yes':'no')};setDark(darkVal?darkVal==='yes':sysDark.matches),requestAnimationFrame(()=>bodyClx.remove('not-ready')),btnDark.addEventListener('click',()=>setDark(!bodyClx.contains('dark'))),sysDark.addEventListener('change',a=>setDark(a.matches))</script>
+<nav class=social>
+<a class=twitter style=--url:url(./twitter.svg) href=https://twitter.com/twitter.com/sh1ma_rin target=_blank></a>
+<a class=github style=--url:url(./github.svg) href=https://github.com/github.com/Avimitin target=_blank></a>
+</nav>
 </header>
-
-
-    <main class="main">
-
-<article class="post-single">
-  <header class="post-title">
-    <p>
-      <time>Jan 1, 1</time>
-      
-      <span>avimitin</span>
-      
-    </p>
-    <h1>白嫖博客指南</h1>
-  </header>
-  <section class="post-content"><h1 id="白嫖博客指南">白嫖博客指南</h1>
+<main class=main>
+<article class=post-single>
+<header class=post-title>
+<p>
+<time>Jan 1, 1</time>
+<span>avimitin</span>
+</p>
+<h1>白嫖博客指南</h1>
+</header>
+<section class=post-content><h1 id=白嫖博客指南>白嫖博客指南</h1>
 <p>因为我的机子又小又弱，顶不住 DDoS，我一直是处于怂逼
 状态，不敢把博客公开，都是自己用。然后最近发现，其实
 我也没什么国内访问的需要，为啥不转移到托管平台呢？
 于是这周稍微折腾了一下，把博客从 vps 的 nginx 转移
 到了 CloudFlare Pages 上。</p>
-<h2 id="具体思路">具体思路</h2>
+<h2 id=具体思路>具体思路</h2>
 <p>本地建立 hexo 环境，建立 git 仓库，把源文件 stage
 到 master 分支，提交到 GitHub 时使用 Actions 编译，
 然后把静态文件 stage 到别的分支。CloudFlare 监听
 这个静态文件的分支，有静态文件变动就生成。最后域名
 CNAME 到 CloudFlare 就可以了。</p>
-<h2 id="预备需求">预备需求</h2>
+<h2 id=预备需求>预备需求</h2>
 <ul>
 <li>一个 GitHub 帐号</li>
 <li>一个 CloudFlare 帐号</li>
@@ -165,76 +67,76 @@ CNAME 到 CloudFlare 就可以了。</p>
 <li>曾经使用过 hexo (没有的话看 hexo 的文档)</li>
 <li>（可选）一个自己的域名</li>
 </ul>
-<h2 id="hexo-安装">Hexo 安装</h2>
+<h2 id=hexo-安装>Hexo 安装</h2>
 <blockquote>
 <p>我因为常用 Arch Linux 所以就只基于 Arch 环境来讲
 一些终端操作。如果你发现环境不一样，你可以试着开个
 docker 来运行。或者你也可以到我的
-<a href="https://github.com/Avimitin/blog/issues">仓库 issues</a>
+<a href=https://github.com/Avimitin/blog/issues>仓库 issues</a>
 来询问我。</p>
 </blockquote>
-<p>首先需要安装 <a href="https://github.com/nvm-sh/nvm">nvm</a> 。
+<p>首先需要安装 <a href=https://github.com/nvm-sh/nvm>nvm</a> 。
 跟着 README 的安装指引一步一步来就好。安装好之后
 开始安装 node 和 npm</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-console" data-lang="console">nvm install node
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console>nvm install node
 </code></pre></div><p>用版本命令查看是否安装成功：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-console" data-lang="console">node --version
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console>node --version
 npm --version
 </code></pre></div><p>确认没啥毛病之后，开始安装 hexo：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-console" data-lang="console">npm install -g hexo-cli
-</code></pre></div><p>如果有遇到任何问题请查看 hexo 的 <a href="https://hexo.io/docs">官方文档</a>。
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console>npm install -g hexo-cli
+</code></pre></div><p>如果有遇到任何问题请查看 hexo 的 <a href=https://hexo.io/docs>官方文档</a>。
 如何在 hexo 下写文章也请查看官方文档。</p>
-<h2 id="github">GitHub</h2>
+<h2 id=github>GitHub</h2>
 <p>首先你需要在 GitHub 创建一个新的 Repository，然后进入你的
 hexo 文件夹，把所有编译需要的文件 commit 到 master 分支。</p>
-<h3 id="github-actions">GitHub Actions</h3>
+<h3 id=github-actions>GitHub Actions</h3>
 <p>然后在这个文件夹创建两个目录： <code>.github/workflows</code>，并新建
 一个 <code>build.yml</code> 文件，我们往里面开始写工作流：</p>
 <p>首先是给你的工作流取个名，这个不是很重要，就简单叫他 <code>blog</code> 好了。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">name</span>: <span style="color:#ae81ff">blog</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#f92672>name</span>: <span style=color:#ae81ff>blog</span>
 </code></pre></div><p>然后我们写一下工作流触发的条件：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">on</span>:
-  <span style="color:#f92672">push</span>:
-    <span style="color:#f92672">branches</span>: [ <span style="color:#ae81ff">master ]</span>
-  <span style="color:#f92672">pull_request</span>:
-    <span style="color:#f92672">branches</span>: [ <span style="color:#ae81ff">master ]</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#f92672>on</span>:
+  <span style=color:#f92672>push</span>:
+    <span style=color:#f92672>branches</span>: [ <span style=color:#ae81ff>master ]</span>
+  <span style=color:#f92672>pull_request</span>:
+    <span style=color:#f92672>branches</span>: [ <span style=color:#ae81ff>master ]</span>
 </code></pre></div><p>这里限定工作流在 <code>push</code> 和 <code>PR</code> 到 master 分支时再触发构建。</p>
 <p>然后开始设置工作环境，因为没有什么系统依赖，这里简
 单用 ubuntu 镜像就可以了：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">jobs</span>:
-  <span style="color:#f92672">build</span>:
-    <span style="color:#f92672">runs-on</span>: <span style="color:#ae81ff">ubuntu-latest</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#f92672>jobs</span>:
+  <span style=color:#f92672>build</span>:
+    <span style=color:#f92672>runs-on</span>: <span style=color:#ae81ff>ubuntu-latest</span>
 </code></pre></div><p>接着开始设置拉取仓库的步骤：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">steps</span>:
-  - <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/checkout@v2</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#f92672>steps</span>:
+  - <span style=color:#f92672>uses</span>: <span style=color:#ae81ff>actions/checkout@v2</span>
 </code></pre></div><p>如果你像我一样，对主题做了一些魔改，用了 git submodule
 ，你还需要设置一个步骤拉取 submodule：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">install theme</span>
-  <span style="color:#f92672">run</span>: <span style="color:#ae81ff">git submodule init &amp;&amp; git submodule update</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml>- <span style=color:#f92672>name</span>: <span style=color:#ae81ff>install theme</span>
+  <span style=color:#f92672>run</span>: <span style=color:#ae81ff>git submodule init &amp;&amp; git submodule update</span>
 </code></pre></div><p>然后设置 node 环境：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">setup node</span>
-  <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/setup-node@v2</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml>- <span style=color:#f92672>name</span>: <span style=color:#ae81ff>setup node</span>
+  <span style=color:#f92672>uses</span>: <span style=color:#ae81ff>actions/setup-node@v2</span>
 </code></pre></div><p>设置安装 hexo 并安装所有 node 依赖的步骤：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">install hexo</span>
-  <span style="color:#f92672">run</span>: <span style="color:#ae81ff">sudo npm install -g hexo</span>
-- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">setup build environment</span>
-  <span style="color:#f92672">run</span>: <span style="color:#ae81ff">npm install</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml>- <span style=color:#f92672>name</span>: <span style=color:#ae81ff>install hexo</span>
+  <span style=color:#f92672>run</span>: <span style=color:#ae81ff>sudo npm install -g hexo</span>
+- <span style=color:#f92672>name</span>: <span style=color:#ae81ff>setup build environment</span>
+  <span style=color:#f92672>run</span>: <span style=color:#ae81ff>npm install</span>
 </code></pre></div><p>最后就是开始构建：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">build</span>
-  <span style="color:#f92672">run</span>: <span style="color:#ae81ff">hexo generate</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml>- <span style=color:#f92672>name</span>: <span style=color:#ae81ff>build</span>
+  <span style=color:#f92672>run</span>: <span style=color:#ae81ff>hexo generate</span>
 </code></pre></div><p>构建完之后，我设置了让他部署到同个仓库的步骤：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">deploy</span>
-  <span style="color:#f92672">env</span>:
-    <span style="color:#f92672">USER</span>: <span style="color:#e6db74">&#39;avimitin&#39;</span>
-    <span style="color:#f92672">EMAIL</span>: <span style="color:#e6db74">&#39;avimitin@gmail.com&#39;</span>
-    <span style="color:#f92672">REPO</span>: <span style="color:#e6db74">&#39;github.com/Avimitin/blog&#39;</span>
-    <span style="color:#f92672">TOKEN</span>: <span style="color:#ae81ff">${{ secrets.GH_TOKEN }}</span>
-  <span style="color:#f92672">run</span>: |<span style="color:#e6db74">
-</span><span style="color:#e6db74">    git config --global user.name $USER
-</span><span style="color:#e6db74">    git config --global user.email $EMAIL
-</span><span style="color:#e6db74">    cd public &amp;&amp; git init -b gh-pages &amp;&amp; git add .
-</span><span style="color:#e6db74">    git commit -m &#34;update blog&#34;
-</span><span style="color:#e6db74">    git push --force &#34;https://$TOKEN@$REPO&#34; gh-pages:gh-pages</span>    
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml>- <span style=color:#f92672>name</span>: <span style=color:#ae81ff>deploy</span>
+  <span style=color:#f92672>env</span>:
+    <span style=color:#f92672>USER</span>: <span style=color:#e6db74>&#39;avimitin&#39;</span>
+    <span style=color:#f92672>EMAIL</span>: <span style=color:#e6db74>&#39;avimitin@gmail.com&#39;</span>
+    <span style=color:#f92672>REPO</span>: <span style=color:#e6db74>&#39;github.com/Avimitin/blog&#39;</span>
+    <span style=color:#f92672>TOKEN</span>: <span style=color:#ae81ff>${{ secrets.GH_TOKEN }}</span>
+  <span style=color:#f92672>run</span>: |<span style=color:#e6db74>
+</span><span style=color:#e6db74>    git config --global user.name $USER
+</span><span style=color:#e6db74>    git config --global user.email $EMAIL
+</span><span style=color:#e6db74>    cd public &amp;&amp; git init -b gh-pages &amp;&amp; git add .
+</span><span style=color:#e6db74>    git commit -m &#34;update blog&#34;
+</span><span style=color:#e6db74>    git push --force &#34;https://$TOKEN@$REPO&#34; gh-pages:gh-pages</span>    
 </code></pre></div><p>这里面，env 是设置环境变量，方便以后修改。因为 workflows 里的
 git 是全新安装的，我需要设置一下 user 信息。</p>
 <p>配置好 git config 后，进入静态文件编译后的输出文件夹，在这里我
@@ -246,8 +148,8 @@ token 如何获得可以看下方的 FAQ。</p>
 <p>push 时一定要带上 <code>--force</code> 参数，不然会遇到本地历史记录不同步
 不允许同步的问题。</p>
 <p>完成后的工作流文件可以参考这里：
-<a href="https://github.com/Avimitin/blog/blob/master/.github/workflows/blog.yml">.github/workflows/blog.yml</a></p>
-<h2 id="cloudflare">CloudFlare</h2>
+<a href=https://github.com/Avimitin/blog/blob/master/.github/workflows/blog.yml>.github/workflows/blog.yml</a></p>
+<h2 id=cloudflare>CloudFlare</h2>
 <p>打开 CloudFlare 官网并登录，在下方找到网页选项卡（英文叫 Pages）。
 点击进入设置页面。</p>
 <p>进入页面后，点击创建项目按钮，绑定你的 GitHub 账户，然后选中
@@ -256,16 +158,16 @@ token 如何获得可以看下方的 FAQ。</p>
 None，构建输出目录和构建目录都留空，保存后等待 CloudFlare
 部署即可，大约 3-4 分钟就可以了。</p>
 <p>如果你有自己的域名，跟随 CloudFlare 的指引 CNAME 上去即可。</p>
-<h2 id="faq">FAQ</h2>
-<h3 id="如何不把敏感信息写在-workflow-里">如何不把敏感信息写在 workflow 里</h3>
+<h2 id=faq>FAQ</h2>
+<h3 id=如何不把敏感信息写在-workflow-里>如何不把敏感信息写在 workflow 里</h3>
 <p>在仓库的 settings 页面里，点击左侧的 Secrets 页面，点击
 右上角的 new secrets，设置一个隐藏的环境变量。</p>
-<h3 id="如何使用-github-的-token">如何使用 GitHub 的 token</h3>
+<h3 id=如何使用-github-的-token>如何使用 GitHub 的 token</h3>
 <p>点击右上角你的头像，点击设置，下拉到 <code>Developer Settings</code>
 页面，选择 <code>Personal access tokens</code> 选项卡，创建一个新的 Token。
 这个 Token 只需要仓库的读写权限就够了。Token 如何使用请参阅
 workflows 的最后一步。</p>
-<h2 id="参阅资料">参阅资料</h2>
+<h2 id=参阅资料>参阅资料</h2>
 <ul>
 <li>Hexo 官方文档：https://hexo.io/docs/</li>
 <li>Git 使用方法：https://git-scm.com/book/zh/v2</li>
@@ -274,35 +176,17 @@ workflows 的最后一步。</p>
 <li>CloudFlare Pages 文档：https://developers.cloudflare.com/pages/</li>
 </ul>
 </section>
-
-  
-  
-
-  
-  
-  
-  <nav class="post-nav">
-    
-    <a class="prev" href="https://blog.sh1mar.in/post/%E4%BD%BF%E7%94%A8%E9%98%BF%E9%87%8C%E4%BA%91oss%E5%81%9A%E5%9B%BE%E5%BA%8A/"><span>←</span><span>用阿里云OSS做图床</span></a>
-     
-    <a class="next" href="https://blog.sh1mar.in/post/neovim/"><span>让你的 neovim 像 IDE 一样强大</span><span>→</span></a>
-    
-  </nav>
-  
-
-  
-  
+<nav class=post-nav>
+<a class=prev href=https://blog.sh1mar.in/post/git/sign-your-commit-with-gpg/><span>←</span><span>Sign Your Commit With GPG</span></a>
+</nav>
 </article>
-
 </main>
-
-    <footer class="footer">
-  <p>&copy; 2022 <a href="https://blog.sh1mar.in">sh1marin&#39;s Blog</a></p>
-  <p>Powered by <a href="https://gohugo.io/" rel="noopener" target="_blank">Hugo️️</a>️</p>
-  <p>
-    <a href="https://github.com/nanxiaobei/hugo-paper" rel="noopener" target="_blank">Paper 5.1</a>
-  </p>
+<footer class=footer>
+<p>&copy; 2022 <a href=https://blog.sh1mar.in>sh1marin's Blog</a></p>
+<p>Powered by <a href=https://gohugo.io/ rel=noopener target=_blank>Hugo️️</a>️</p>
+<p>
+<a href=https://github.com/nanxiaobei/hugo-paper rel=noopener target=_blank>Paper 5.1</a>
+</p>
 </footer>
-
-  </body>
+</body>
 </html>

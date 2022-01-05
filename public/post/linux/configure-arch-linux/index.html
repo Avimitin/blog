@@ -1,0 +1,326 @@
+<!doctype html><html lang=en-us>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no">
+<title>如何配置 Arch Linux - sh1marin's Blog</title>
+<meta name=description content="Network Update 安装必要的软件 添加用户 在 VMWare 上装 Arch 的设置（可选） 添加驱动 安装 安装桌面环境 Install Display manager 自启动 HiDPI 分辨率 装点别的 输入法 Network manager 字体 终端 壁纸 通知系统 主题 常见">
+<meta name=author content>
+<link rel="preload stylesheet" as=style href=https://blog.sh1mar.in/app.min.css>
+<link rel="preload stylesheet" as=style href=https://blog.sh1mar.in/an-old-hope.min.css>
+<script defer src=https://blog.sh1mar.in/highlight.min.js onload=hljs.initHighlightingOnLoad()></script>
+<link rel=preload as=image href=https://blog.sh1mar.in/theme.png>
+<link rel=preload as=image href=https://blog.sh1mar.in/twitter.svg>
+<link rel=preload as=image href=https://blog.sh1mar.in/github.svg>
+<link rel=icon href=https://blog.sh1mar.in/favicon.ico>
+<link rel=apple-touch-icon href=https://blog.sh1mar.in/apple-touch-icon.png>
+<meta name=generator content="Hugo 0.91.2">
+<meta property="og:title" content="如何配置 Arch Linux">
+<meta property="og:description" content="Network Update 安装必要的软件 添加用户 在 VMWare 上装 Arch 的设置（可选） 添加驱动 安装 安装桌面环境 Install Display manager 自启动 HiDPI 分辨率 装点别的 输入法 Network manager 字体 终端 壁纸 通知系统 主题 常见">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://blog.sh1mar.in/post/linux/configure-arch-linux/"><meta property="article:section" content="post">
+<meta property="article:published_time" content="2021-02-21T00:00:00+00:00">
+<meta property="article:modified_time" content="2021-02-21T00:00:00+00:00">
+<meta itemprop=name content="如何配置 Arch Linux">
+<meta itemprop=description content="Network Update 安装必要的软件 添加用户 在 VMWare 上装 Arch 的设置（可选） 添加驱动 安装 安装桌面环境 Install Display manager 自启动 HiDPI 分辨率 装点别的 输入法 Network manager 字体 终端 壁纸 通知系统 主题 常见"><meta itemprop=datePublished content="2021-02-21T00:00:00+00:00">
+<meta itemprop=dateModified content="2021-02-21T00:00:00+00:00">
+<meta itemprop=wordCount content="1845">
+<meta itemprop=keywords content="arch,linux,">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="如何配置 Arch Linux">
+<meta name=twitter:description content="Network Update 安装必要的软件 添加用户 在 VMWare 上装 Arch 的设置（可选） 添加驱动 安装 安装桌面环境 Install Display manager 自启动 HiDPI 分辨率 装点别的 输入法 Network manager 字体 终端 壁纸 通知系统 主题 常见">
+</head>
+<body class=not-ready data-menu=false>
+<header class=header>
+<p class=logo>
+<a class=site-name href=https://blog.sh1mar.in>sh1marin's Blog</a><a class=btn-dark></a>
+</p>
+<script>let bodyClx=document.body.classList,btnDark=document.querySelector('.btn-dark'),sysDark=window.matchMedia('(prefers-color-scheme: dark)'),darkVal=localStorage.getItem('dark'),setDark=a=>{bodyClx[a?'add':'remove']('dark'),localStorage.setItem('dark',a?'yes':'no')};setDark(darkVal?darkVal==='yes':sysDark.matches),requestAnimationFrame(()=>bodyClx.remove('not-ready')),btnDark.addEventListener('click',()=>setDark(!bodyClx.contains('dark'))),sysDark.addEventListener('change',a=>setDark(a.matches))</script>
+<nav class=social>
+<a class=twitter style=--url:url(./twitter.svg) href=https://twitter.com/twitter.com/sh1ma_rin target=_blank></a>
+<a class=github style=--url:url(./github.svg) href=https://github.com/github.com/Avimitin target=_blank></a>
+</nav>
+</header>
+<main class=main>
+<article class=post-single>
+<header class=post-title>
+<p>
+<time>Feb 21, 2021</time>
+</p>
+<h1>如何配置 Arch Linux</h1>
+</header>
+<section class=post-content>
+<ul>
+<li><a href=#network>Network</a></li>
+<li><a href=#update>Update</a></li>
+<li><a href=#%E5%AE%89%E8%A3%85%E5%BF%85%E8%A6%81%E7%9A%84%E8%BD%AF%E4%BB%B6>安装必要的软件</a></li>
+<li><a href=#%E6%B7%BB%E5%8A%A0%E7%94%A8%E6%88%B7>添加用户</a></li>
+<li><a href=#%E5%9C%A8-vmware-%E4%B8%8A%E8%A3%85-arch-%E7%9A%84%E8%AE%BE%E7%BD%AE%E5%8F%AF%E9%80%89>在 VMWare 上装 Arch 的设置（可选）</a>
+<ul>
+<li><a href=#%E6%B7%BB%E5%8A%A0%E9%A9%B1%E5%8A%A8>添加驱动</a></li>
+<li><a href=#%E5%AE%89%E8%A3%85>安装</a></li>
+</ul>
+</li>
+<li><a href=#%E5%AE%89%E8%A3%85%E6%A1%8C%E9%9D%A2%E7%8E%AF%E5%A2%83>安装桌面环境</a>
+<ul>
+<li><a href=#install-display-manager>Install Display manager</a></li>
+<li><a href=#%E8%87%AA%E5%90%AF%E5%8A%A8>自启动</a></li>
+<li><a href=#hidpi>HiDPI</a></li>
+</ul>
+</li>
+<li><a href=#%E5%88%86%E8%BE%A8%E7%8E%87>分辨率</a></li>
+<li><a href=#%E8%A3%85%E7%82%B9%E5%88%AB%E7%9A%84>装点别的</a>
+<ul>
+<li><a href=#%E8%BE%93%E5%85%A5%E6%B3%95>输入法</a></li>
+<li><a href=#network-manager>Network manager</a></li>
+<li><a href=#%E5%AD%97%E4%BD%93>字体</a></li>
+<li><a href=#%E7%BB%88%E7%AB%AF>终端</a></li>
+<li><a href=#%E5%A3%81%E7%BA%B8>壁纸</a></li>
+<li><a href=#%E9%80%9A%E7%9F%A5%E7%B3%BB%E7%BB%9F>通知系统</a></li>
+</ul>
+</li>
+<li><a href=#%E4%B8%BB%E9%A2%98>主题</a></li>
+<li><a href=#%E5%B8%B8%E8%A7%81%E9%94%99%E8%AF%AF>常见错误</a></li>
+</ul>
+<h2 id=network>Network</h2>
+<p>如果你有跟着我上一篇文章，安装了 <code>NetworkManager</code>，此时你
+可以输入命令 <code>nmtui</code> 来打开一个终端网络管理器来管理网络。</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console>#启动网络管理器的 daemon
+systemctl start NetworkManager.service
+#设置为开机自启动
+systemctl enable NetworkManager.service
+<span style=color:#960050;background-color:#1e0010>
+</span><span style=color:#960050;background-color:#1e0010></span>#启动终端管理器
+nmtui
+</code></pre></div><p>如果没有安装，那你可能需要把 U盘插上，mount 好分区之后
+重新 chroot，并安装需要的网络管理器。</p>
+<h2 id=update>Update</h2>
+<p>然后执行命令更新：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>pacman -Syu
+</code></pre></div><h2 id=安装必要的软件>安装必要的软件</h2>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>pacman -S man base-devel
+</code></pre></div><h2 id=添加用户>添加用户</h2>
+<p>创建一个叫做 TOM 的用户（把 TOM 换成你的名字）：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>useradd -m -G wheel TOM
+</code></pre></div><p>修改 TOM 的密码：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>passwd TOM
+</code></pre></div><p>修改 <code>sudofile</code>， 没有 vi 就装一个：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>visudo
+</code></pre></div><p>找到 <code>Uncomment to allow members of group wheel...</code> 这一行，把井号去掉：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>%wheel ALL<span style=color:#f92672>=(</span>ALL<span style=color:#f92672>)</span> ALL
+</code></pre></div><p>保存文件退出之后，就可以输入 <code>exit</code> 退出当前用户，登录刚加入的用户了。</p>
+<h2 id=在-vmware-上装-arch-的设置可选>在 VMWare 上装 Arch 的设置（可选）</h2>
+<p>如果不是用 VMware 装的虚拟机 arch 可以跳过这段。</p>
+<p>首先建议你看一遍 wiki：
+<a href=https://wiki.archlinux.org/index.php/VMware/Install_Arch_Linux_as_a_guest>VMware/Install Arch Linux as guest</a>
+和
+<a href=https://www.vmware.com/support/ws5/doc/ws_newguest_tools_linux.html#wp1118025>VMware Tools for Linux Guests</a></p>
+<h3 id=添加驱动>添加驱动</h3>
+<p>你需要打开 <code>/etc/mkinitcpio.conf</code> 文件，然后找到 <code>MODULES</code> 这一段，往里添加模块名：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>/etc/mkinitcpio.conf
+--------------------
+...
+MODULES=(vmw_balloon vmw_pvscsi vmw_vmci vmwgfx vmxnet3 vmblock vsock vmnet vmmon)
+...
+</code></pre></div><p>然后点击上方的 <code>虚拟机 -> 安装 VMware Tools</code> 来插入 CD 盘。</p>
+<h3 id=安装>安装</h3>
+<p>首先先给启动脚本创建文件夹：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#66d9ef>for</span> x in <span style=color:#f92672>{</span>0..6<span style=color:#f92672>}</span>; <span style=color:#66d9ef>do</span> mkdir -p /etc/init.d/rc<span style=color:#e6db74>${</span>x<span style=color:#e6db74>}</span>.d; <span style=color:#66d9ef>done</span>
+</code></pre></div><p>然后挂载光盘：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>mkdir /mnt/cdrom
+mount /dev/cdrom /mnt/cdrom
+</code></pre></div><p>把安装文件复制出来：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>cd tmp
+cp /mnt/cdrom/VMwareTools.tar.gz ./
+tar -zxf ./VMWareTools.tar.gz
+</code></pre></div><p>然后进入解压出来的 <code>vmware-tools-distrib</code> 文件夹启动 perl 脚本：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>cd vmware-tools-distrib
+perl ./vmware-install.pl
+</code></pre></div><p>重启，登录并启动 VMware tools</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>/etc/init.d/rc6.d/K99vmware-tools start
+</code></pre></div><p>然后把 VMware tools 链接到 systemd 自启动文件中：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>vim /etc/systemd/system/vmwaretools.service
+<span style=color:#75715e>#-----------------edit-----------------------</span>
+<span style=color:#f92672>[</span>Unit<span style=color:#f92672>]</span>
+Description<span style=color:#f92672>=</span>VMWare Tools daemon
+
+<span style=color:#f92672>[</span>Service<span style=color:#f92672>]</span>
+ExecStart<span style=color:#f92672>=</span>/etc/init.d/vmware-tools start
+ExecStop<span style=color:#f92672>=</span>/etc/init.d/vmware-tools stop
+PIDFile<span style=color:#f92672>=</span>/var/lock/subsys/vmware
+TimeoutSec<span style=color:#f92672>=</span><span style=color:#ae81ff>0</span>
+RemainAfterExit<span style=color:#f92672>=</span>yes
+ 
+<span style=color:#f92672>[</span>Install<span style=color:#f92672>]</span>
+WantedBy<span style=color:#f92672>=</span>multi-user.target
+<span style=color:#75715e>#------------------end-----------------------</span>
+systemctl enable vmwaretools.service
+</code></pre></div><h2 id=安装桌面环境>安装桌面环境</h2>
+<p>我目前先用 X 不用 Wayland：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>sudo pacman -S xorg
+</code></pre></div><p>然后寻找适合你显卡的驱动：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>sudo pacman -S xf86-video
+</code></pre></div><p>然后选择什么桌面就自己挑了，KDE，GNOME，i3WM，或者 Deepin，选自己喜欢的装。</p>
+<h3 id=install-display-manager>Install Display manager</h3>
+<p>Display manager，也可以称作登录管理器，是一个图形用户界面，帮助你登录进系统并启动桌面。</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>sudo pacman -S light-dm
+<span style=color:#75715e># lightdm-gtk-greeter  是默认的皮肤，你也可以选择 deepin</span>
+sudo pacman -S lightdm-gtk-greeter
+</code></pre></div><p>配置一下</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>sudo vim /etc/lightdm/lightdm.conf
+</code></pre></div><p>执行退出。然后启用开机自启</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>sudo systemctl enable lightdm
+</code></pre></div><p>装好窗口管理的 session 之后就可以直接运行启动了：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>sudo systemctl start lightdm
+</code></pre></div><p>启动之后选择自己需要的桌面，然后登录就能进入桌面了。</p>
+<h3 id=自启动>自启动</h3>
+<p>lightdm 启动的时候会执行 <code>~/.xprofile</code> , <code>~/.xsession</code>, <code>~/.Xresources</code>, 可以把脚本添加进去，
+启动时执行。启动脚本如何写我会在后面的软件章写。</p>
+<h3 id=hidpi>HiDPI</h3>
+<p>如果需要设置 dpi，在 <code>~/.Xresources</code> 里写入：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>Xft.dpi = 192
+</code></pre></div><p>150% 放大填 144, 200% 放大填 192。</p>
+<h2 id=分辨率>分辨率</h2>
+<p>一般来说应该能正常识别分辨率的，如果分辨率不对劲你可以输入 <code>xrandr</code> 来检查一下输出配置：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>xrandr
+<span style=color:#75715e>###############</span>
+<span style=color:#75715e>#   output    #</span>
+<span style=color:#75715e>###############</span>
+Screen 0: minimum <span style=color:#ae81ff>1</span> x 1, current <span style=color:#ae81ff>1920</span> x 1080, maximum <span style=color:#ae81ff>16384</span> x <span style=color:#ae81ff>16384</span>
+Virtual1 connected primary 1920x1080+0+0 <span style=color:#f92672>(</span>normal left inverted right x axis y axis<span style=color:#f92672>)</span> 0mm x 0mm
+   1920x1080     60.00*+
+   2560x1600     59.99
+   1920x1440     60.00
+   1856x1392     60.00
+   1792x1344     60.00
+   1920x1200     59.88
+   1600x1200     60.00
+   1680x1050     59.95
+   1400x1050     59.98
+   1280x1024     60.02
+   1440x900      59.89
+   1280x960      60.00
+   1360x768      60.02
+   1280x800      59.81
+   1152x864      75.00
+   1280x768      59.87
+   1024x768      60.00
+   800x600       60.32
+   640x480       59.94
+Virtual2 disconnected <span style=color:#f92672>(</span>normal left inverted right x axis y axis<span style=color:#f92672>)</span>
+</code></pre></div><p>如果分辨率不对，你可以输入下面的命令来切换：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>xrandr --output Virtual1 --mode 1920x1080
+</code></pre></div><p>如果列出来的分辨率也不对劲，你可以参考下面的方法来创建脚本开机修改分辨率：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#75715e>#!/bin/bash
+</span><span style=color:#75715e></span>xrandr --newmode <span style=color:#e6db74>&#34;1920x1080_60.00&#34;</span>  173.00  <span style=color:#ae81ff>1920</span> <span style=color:#ae81ff>2048</span> <span style=color:#ae81ff>2248</span> <span style=color:#ae81ff>2576</span>  <span style=color:#ae81ff>1080</span> <span style=color:#ae81ff>1083</span> <span style=color:#ae81ff>1088</span> <span style=color:#ae81ff>1120</span> -hsync +vsync
+xrandr --addmode Virtual1 1920x1080_60.00
+xrandr --output Virtual1 --mode 1920x1080_60.00
+</code></pre></div><p>其中，首段创建配置文件的 newmode 后的参数是通过下面这个命令得到的，把他换成你需要的分辨率，得到的配置参数可以防止错误配置导致的频闪：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>cvt -r <span style=color:#ae81ff>1920</span> <span style=color:#ae81ff>1080</span>
+</code></pre></div><p>可以把上面的脚本写入 <code>~/.xprofile</code> 启动时自动执行。</p>
+<blockquote>
+<p>更多配置方法参阅：https://wiki.archlinux.org/index.php/Xrandr#Configuration</p>
+</blockquote>
+<h2 id=装点别的>装点别的</h2>
+<p><strong>如果你不认识下面的软件，我很希望你能先去 Arch Wiki 和 GitHub 查询过之后再来安装，毕竟 Arch 就是一个完全让你自定义的系统，不要照搬</strong></p>
+<h3 id=输入法>输入法</h3>
+<p>安装： <code>yay -S fcitx fcitx-rime fcitx-configtool</code></p>
+<p>在 <code>~/.xprofile</code> 中写入:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#75715e>#!/bin/sh
+</span><span style=color:#75715e></span>export GTK_IM_MODULE<span style=color:#f92672>=</span>fcitx
+export QT_IM_MODULE<span style=color:#f92672>=</span>fcitx
+export XMODIFIERS<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;@im=fcitx&#34;</span>
+</code></pre></div><p>同时也可以再加一句 <code>fcitx &</code> 来开机自启动 fcitx：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#75715e>#!/bin/sh
+</span><span style=color:#75715e></span>
+<span style=color:#75715e># fcitx settings</span>
+export GTK_IM_MODULE<span style=color:#f92672>=</span>fcitx
+export QT_IM_MODULE<span style=color:#f92672>=</span>fcitx
+export XMODIFIERS<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;@im=fcitx&#34;</span>
+
+fcitx &amp;
+</code></pre></div><p>用 <code>fcitx-configtool</code> 来启动 fcitx 管理界面。然后把 rime 勾选上, 第一个放 <code>Keyboard-English</code>，
+rime 放在第二位。</p>
+<p>Fcitx 还需要一些额外的 lib 来辅助工作，但是是可选的：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>yay -S nuspell hunspell hspell aspell libvoiko
+</code></pre></div><h3 id=network-manager>Network manager</h3>
+<p>Network Manager 可以帮你更轻松的管理网络设置, 以及附带的 GUI 也更加友善。</p>
+<p>执行 <code>yay -S networkmanager networkmanager-applet</code> 安装。</p>
+<p>然后在 <code>~/.xprofile</code> 中写入 <code>nm-applet &</code> 来开机自启动</p>
+<h3 id=字体>字体</h3>
+<p>推荐安装：</p>
+<ul>
+<li><a href=https://github.com/ryanoasis/nerd-fonts/releases>nerd font</a></li>
+</ul>
+<p>我自己用的是 <code>JetbrainsMono Nerd Font</code> DWM 则使用的 <code>Ubuntu Mono Nerd Font</code></p>
+<ul>
+<li>英文字体设置：</li>
+</ul>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-text data-lang=text>/etc/locale.conf
+----------------
+LANG=en_US.UTF-8
+LC_ADDRESS=en_US.UTF-8
+LC_IDENTIFICATION=en_US.UTF-8
+LC_MEASUREMENT=en_US.UTF-8
+LC_MONETARY=en_US.UTF-8
+LC_NAME=en_US.UTF-8
+LC_NUMERIC=en_US.UTF-8
+LC_PAPER=en_US.UTF-8
+LC_TELEPHONE=en_US.UTF-8
+LC_TIME=en_US.UTF-8
+</code></pre></div><ul>
+<li>Emoji 字体：</li>
+</ul>
+<p>可以在下述字体中选择一个安装。</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>yay -Ss ttf-linux-libertine ttf-inconsolata ttf-joypixels ttf-twemoji-color noto-fonts-emoji ttf-liberation ttf-droid
+</code></pre></div><ul>
+<li>中文字体</li>
+</ul>
+<p>你可以查看 <a href=https://wiki.archlinux.org/title/Localization/Chinese>这个页面</a>
+来选择一些中文字体。个人推荐 Adobe 的思源黑体。</p>
+<h3 id=终端>终端</h3>
+<p>我用的 simple terminal: <a href=https://github.com/Avimitin/st>Avimitin/st</a>，
+参阅：<a href=https://avimitin.com/system/simpleterminal.html>Simple Terminal 的配置</a>。</p>
+<h3 id=壁纸>壁纸</h3>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>yay -S feh
+</code></pre></div><p>Some tips and tricks:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#75715e># move all your image to a library like: ~/Pictures/WallPapers</span>
+feh --recursive --randomize --bg-fill ~/Pictures/WallPapers/
+<span style=color:#75715e># this command will show all the picture as background randomly</span>
+</code></pre></div><h3 id=通知系统>通知系统</h3>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>yay -S notification-daemon
+</code></pre></div><h2 id=主题>主题</h2>
+<p>可以在 gnome-look.org 上下载喜欢的 GTK 主题和图标，然后在本地
+创建文件夹：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console>mkdir -p ~/.local/share/themes
+mkdir -p ~/.local/share/icons
+</code></pre></div><p>把下载好的主题放进 themes 文件夹里，图标放进 icons 文件夹里。
+然后安装 <code>lxapperance</code> 更换。</p>
+<h2 id=声音>声音</h2>
+<p>下载 <code>alsa-utils</code> 包，使用 alsamixer 切换声卡选择输出。</p>
+<h2 id=常见错误>常见错误</h2>
+<ul>
+<li><code>Gtk-Message: Failed to load module "colorreload-gtk-module"</code></li>
+</ul>
+<p>是正常的，但是假如你看着不舒服，可以安装 <code>kde-gtk-config</code> 包，
+里面包含必要的 Modules.</p>
+</section>
+<footer class=post-tags>
+<a href=https://blog.sh1mar.in/tags/arch>arch</a>
+<a href=https://blog.sh1mar.in/tags/linux>linux</a>
+</footer>
+<nav class=post-nav>
+<a class=prev href=https://blog.sh1mar.in/post/coding/circulate_job_gurdian_in_go/><span>←</span><span>Golang Polling Control Flow</span></a>
+<a class=next href=https://blog.sh1mar.in/post/linux/arch-installation/><span>Arch Linux Installation Guide</span><span>→</span></a>
+</nav>
+</article>
+</main>
+<footer class=footer>
+<p>&copy; 2022 <a href=https://blog.sh1mar.in>sh1marin's Blog</a></p>
+<p>Powered by <a href=https://gohugo.io/ rel=noopener target=_blank>Hugo️️</a>️</p>
+<p>
+<a href=https://github.com/nanxiaobei/hugo-paper rel=noopener target=_blank>Paper 5.1</a>
+</p>
+</footer>
+</body>
+</html>

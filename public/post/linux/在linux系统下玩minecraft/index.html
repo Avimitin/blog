@@ -1,0 +1,138 @@
+<!doctype html><html lang=en-us>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no">
+<title>在Linux系统下玩Minecraft - sh1marin's Blog</title>
+<meta name=description content="Java环境安装 打开终端 通过包管理器安装OpenJDK8（直接放弃甲骨文的官方JDK，配置无敌麻烦。） # Ubuntu/Deepin sudo apt-get install openjdk8 # Arch/Manjaro sudo pacman -S jdk8-openjdk sudo pacman -S jre8-openjdk 3.有">
+<meta name=author content>
+<link rel="preload stylesheet" as=style href=https://blog.sh1mar.in/app.min.css>
+<link rel="preload stylesheet" as=style href=https://blog.sh1mar.in/an-old-hope.min.css>
+<script defer src=https://blog.sh1mar.in/highlight.min.js onload=hljs.initHighlightingOnLoad()></script>
+<link rel=preload as=image href=https://blog.sh1mar.in/theme.png>
+<link rel=preload as=image href=https://blog.sh1mar.in/twitter.svg>
+<link rel=preload as=image href=https://blog.sh1mar.in/github.svg>
+<link rel=icon href=https://blog.sh1mar.in/favicon.ico>
+<link rel=apple-touch-icon href=https://blog.sh1mar.in/apple-touch-icon.png>
+<meta name=generator content="Hugo 0.91.2">
+<meta property="og:title" content="在Linux系统下玩Minecraft">
+<meta property="og:description" content="Java环境安装 打开终端 通过包管理器安装OpenJDK8（直接放弃甲骨文的官方JDK，配置无敌麻烦。） # Ubuntu/Deepin sudo apt-get install openjdk8 # Arch/Manjaro sudo pacman -S jdk8-openjdk sudo pacman -S jre8-openjdk 3.有">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://blog.sh1mar.in/post/linux/%E5%9C%A8linux%E7%B3%BB%E7%BB%9F%E4%B8%8B%E7%8E%A9minecraft/"><meta property="article:section" content="post">
+<meta property="article:published_time" content="2019-08-11T00:00:00+00:00">
+<meta property="article:modified_time" content="2019-08-11T00:00:00+00:00">
+<meta itemprop=name content="在Linux系统下玩Minecraft">
+<meta itemprop=description content="Java环境安装 打开终端 通过包管理器安装OpenJDK8（直接放弃甲骨文的官方JDK，配置无敌麻烦。） # Ubuntu/Deepin sudo apt-get install openjdk8 # Arch/Manjaro sudo pacman -S jdk8-openjdk sudo pacman -S jre8-openjdk 3.有"><meta itemprop=datePublished content="2019-08-11T00:00:00+00:00">
+<meta itemprop=dateModified content="2019-08-11T00:00:00+00:00">
+<meta itemprop=wordCount content="586">
+<meta itemprop=keywords content>
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="在Linux系统下玩Minecraft">
+<meta name=twitter:description content="Java环境安装 打开终端 通过包管理器安装OpenJDK8（直接放弃甲骨文的官方JDK，配置无敌麻烦。） # Ubuntu/Deepin sudo apt-get install openjdk8 # Arch/Manjaro sudo pacman -S jdk8-openjdk sudo pacman -S jre8-openjdk 3.有">
+</head>
+<body class=not-ready data-menu=false>
+<header class=header>
+<p class=logo>
+<a class=site-name href=https://blog.sh1mar.in>sh1marin's Blog</a><a class=btn-dark></a>
+</p>
+<script>let bodyClx=document.body.classList,btnDark=document.querySelector('.btn-dark'),sysDark=window.matchMedia('(prefers-color-scheme: dark)'),darkVal=localStorage.getItem('dark'),setDark=a=>{bodyClx[a?'add':'remove']('dark'),localStorage.setItem('dark',a?'yes':'no')};setDark(darkVal?darkVal==='yes':sysDark.matches),requestAnimationFrame(()=>bodyClx.remove('not-ready')),btnDark.addEventListener('click',()=>setDark(!bodyClx.contains('dark'))),sysDark.addEventListener('change',a=>setDark(a.matches))</script>
+<nav class=social>
+<a class=twitter style=--url:url(./twitter.svg) href=https://twitter.com/twitter.com/sh1ma_rin target=_blank></a>
+<a class=github style=--url:url(./github.svg) href=https://github.com/github.com/Avimitin target=_blank></a>
+</nav>
+</header>
+<main class=main>
+<article class=post-single>
+<header class=post-title>
+<p>
+<time>Aug 11, 2019</time>
+</p>
+<h1>在Linux系统下玩Minecraft</h1>
+</header>
+<section class=post-content><h2 id=java环境安装>Java环境安装</h2>
+<ol>
+<li>
+<p>打开终端</p>
+</li>
+<li>
+<p>通过包管理器安装OpenJDK8（直接放弃甲骨文的官方JDK，配置无敌麻烦。）</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#75715e># Ubuntu/Deepin</span>
+sudo apt-get install openjdk8
+<span style=color:#75715e># Arch/Manjaro</span>
+sudo pacman -S jdk8-openjdk
+sudo pacman -S jre8-openjdk
+</code></pre></div></li>
+</ol>
+<p>3.有时候会有报错，记得检查是否安装<code>openjfx8</code></p>
+<h2 id=hmcl下载>HMCL下载</h2>
+<p>基本上大部分的Minecraft资源站都有各种版本HMCL资源，谷歌一下。这里有一份稍微新版本的HMCL备份。—><a href="https://drive.google.com/open?id=19NYiTB2fkzUVvnIsrEZO69ZKf-tDdzEw">HMCL-3.2.130版本备份资源</a>&lt;—</p>
+<h2 id=正式开玩>正式开玩</h2>
+<ol>
+<li>
+<p>HMCL启动</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#75715e># 进入HMCL所在目录</span>
+cd ~/Downloads
+<span style=color:#75715e># 启动HMCL</span>
+java -jar HMCL-xxx.jar
+</code></pre></div></li>
+<li>
+<p>MC启动</p>
+</li>
+</ol>
+<ul>
+<li>
+<p>首先先把各种个人信息项设置好。</p>
+</li>
+<li>
+<p>进入游戏列表，打开安装新游戏版本，自己选择一个版本安装。</p>
+<p><img src=https://img.vim-cn.com/56/5b191f9da21709566bae86e11658bfcedf49f8.png alt=游戏安装页面></p>
+<p>游戏安装页面</p>
+</li>
+<li>
+<p>注意先下载游戏，再安装整合包。
+<a href=https://img.vim-cn.com/06/82d3f1f9dff3adf01adbf119173139c7671f46.png><img src=https://img.vim-cn.com/06/82d3f1f9dff3adf01adbf119173139c7671f46.png alt=img></a></p>
+</li>
+<li>
+<p>游戏安装成功之后，点击下载好的游戏右侧的齿轮图标，点击自动安装，上方菜单栏选择在线安装。<strong>先安装Forge，再安装OptiFine</strong></p>
+</li>
+<li>
+<p>然后点击游戏设置，调整一下游戏内存和窗口分辨率</p>
+</li>
+<li>
+<p>最后点击顶上的主页按钮，左下角开始游戏。</p>
+<h2 id=mod和光影安装>Mod和光影安装</h2>
+</li>
+<li>
+<p>打开MC文件夹下载目录
+<a href=https://img.vim-cn.com/fa/5ae45480c59558f28d477175194df1f4b21297.png><img src=https://img.vim-cn.com/fa/5ae45480c59558f28d477175194df1f4b21297.png alt=img></a></p>
+</li>
+<li>
+<p>文件夹的作用</p>
+<blockquote>
+<p><strong>mods</strong>: 将mod放入其中，重启游戏生效</p>
+<p><strong>resourcepacks</strong>: 将材质包放入其中，重启游戏之后到设置选择。</p>
+<p><strong>saves</strong>: Minecraft本地地图存放在这里</p>
+<p><strong>shaderpacks</strong>: 光影包存放在这里，重启游戏之后到视频选项中开启。</p>
+</blockquote>
+<h2 id=服务器宣传>服务器宣传</h2>
+<p>欢迎来我的服务器游玩，打开多人游戏，输入</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>123.207.233.155
+</code></pre></div><p>进入服务器。服务器游戏版本为1.12.2，服务器负载4-5人游玩。24h不间断营业。（其实也没啥好玩的就当做是个云端地图吧。）</p>
+</li>
+</ul>
+</section>
+<nav class=post-nav>
+<a class=prev href=https://blog.sh1mar.in/post/linux/linux%E4%B8%8B%E9%85%8D%E7%BD%AEnas%E7%9A%84%E4%B8%80%E4%BA%9B%E6%80%BB%E7%BB%93%E7%BB%8F%E9%AA%8C/><span>←</span><span>使用Linux搭建NAS</span></a>
+<a class=next href=https://blog.sh1mar.in/post/tools/windows-server-2019%E6%90%AD%E5%BB%BAnas%E7%9A%84%E4%B8%80%E4%BA%9B%E6%80%BB%E7%BB%93/><span>Windows Server 2019搭建NAS</span><span>→</span></a>
+</nav>
+</article>
+</main>
+<footer class=footer>
+<p>&copy; 2022 <a href=https://blog.sh1mar.in>sh1marin's Blog</a></p>
+<p>Powered by <a href=https://gohugo.io/ rel=noopener target=_blank>Hugo️️</a>️</p>
+<p>
+<a href=https://github.com/nanxiaobei/hugo-paper rel=noopener target=_blank>Paper 5.1</a>
+</p>
+</footer>
+</body>
+</html>

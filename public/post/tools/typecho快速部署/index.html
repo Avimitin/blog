@@ -1,0 +1,299 @@
+<!doctype html><html lang=en-us>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no">
+<title>快速配置Typecho - sh1marin's Blog</title>
+<meta name=description content="前言
+因为Hexo迁库太麻烦了，而我经常忘记备份。而且每次写文章都要先渲染成静态页面。所以整了个Typecho，随时随地写文章，迁站只要宝塔一键就完事。">
+<meta name=author content>
+<link rel="preload stylesheet" as=style href=https://blog.sh1mar.in/app.min.css>
+<link rel="preload stylesheet" as=style href=https://blog.sh1mar.in/an-old-hope.min.css>
+<script defer src=https://blog.sh1mar.in/highlight.min.js onload=hljs.initHighlightingOnLoad()></script>
+<link rel=preload as=image href=https://blog.sh1mar.in/theme.png>
+<link rel=preload as=image href=https://blog.sh1mar.in/twitter.svg>
+<link rel=preload as=image href=https://blog.sh1mar.in/github.svg>
+<link rel=icon href=https://blog.sh1mar.in/favicon.ico>
+<link rel=apple-touch-icon href=https://blog.sh1mar.in/apple-touch-icon.png>
+<meta name=generator content="Hugo 0.91.2">
+<meta property="og:title" content="快速配置Typecho">
+<meta property="og:description" content="前言
+因为Hexo迁库太麻烦了，而我经常忘记备份。而且每次写文章都要先渲染成静态页面。所以整了个Typecho，随时随地写文章，迁站只要宝塔一键就完事。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://blog.sh1mar.in/post/tools/typecho%E5%BF%AB%E9%80%9F%E9%83%A8%E7%BD%B2/"><meta property="article:section" content="post">
+<meta property="article:published_time" content="2020-04-18T00:00:00+00:00">
+<meta property="article:modified_time" content="2020-04-18T00:00:00+00:00">
+<meta itemprop=name content="快速配置Typecho">
+<meta itemprop=description content="前言
+因为Hexo迁库太麻烦了，而我经常忘记备份。而且每次写文章都要先渲染成静态页面。所以整了个Typecho，随时随地写文章，迁站只要宝塔一键就完事。"><meta itemprop=datePublished content="2020-04-18T00:00:00+00:00">
+<meta itemprop=dateModified content="2020-04-18T00:00:00+00:00">
+<meta itemprop=wordCount content="3559">
+<meta itemprop=keywords content>
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="快速配置Typecho">
+<meta name=twitter:description content="前言
+因为Hexo迁库太麻烦了，而我经常忘记备份。而且每次写文章都要先渲染成静态页面。所以整了个Typecho，随时随地写文章，迁站只要宝塔一键就完事。">
+</head>
+<body class=not-ready data-menu=false>
+<header class=header>
+<p class=logo>
+<a class=site-name href=https://blog.sh1mar.in>sh1marin's Blog</a><a class=btn-dark></a>
+</p>
+<script>let bodyClx=document.body.classList,btnDark=document.querySelector('.btn-dark'),sysDark=window.matchMedia('(prefers-color-scheme: dark)'),darkVal=localStorage.getItem('dark'),setDark=a=>{bodyClx[a?'add':'remove']('dark'),localStorage.setItem('dark',a?'yes':'no')};setDark(darkVal?darkVal==='yes':sysDark.matches),requestAnimationFrame(()=>bodyClx.remove('not-ready')),btnDark.addEventListener('click',()=>setDark(!bodyClx.contains('dark'))),sysDark.addEventListener('change',a=>setDark(a.matches))</script>
+<nav class=social>
+<a class=twitter style=--url:url(./twitter.svg) href=https://twitter.com/twitter.com/sh1ma_rin target=_blank></a>
+<a class=github style=--url:url(./github.svg) href=https://github.com/github.com/Avimitin target=_blank></a>
+</nav>
+</header>
+<main class=main>
+<article class=post-single>
+<header class=post-title>
+<p>
+<time>Apr 18, 2020</time>
+</p>
+<h1>快速配置Typecho</h1>
+</header>
+<section class=post-content><h1 id=前言>前言</h1>
+<p>因为Hexo迁库太麻烦了，而我经常忘记备份。而且每次写文章都要先渲染成静态页面。所以整了个Typecho，随时随地写文章，迁站只要宝塔一键就完事。</p>
+<h1 id=资源预备>资源预备</h1>
+<h2 id=选购服务器的一些建议>选购服务器的一些建议</h2>
+<p>假如你有国内备案的就最方便了。但是假如没有的话服务器尽量选香港服务器。尽量不要选<code>Vultr</code>了，延迟太高。可以尝试华为云香港或者阿里云香港。能白嫖就白嫖。</p>
+<p>假如还是硬头皮选<code>Vultr</code>请走我<code>aff</code>：<a href="https://www.vultr.com/?ref=8527098">https://www.vultr.com/?ref=8527098</a></p>
+<p>服务器买和配置啥的自己找教程了，太小白的教不动，系统可选CentOS或者Debian，服务器就不要选别的发行版了，方便方便自己。</p>
+<p>然后只是作为博客而已，不用买配置太牛掰的，省点钱吃点好吃的对自己好一点。<code>Vultr</code>的话选个5美金的配置就完全够用了。华为云的话选个<code>1vCPU|1GB|1Mbit/s</code>就可以了。最近华为云有在做活动，可以嫖两个月，试试他们的香港机子吧。</p>
+<h2 id=选购域名>选购域名</h2>
+<p>首先推荐<a href=https://www.namesilo.com/>namesilo</a>，这个网站不需要实名注册，而且支持支付宝，没有外币卡也能快乐pay。</p>
+<p><img src=https://avi-pic-storage.oss-cn-shenzhen.aliyuncs.com/pic/Snipaste_2020-04-18_16-39-55.png alt=namesilo域名购买界面></p>
+<blockquote>
+<ol>
+<li>在这里搜索你想要的域名关键词，比如我叫avimitin就搜索avimitin</li>
+<li>勾选你想要的域名后缀</li>
+<li>假如没有满意的后缀，就点击这个按钮看更多。</li>
+</ol>
+</blockquote>
+<p>勾选完之后点击下面<code>Register Checked Name</code>，域名保护可选可不选，有钱你就买。</p>
+<p><img src=https://avi-pic-storage.oss-cn-shenzhen.aliyuncs.com/pic/Snipaste_2020-04-18_16-58-28.png alt=购物车页面></p>
+<blockquote>
+<ol>
+<li>自动续费选择no</li>
+<li>隐私设置选择WhoIS Privacy，是永久免费的域名隐私保护</li>
+<li>购买年限自己挑</li>
+<li>填okoff可以便宜一点</li>
+<li>然后点击continue注册</li>
+</ol>
+</blockquote>
+<p>注册部分我就不讲了，你自己搞，然后注册完支付页面选支付宝，那个邮箱那里填个能联系上你的，扫码支付，搞定。</p>
+<h2 id=域名解析>域名解析</h2>
+<p>域名购买完之后，点击右上角的<code>Manage My Domain</code>，勾选你想要用的域名，在最右边的Options选项栏里选择那个小地球，第五个按钮。</p>
+<p><img src=https://avi-pic-storage.oss-cn-shenzhen.aliyuncs.com/pic/Snipaste_2020-04-18_17-16-21.png alt></p>
+<blockquote>
+<p>删除原来的域名记录</p>
+<ol>
+<li>在这里选择一个类型</li>
+<li>常规解析先用一个A类型，地址填你刚刚买的服务器的ip</li>
+<li>再用一个CNAME 类型，主机名填WWW，地址填写你买的域名</li>
+</ol>
+<p>别的都不用管，TTL3600就行了。</p>
+</blockquote>
+<p>DNS服务器可以先不改，假如你要用到CDN再改，我会在CloudFlare的教程里面讲到。</p>
+<h1 id=站点建设>站点建设</h1>
+<h2 id=服务器防火墙设置>服务器防火墙设置</h2>
+<p>请记得到服务器页面打开防火墙，然后打开以下TCP端口：<code>22|80|443|8888</code></p>
+<blockquote>
+<p>Tips：</p>
+<ul>
+<li>22：SSH端口</li>
+<li>80：HTTP端口</li>
+<li>443： HTTPS端口</li>
+<li>8888：宝塔端口</li>
+</ul>
+<p>假如连接不上服务器的某个服务，就去防火墙检查是不是相对应端口没打开。</p>
+</blockquote>
+<h2 id=ssh连接>SSH连接</h2>
+<p>下载个XShell，还有配套的XFTP。说实话我觉得XShell比Putty好用一些。然后到你VPS的页面复制用户名和密码。</p>
+<blockquote>
+<p>假如你不想下载软件的话，用PowerShell输入 <code>SSH root@123.123.123.123 -p 22</code></p>
+<p>把IP改成自己的回车就行了。</p>
+</blockquote>
+<h2 id=安装宝塔和lnmp>安装宝塔和LNMP</h2>
+<p><strong>以下所有命令和操作建立在Debian10系统基础上</strong></p>
+<p>首先同步更新一下库和软件：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>apt-get update
+apt-get upgrade
+</code></pre></div><p>然后安装宝塔：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>wget -O install.sh http://download.bt.cn/install/install-ubuntu_6.0.sh <span style=color:#f92672>&amp;&amp;</span> bash install.sh
+</code></pre></div><p>宝塔安装完之后复制界面上的<code>URL</code>，用户名和密码，到浏览器登录。假如第二次登录忘记账号密码了使用这个命令查询用户名密码:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>bt default
+</code></pre></div><p>登录网站之后会自动弹出LNMP安装页面，请注意<strong>PHP安装7.1及以上版本！！</strong></p>
+<p><img src=https://avi-pic-storage.oss-cn-shenzhen.aliyuncs.com/pic/Snipaste_2020-04-18_17-16-21.png alt></p>
+<p>然后泡杯咖啡等他安装，先去干点别的。</p>
+<h2 id=typecho配置>Typecho配置</h2>
+<h3 id=typecho下载>Typecho下载</h3>
+<p>点击<a href=https://typecho.org/download>Typecho</a>下载页下载1.1正式版</p>
+<h3 id=添加站点>添加站点</h3>
+<p>打开宝塔界面，点击左边菜单栏的网站选项，点击添加站点。</p>
+<p><img src=https://avi-pic-storage.oss-cn-shenzhen.aliyuncs.com/pic/Snipaste_2020-04-18_19-34-05.png alt></p>
+<blockquote>
+<ol>
+<li>写下域名</li>
+<li>选择MySQL</li>
+<li>记住这里是下划线</li>
+</ol>
+</blockquote>
+<p>然后创建完成。</p>
+<h3 id=数据库>数据库</h3>
+<p>点击左边数据库，点击选项root密码，把root密码复制了。</p>
+<blockquote>
+<p>没必要改，忘记了过来复制就行，改成你熟悉的密码还会增加密码泄露风险</p>
+</blockquote>
+<h3 id=安装typecho>安装Typecho</h3>
+<p>点击左边的文件按钮，进入你的网站目录，也就是刚刚创建的/www/wwwroot/example.com目录。把里面的东西全部删除了，然后点击上传，把刚刚下载的压缩包上传到网站目录下，解压。</p>
+<p>为了防止混淆，啰嗦多几句，写个流程出来：</p>
+<ul>
+<li>打开<code>www/wwwroot/example.com</code>目录</li>
+<li>删除原有所有文件</li>
+<li>上传下载的Typecho压缩包</li>
+<li>解压缩</li>
+<li>删除压缩包</li>
+<li>打开build文件夹</li>
+<li>全选文件，剪切</li>
+<li>返回上一级(返回到<code>www/wwwroot/example.com</code>目录)</li>
+<li>粘贴，删除build文件夹。</li>
+</ul>
+<p>具体操作可以看这个图。</p>
+<p><img src=https://pic2.zhimg.com/v2-082727a103520cd686cbd397ed6e86ed_b.webp alt=img></p>
+<h3 id=配置typecho>配置Typecho</h3>
+<p>然后在浏览器访问<code>example.com/install.php</code></p>
+<p><img src=https://avi-pic-storage.oss-cn-shenzhen.aliyuncs.com/pic/installphp.jpg alt></p>
+<blockquote>
+<ul>
+<li>数据库地址填localhost</li>
+<li>端口3306不要改</li>
+<li>用户名填root</li>
+<li>数据库密码把刚刚复制的密码粘贴上去</li>
+<li>填example_com</li>
+<li>账户密码是管理员权限的，不要忘记了。</li>
+</ul>
+</blockquote>
+<p>然后打开<code>example.com</code>就是你的博客啦</p>
+<p>管理页面在<code>example.com/admin</code>里面。现在就可以把个人信息自定义一下了。</p>
+<h1 id=美化主题>美化主题</h1>
+<h2 id=主题下载>主题下载</h2>
+<p>主题在这个网站里面可以找：<a href=https://typecho.me/>Typecho Themes</a>，找到喜欢的主题，点击demo看看效果是否满意。然后到作者的Github库里找新发布的release，下载zip。假如作者没有上传release的话就直接clone整个库。</p>
+<p>我个人是推荐直接clone，之后作者有什么改动只要输入<code>git pull</code>就可以平滑更新了。</p>
+<p>下面以<code>Rorical</code>主题举例来示范如何安装主题，这个主题在我不断鼓励(<del>鞭策</del>作者之后已经非常简约完美了。</p>
+<h2 id=rorical主题安装><code>Rorical</code>主题安装</h2>
+<ol>
+<li>首先打开<code>Rorical主题项目</code>的仓库网页：<a href=https://github.com/Liupaperbox/Rorical>https://github.com/Liupaperbox/Rorical</a></li>
+</ol>
+<p><img src=https://avi-pic-storage.oss-cn-shenzhen.aliyuncs.com/pic/Snipaste_2020-04-19_11-49-23.png alt></p>
+<blockquote>
+<ol>
+<li>单击这个按钮</li>
+<li>复制这个Git URL</li>
+<li>或者点这个按钮复制</li>
+</ol>
+</blockquote>
+<ol start=2>
+<li>然后打开你的SSH软件，进入网站根目录(也就是那个<code>www/wwwroot/example.com/</code>)，然后输入:</li>
+</ol>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#75715e># 进入主题目录</span>
+cd usr/themes
+<span style=color:#75715e># 复制整个仓库</span>
+git clone https://github.com/Liupaperbox/Rorical.git
+</code></pre></div><ol start=3>
+<li>然后打开后台管理页面，点击控制台-外观，把主题勾选成<code>Rorical</code>主题.</li>
+</ol>
+<p><img src=https://avi-pic-storage.oss-cn-shenzhen.aliyuncs.com/pic/Snipaste_2020-04-19_11-46-44.png alt></p>
+<p>然后点击设置外观：自己设置一些图片路径</p>
+<ol start=3>
+<li>底下的widget设置用的<code>Font-Awesome</code>里的图标，<a href=http://www.fontawesome.com.cn/faicons/>FontAwesome图标库网址</a>。一个widget写一行。格式为：</li>
+</ol>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>fa fa-link$$example words$$URL
+</code></pre></div><h1 id=网站安全设置>网站安全设置</h1>
+<h2 id=宝塔登录安全>宝塔登录安全</h2>
+<p>返回宝塔面板，点击面板设置，勾选上Google验证，然后把面板端口改成你记得住的端口号，不要一直用8888。</p>
+<p><img src=https://avi-pic-storage.oss-cn-shenzhen.aliyuncs.com/pic/Snipaste_2020-04-19_12-05-07.png alt></p>
+<blockquote>
+<ol>
+<li>手机下载Google Authority,扫码认证</li>
+<li>面板端口改成好记但是不是常规端口。</li>
+<li>然后把8888给删除了</li>
+</ol>
+<p>PS：<strong>记得记得记得先在防火墙打开你准备设置的端口</strong></p>
+</blockquote>
+<h2 id=typecho登录安全>Typecho登录安全</h2>
+<p>首先把要把登录页面改掉，也就是把<code>example.com/admin</code>改成<code>example.com/abcdefg</code>：</p>
+<p><img src=https://avi-pic-storage.oss-cn-shenzhen.aliyuncs.com/pic/Snipaste_2020-04-19_12-09-59.png alt></p>
+<blockquote>
+<p>进入网站根目录，用mv命令把admin改名成abcdefg</p>
+</blockquote>
+<p><img src=https://avi-pic-storage.oss-cn-shenzhen.aliyuncs.com/pic/Snipaste_2020-04-19_12-13-19.png alt></p>
+<blockquote>
+<p>然后用vim打开<code>config.inc.php</code>，把原来'/admin/&lsquo;后台路径改成&rsquo;/abcdefg/'</p>
+</blockquote>
+<p>之后登录后台就用<code>example.com/abcdefg</code>就可以了。</p>
+<h2 id=原站保护>原站保护</h2>
+<p>关于如何使用CDN保护原站IP可以看我这篇文章-></p>
+<h1 id=其他设置>其他设置</h1>
+<h2 id=图床>图床</h2>
+<p><strong>建议选完图床之后备份好自己的图片，免得图床炸了之后修复死链找不到图</strong></p>
+<ul>
+<li>我这里有两个免费图床的建议：</li>
+</ul>
+<blockquote>
+<p><a href=https://sm.ms>https://sm.ms</a></p>
+<p>这个的速度更快一点点:<a href=https://img.vim-cn.com/>https://img.vim-cn.com/</a>。</p>
+</blockquote>
+<ul>
+<li>或者也可以看<a href=https://codein.icu/Github-PicGo-Jsdelivr/>这篇文章</a>学习使用<code>github</code>配合<code>jsdelivr</code>搭建自己的图床。速度是很不错的，就算在国内裸连也有不错的速度。</li>
+<li>亦或是像我一样花十几块钱买一个OSS搭建图床：<a href=none>使用OSS搭建图床教程</a></li>
+</ul>
+<h2 id=ssl证书>SSL证书</h2>
+<p>SSL证书是为了让别人访问你的站点的时候，能够使用HTTPS访问，加密传输并提供身份验证。HTTPS其实就是在HTTP通道的基础上加入了SSL层用来加密。更详细原理请谷歌查询，反正最直观的表现就是出现这个锁头了</p>
+<p><img src=https://avi-pic-storage.oss-cn-shenzhen.aliyuncs.com/pic/Snipaste_2020-04-19_13-19-06.png alt></p>
+<hr>
+<p>SSl证书申请有两种办法：</p>
+<h3 id=宝塔一键申请>宝塔一键申请</h3>
+<p>打开宝塔控制面板，选择网站，点击对应域名的设置按钮，找到SSl选项面板，点击Let&rsquo;s Encrypt签名，然后打开强制HTTPS。完工。</p>
+<p><img src=https://avi-pic-storage.oss-cn-shenzhen.aliyuncs.com/pic/Snipaste_2020-04-19_13-23-32.png alt></p>
+<h3 id=certbot申请>Certbot申请</h3>
+<p>首先安装Certbot，不是Debian的用你的包管理器查询一下有没有，没有就用编译安装:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>apt install certbot
+</code></pre></div><p>然后就用Certbot申请证书,可以一直<code>-d</code>添加所有你想要注册的域名，一般来说这俩就够了：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>certbot certonly --webroot -w /www/wwwroot/example -d example.com -d www.example.com
+</code></pre></div><p>假如出现<code>443</code>端口被占用，基本都是被Nginx占用了，那么就先<code>kill</code>掉应用：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#75715e>#使用netstat -anp|grep 443查询占用的软件</span>
+$ netstat -anp|grep <span style=color:#ae81ff>443</span>
+tcp    <span style=color:#ae81ff>0</span>    <span style=color:#ae81ff>0</span> 0.0.0.0:443    0.0.0.0:*    LISTEN    21395/nginx: worker
+</code></pre></div><p>这个<code>21395</code>就是占用端口程序的PID，使用kill命令关闭</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>kill <span style=color:#ae81ff>21395</span>
+</code></pre></div><p>然后再申请就可以了，记得重启Nginx。</p>
+<h2 id=重定向>重定向</h2>
+<p>假如你有一大堆域名没用，想全部解析到博客上，可以用宝塔的重定向将其他域名指向博客。</p>
+<blockquote>
+<p><strong>注意：不要忘记域名解析了</strong></p>
+</blockquote>
+<ol>
+<li>打开宝塔，点击网站的设置，添加一个新的域名</li>
+</ol>
+<p><img src=https://avi-pic-storage.oss-cn-shenzhen.aliyuncs.com/pic/Snipaste_2020-04-19_13-54-00.png alt></p>
+<ol start=2>
+<li>点击下面重定向，访问域名选择<code>example.org</code>，目标URL填入<code>example.com</code>，然后点击启用301。</li>
+<li>假如还有更多域名就点底下的测试版，重复1，2步骤。</li>
+</ol></section>
+<nav class=post-nav>
+<a class=prev href=https://blog.sh1mar.in/post/tools/%E4%BD%BF%E7%94%A8%E9%98%BF%E9%87%8C%E4%BA%91oss%E5%81%9A%E5%9B%BE%E5%BA%8A/><span>←</span><span>用阿里云OSS做图床</span></a>
+<a class=next href=https://blog.sh1mar.in/post/tools/%E9%BB%91%E8%8B%B9%E6%9E%9C/><span>黑苹果安装教程</span><span>→</span></a>
+</nav>
+</article>
+</main>
+<footer class=footer>
+<p>&copy; 2022 <a href=https://blog.sh1mar.in>sh1marin's Blog</a></p>
+<p>Powered by <a href=https://gohugo.io/ rel=noopener target=_blank>Hugo️️</a>️</p>
+<p>
+<a href=https://github.com/nanxiaobei/hugo-paper rel=noopener target=_blank>Paper 5.1</a>
+</p>
+</footer>
+</body>
+</html>
