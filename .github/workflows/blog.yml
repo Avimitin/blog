@@ -26,8 +26,14 @@ jobs:
         run: hugo --minify
 
       - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
-        if: ${{ github.ref == 'refs/heads/main' }}
-        with:
-          github_token: ${{ secrets.GH_TOKEN }}
-          publish_dir: ./public
+        env:
+          USER: 'Avimitin Blog Generator'
+          EMAIL: 'avimitin@gmail.com'
+          REPO: 'github.com/Avimitin/blog'
+          TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          git config --global user.name $USER
+          git config --global user.email $EMAIL
+          cd public && git init -b gh-pages && git add .
+          git commit -m "Generate static blog"
+          git push --force "https://$TOKEN@$REPO" gh-pages:gh-pages
