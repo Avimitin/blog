@@ -27,7 +27,7 @@ jobs:
 
       - name: Deploy
         env:
-          USER: 'Avimitin Blog Generator'
+          USER: 'BlogGenerator'
           EMAIL: 'avimitin@gmail.com'
           REPO: 'github.com/Avimitin/blog'
           TOKEN: ${{ secrets.GH_TOKEN }}
