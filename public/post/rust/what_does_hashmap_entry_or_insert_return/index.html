@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+<html lang="en-us">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+  
+  <title>HashMap::Entry 的 or_insert 返回了什么 - sh1marin&#39;s Blog</title>
+
+  
+  
+  <meta name="description" content="HashMap::Entry 的 or_insert 返回了什么 Tags: Language Specific
+这几天学 Rust 的时候看到的一块代码给我带来了一点疑惑：
+use std::collections::HashMap; fn main() { let mut hashmap = HashMap::new(); let foo = hashmap.entry(&#34;foo&#34;).or_insert(1); println!(&#34;foo has value {}&#34;, foo); *foo &#43;= 1; println!(&#34;foo has value {}&#34;, foo); println!(&#34;hashmap now store key-value pair: {:?}&#34;, hashmap); } 在这里我定义了一个新的哈希表变量 hashmap，并使用 HashMap.entry().or_insert() 方法在检测到没有 &quot;foo&quot; 这个键的时候，插入键值对 &quot;foo&quot; = 1 ，并返回一个值，这个值可以进行解引用操作，并自增一位。
+编译之后程序会输出：
+$ rustc main.rs &amp;&amp; ./main foo has value 1 foo has value 2 hashmap now store key-value pair: {&#34;foo&#34;: 2} 可以看到，不止 foo 的值自增了，hashmap 里的值也自增了一位。只看代码，貌似 foo 是一个指向哈希表里的值的引用。但是没有声明 mut，为什么我可以解引用并修改他的值呢，如果要修改我难道不应该用 let mut foo = ." />
+  <meta name="author" content="avimitin" />
+  
+
+  
+  
+  
+  
+  
+  
+  <link rel="preload stylesheet" as="style" href="https://blog.sh1mar.in/app.min.css" />
+
+  
+  <link rel="preload stylesheet" as="style" href="https://blog.sh1mar.in/an-old-hope.min.css" />
+  <script
+    defer
+    src="https://blog.sh1mar.in/highlight.min.js"
+    onload="hljs.initHighlightingOnLoad();"
+  ></script>
+  
+
+  
+  <link rel="preload" as="image" href="https://blog.sh1mar.in/theme.png" />
+
+  
+
+  
+  <link rel="icon" href="https://blog.sh1mar.in/favicon.ico" />
+  <link rel="apple-touch-icon" href="https://blog.sh1mar.in/apple-touch-icon.png" />
+
+  
+  <meta name="generator" content="Hugo 0.91.2" />
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+  
+  <meta property="og:title" content="HashMap::Entry 的 or_insert 返回了什么" />
+<meta property="og:description" content="HashMap::Entry 的 or_insert 返回了什么 Tags: Language Specific
+这几天学 Rust 的时候看到的一块代码给我带来了一点疑惑：
+use std::collections::HashMap; fn main() { let mut hashmap = HashMap::new(); let foo = hashmap.entry(&#34;foo&#34;).or_insert(1); println!(&#34;foo has value {}&#34;, foo); *foo &#43;= 1; println!(&#34;foo has value {}&#34;, foo); println!(&#34;hashmap now store key-value pair: {:?}&#34;, hashmap); } 在这里我定义了一个新的哈希表变量 hashmap，并使用 HashMap.entry().or_insert() 方法在检测到没有 &quot;foo&quot; 这个键的时候，插入键值对 &quot;foo&quot; = 1 ，并返回一个值，这个值可以进行解引用操作，并自增一位。
+编译之后程序会输出：
+$ rustc main.rs &amp;&amp; ./main foo has value 1 foo has value 2 hashmap now store key-value pair: {&#34;foo&#34;: 2} 可以看到，不止 foo 的值自增了，hashmap 里的值也自增了一位。只看代码，貌似 foo 是一个指向哈希表里的值的引用。但是没有声明 mut，为什么我可以解引用并修改他的值呢，如果要修改我难道不应该用 let mut foo = ." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://blog.sh1mar.in/post/rust/what_does_hashmap_entry_or_insert_return/" /><meta property="article:section" content="post" />
+
+
+
+
+  
+  <meta itemprop="name" content="HashMap::Entry 的 or_insert 返回了什么">
+<meta itemprop="description" content="HashMap::Entry 的 or_insert 返回了什么 Tags: Language Specific
+这几天学 Rust 的时候看到的一块代码给我带来了一点疑惑：
+use std::collections::HashMap; fn main() { let mut hashmap = HashMap::new(); let foo = hashmap.entry(&#34;foo&#34;).or_insert(1); println!(&#34;foo has value {}&#34;, foo); *foo &#43;= 1; println!(&#34;foo has value {}&#34;, foo); println!(&#34;hashmap now store key-value pair: {:?}&#34;, hashmap); } 在这里我定义了一个新的哈希表变量 hashmap，并使用 HashMap.entry().or_insert() 方法在检测到没有 &quot;foo&quot; 这个键的时候，插入键值对 &quot;foo&quot; = 1 ，并返回一个值，这个值可以进行解引用操作，并自增一位。
+编译之后程序会输出：
+$ rustc main.rs &amp;&amp; ./main foo has value 1 foo has value 2 hashmap now store key-value pair: {&#34;foo&#34;: 2} 可以看到，不止 foo 的值自增了，hashmap 里的值也自增了一位。只看代码，貌似 foo 是一个指向哈希表里的值的引用。但是没有声明 mut，为什么我可以解引用并修改他的值呢，如果要修改我难道不应该用 let mut foo = .">
+
+<meta itemprop="wordCount" content="137">
+<meta itemprop="keywords" content="" />
+  
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="HashMap::Entry 的 or_insert 返回了什么"/>
+<meta name="twitter:description" content="HashMap::Entry 的 or_insert 返回了什么 Tags: Language Specific
+这几天学 Rust 的时候看到的一块代码给我带来了一点疑惑：
+use std::collections::HashMap; fn main() { let mut hashmap = HashMap::new(); let foo = hashmap.entry(&#34;foo&#34;).or_insert(1); println!(&#34;foo has value {}&#34;, foo); *foo &#43;= 1; println!(&#34;foo has value {}&#34;, foo); println!(&#34;hashmap now store key-value pair: {:?}&#34;, hashmap); } 在这里我定义了一个新的哈希表变量 hashmap，并使用 HashMap.entry().or_insert() 方法在检测到没有 &quot;foo&quot; 这个键的时候，插入键值对 &quot;foo&quot; = 1 ，并返回一个值，这个值可以进行解引用操作，并自增一位。
+编译之后程序会输出：
+$ rustc main.rs &amp;&amp; ./main foo has value 1 foo has value 2 hashmap now store key-value pair: {&#34;foo&#34;: 2} 可以看到，不止 foo 的值自增了，hashmap 里的值也自增了一位。只看代码，貌似 foo 是一个指向哈希表里的值的引用。但是没有声明 mut，为什么我可以解引用并修改他的值呢，如果要修改我难道不应该用 let mut foo = ."/>
+
+  
+  
+</head>
+
+
+  <body class="not-ready" data-menu="false">
+    <header class="header">
+  
+  <p class="logo">
+    <a class="site-name" href="https://blog.sh1mar.in">sh1marin&#39;s Blog</a><a class="btn-dark"></a>
+  </p>
+  
+
+  <script>
+    let bodyClx = document.body.classList;
+    let btnDark = document.querySelector('.btn-dark');
+    let sysDark = window.matchMedia('(prefers-color-scheme: dark)');
+    let darkVal = localStorage.getItem('dark');
+
+    let setDark = (isDark) => {
+      bodyClx[isDark ? 'add' : 'remove']('dark');
+      localStorage.setItem('dark', isDark ? 'yes' : 'no');
+    };
+
+    setDark(darkVal ? darkVal === 'yes' : sysDark.matches);
+    requestAnimationFrame(() => bodyClx.remove('not-ready'));
+
+    btnDark.addEventListener('click', () => setDark(!bodyClx.contains('dark')));
+    sysDark.addEventListener('change', (event) => setDark(event.matches));
+  </script>
+
+  
+  
+
+  
+</header>
+
+
+    <main class="main">
+
+<article class="post-single">
+  <header class="post-title">
+    <p>
+      <time>Jan 1, 1</time>
+      
+      <span>avimitin</span>
+      
+    </p>
+    <h1>HashMap::Entry 的 or_insert 返回了什么</h1>
+  </header>
+  <section class="post-content"><h1 id="hashmapentry-的-or_insert-返回了什么">HashMap::Entry 的 or_insert 返回了什么</h1>
+<p>Tags: Language Specific</p>
+<p>这几天学 Rust 的时候看到的一块代码给我带来了一点疑惑：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#66d9ef">use</span> std::collections::HashMap;
+
+<span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">main</span>() {
+    <span style="color:#66d9ef">let</span> <span style="color:#66d9ef">mut</span> hashmap <span style="color:#f92672">=</span> HashMap::new();
+
+    <span style="color:#66d9ef">let</span> foo <span style="color:#f92672">=</span> hashmap.entry(<span style="color:#e6db74">&#34;foo&#34;</span>).or_insert(<span style="color:#ae81ff">1</span>);
+    println!(<span style="color:#e6db74">&#34;foo has value {}&#34;</span>, foo);
+
+    <span style="color:#f92672">*</span>foo <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>;
+    println!(<span style="color:#e6db74">&#34;foo has value {}&#34;</span>, foo);
+
+    println!(<span style="color:#e6db74">&#34;hashmap now store key-value pair: {:?}&#34;</span>, hashmap);
+}
+</code></pre></div><p>在这里我定义了一个新的哈希表变量 <code>hashmap</code>，并使用 <code>HashMap.entry().or_insert()</code> 方法在检测到没有 <code>&quot;foo&quot;</code> 这个键的时候，插入键值对 <code>&quot;foo&quot; = 1</code> ，并返回一个值，这个值可以进行解引用操作，并自增一位。</p>
+<p>编译之后程序会输出：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ rustc main.rs <span style="color:#f92672">&amp;&amp;</span> ./main
+foo has value <span style="color:#ae81ff">1</span>
+foo has value <span style="color:#ae81ff">2</span>
+hashmap now store key-value pair: <span style="color:#f92672">{</span><span style="color:#e6db74">&#34;foo&#34;</span>: 2<span style="color:#f92672">}</span>
+</code></pre></div><p>可以看到，不止 foo 的值自增了，<code>hashmap</code> 里的值也自增了一位。只看代码，貌似 <code>foo</code> 是一个指向哈希表里的值的引用。但是没有声明 <code>mut</code>，为什么我可以解引用并修改他的值呢，如果要修改我难道不应该用 <code>let mut foo = ...</code> 来声明 <code>foo</code> 是可写的吗？</p>
+<p>这里其实我理解错了，其实 <code>foo</code> 本身已经是一个 mutable reference，查看<a href="https://doc.rust-lang.org/std/collections/hash_map/enum.Entry.html#method.or_insert">文档</a>，可以看到 <code>or_insert()</code> 返回的是一个可变引用而不是值。</p>
+<p><img src="/images/rust/What_Does_HashMap_Entry_or_insert_Return/lib.png" alt="lib"></p>
+<p>所以在此处解引用指向的是哈希表里的值而不是 <code>foo</code> 本身，<code>or_insert()</code> 方法已经传回来了一个可写的引用，<code>foo</code> 的类型就是一个可写的引用。而我们修改的是哈希表里的值不是 <code>foo</code> 自己的值，所以就不需要声明 mutable 啦。</p>
+<p>更加直观一点，<code>foo</code> 其实就是下面的这个 <code>ref_integer</code> 。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-rust" data-lang="rust"><span style="color:#66d9ef">fn</span> <span style="color:#a6e22e">main</span>() {
+    <span style="color:#66d9ef">let</span> <span style="color:#66d9ef">mut</span> origin_integer <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;
+    <span style="color:#66d9ef">let</span> ref_integer <span style="color:#f92672">=</span> <span style="color:#f92672">&amp;</span><span style="color:#66d9ef">mut</span> origin_integer;
+
+    <span style="color:#f92672">*</span>ref_integer<span style="color:#f92672">+=</span><span style="color:#ae81ff">1</span>;
+
+    println!(<span style="color:#e6db74">&#34;origin_integer: {}&#34;</span>, origin_integer);
+}
+</code></pre></div><p><code>ref_integer</code> 在此处是一个可写引用，解引用之后就是在修改 <code>origin_integer</code> 的值，而我并不是在修改 <code>ref_integer</code> 存的引用，所以不需要声明 <code>ref_integer</code> 是可写的。</p>
+</section>
+
+  
+  
+
+  
+  
+  
+  <nav class="post-nav">
+    
+    <a class="prev" href="https://blog.sh1mar.in/post/golang/circulate_job_gurdian_in_go/"><span>←</span><span>Golang Polling Control Flow</span></a>
+     
+    <a class="next" href="https://blog.sh1mar.in/post/git/how-to-write-commit/"><span>How to write commit</span><span>→</span></a>
+    
+  </nav>
+  
+
+  
+  
+</article>
+
+</main>
+
+    <footer class="footer">
+  <p>&copy; 2022 <a href="https://blog.sh1mar.in">sh1marin&#39;s Blog</a></p>
+  <p>Powered by <a href="https://gohugo.io/" rel="noopener" target="_blank">Hugo️️</a>️</p>
+  <p>
+    <a href="https://github.com/nanxiaobei/hugo-paper" rel="noopener" target="_blank">Paper 5.1</a>
+  </p>
+</footer>
+
+  </body>
+</html>

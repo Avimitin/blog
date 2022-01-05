@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+<html lang="en-us">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+  
+  <title>Arch Linux Installation Guide - sh1marin&#39;s Blog</title>
+
+  
+  
+  <meta name="description" content="Arch installation Get arch Download Arch Linux from https://archlinux.org/download/ and follow guide from https://wiki.archlinux.org/index.php/Installation_guide
+Before boot (OPTIONAL) You can press e to edit install configuration like:
+# If you think the screen is too small. nomodset video=800x450 Setting font (OPTIONAL) If you think the font is too small and hard to look, you can change font for a more comfortable look.
+setfont /usr/share/kbd/consolefonts/LatGrkCyr-12x12.gz Configure key (OPTIONAL) touch keys.conf #-------edit--------# keycode 1 = Caps_Lock keycode 58 = Escape #----end of edit-----# loadkeys keys." />
+  <meta name="author" content="" />
+  
+
+  
+  
+  
+  
+  
+  
+  <link rel="preload stylesheet" as="style" href="https://blog.sh1mar.in/app.min.css" />
+
+  
+  <link rel="preload stylesheet" as="style" href="https://blog.sh1mar.in/an-old-hope.min.css" />
+  <script
+    defer
+    src="https://blog.sh1mar.in/highlight.min.js"
+    onload="hljs.initHighlightingOnLoad();"
+  ></script>
+  
+
+  
+  <link rel="preload" as="image" href="https://blog.sh1mar.in/theme.png" />
+
+  
+
+  
+  <link rel="icon" href="https://blog.sh1mar.in/favicon.ico" />
+  <link rel="apple-touch-icon" href="https://blog.sh1mar.in/apple-touch-icon.png" />
+
+  
+  <meta name="generator" content="Hugo 0.91.2" />
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+  
+  <meta property="og:title" content="Arch Linux Installation Guide" />
+<meta property="og:description" content="Arch installation Get arch Download Arch Linux from https://archlinux.org/download/ and follow guide from https://wiki.archlinux.org/index.php/Installation_guide
+Before boot (OPTIONAL) You can press e to edit install configuration like:
+# If you think the screen is too small. nomodset video=800x450 Setting font (OPTIONAL) If you think the font is too small and hard to look, you can change font for a more comfortable look.
+setfont /usr/share/kbd/consolefonts/LatGrkCyr-12x12.gz Configure key (OPTIONAL) touch keys.conf #-------edit--------# keycode 1 = Caps_Lock keycode 58 = Escape #----end of edit-----# loadkeys keys." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://blog.sh1mar.in/post/arch-installation/" /><meta property="article:section" content="post" />
+
+
+
+
+  
+  <meta itemprop="name" content="Arch Linux Installation Guide">
+<meta itemprop="description" content="Arch installation Get arch Download Arch Linux from https://archlinux.org/download/ and follow guide from https://wiki.archlinux.org/index.php/Installation_guide
+Before boot (OPTIONAL) You can press e to edit install configuration like:
+# If you think the screen is too small. nomodset video=800x450 Setting font (OPTIONAL) If you think the font is too small and hard to look, you can change font for a more comfortable look.
+setfont /usr/share/kbd/consolefonts/LatGrkCyr-12x12.gz Configure key (OPTIONAL) touch keys.conf #-------edit--------# keycode 1 = Caps_Lock keycode 58 = Escape #----end of edit-----# loadkeys keys.">
+
+<meta itemprop="wordCount" content="1211">
+<meta itemprop="keywords" content="arch,linux," />
+  
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Arch Linux Installation Guide"/>
+<meta name="twitter:description" content="Arch installation Get arch Download Arch Linux from https://archlinux.org/download/ and follow guide from https://wiki.archlinux.org/index.php/Installation_guide
+Before boot (OPTIONAL) You can press e to edit install configuration like:
+# If you think the screen is too small. nomodset video=800x450 Setting font (OPTIONAL) If you think the font is too small and hard to look, you can change font for a more comfortable look.
+setfont /usr/share/kbd/consolefonts/LatGrkCyr-12x12.gz Configure key (OPTIONAL) touch keys.conf #-------edit--------# keycode 1 = Caps_Lock keycode 58 = Escape #----end of edit-----# loadkeys keys."/>
+
+  
+  
+</head>
+
+
+  <body class="not-ready" data-menu="false">
+    <header class="header">
+  
+  <p class="logo">
+    <a class="site-name" href="https://blog.sh1mar.in">sh1marin&#39;s Blog</a><a class="btn-dark"></a>
+  </p>
+  
+
+  <script>
+    let bodyClx = document.body.classList;
+    let btnDark = document.querySelector('.btn-dark');
+    let sysDark = window.matchMedia('(prefers-color-scheme: dark)');
+    let darkVal = localStorage.getItem('dark');
+
+    let setDark = (isDark) => {
+      bodyClx[isDark ? 'add' : 'remove']('dark');
+      localStorage.setItem('dark', isDark ? 'yes' : 'no');
+    };
+
+    setDark(darkVal ? darkVal === 'yes' : sysDark.matches);
+    requestAnimationFrame(() => bodyClx.remove('not-ready'));
+
+    btnDark.addEventListener('click', () => setDark(!bodyClx.contains('dark')));
+    sysDark.addEventListener('change', (event) => setDark(event.matches));
+  </script>
+
+  
+  
+
+  
+</header>
+
+
+    <main class="main">
+
+<article class="post-single">
+  <header class="post-title">
+    <p>
+      <time>Jan 1, 1</time>
+      
+    </p>
+    <h1>Arch Linux Installation Guide</h1>
+  </header>
+  <section class="post-content"><h1 id="arch-installation">Arch installation</h1>
+<h2 id="get-arch">Get arch</h2>
+<p>Download Arch Linux from <a href="https://archlinux.org/download/">https://archlinux.org/download/</a>
+and follow guide from <a href="https://wiki.archlinux.org/index.php/Installation_guide">https://wiki.archlinux.org/index.php/Installation_guide</a></p>
+<h2 id="before-boot-optional">Before boot (OPTIONAL)</h2>
+<p>You can press <code>e</code> to edit install configuration like:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># If you think the screen is too small.</span>
+nomodset video<span style="color:#f92672">=</span>800x450
+</code></pre></div><h2 id="setting-font-optional">Setting font (OPTIONAL)</h2>
+<p>If you think the font is too small and hard to look, you can change font for 
+a more comfortable look.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-console" data-lang="console">setfont /usr/share/kbd/consolefonts/LatGrkCyr-12x12.gz
+</code></pre></div><h2 id="configure-key-optional">Configure key (OPTIONAL)</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">touch keys.conf
+<span style="color:#75715e">#-------edit--------#</span>
+keycode 1 <span style="color:#f92672">=</span> Caps_Lock
+keycode 58 <span style="color:#f92672">=</span> Escape
+<span style="color:#75715e">#----end of edit-----#</span>
+loadkeys keys.conf
+</code></pre></div><h2 id="setting-wifi">Setting WiFi</h2>
+<p>Detail: <a href="https://wiki.archlinux.org/title/Iwd#iwctl">https://wiki.archlinux.org/title/Iwd#iwctl</a>.</p>
+<p>First of all, get your device id:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"><span style="color:#75715e"># input iwctl to get promt</span>
+$ iwctl
+
+<span style="color:#f92672">[</span>iwd<span style="color:#f92672">]</span><span style="color:#75715e"># device list</span>
+</code></pre></div><p>You may found a name like <code>wlan0</code>, that&rsquo;s the name we will use next.</p>
+<p>Then, to scan for networks:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-console" data-lang="console">[iwd]# station your-device-name scan
+</code></pre></div><p>You can then list all available networks:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-console" data-lang="console">[iwd]# station your-device-name get-networks
+</code></pre></div><p>Finally, to connect to a network:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-console" data-lang="console">[iwd]# station your-device-name connect SSID
+</code></pre></div><blockquote>
+<p>If you have Chinese SSID name which you can&rsquo;t input you can use TAB to auto
+complete.</p>
+</blockquote>
+<h2 id="set-correct-time">Set correct time</h2>
+<p><a href="https://man.archlinux.org/man/timedatectl.1">timedatectl(1)</a></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">timedatectl set-ntp true
+<span style="color:#75715e"># check status</span>
+timedatectl status
+<span style="color:#75715e"># check available timezone</span>
+timedatectl list-timezones
+<span style="color:#75715e"># change timezone</span>
+timedatectl set-timezone Asia/Shanghai
+</code></pre></div><h2 id="partition-disk">Partition disk</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"><span style="color:#75715e"># check your disk</span>
+fdisk -l
+<span style="color:#75715e"># start fdisk</span>
+<span style="color:#75715e"># example:</span>
+<span style="color:#75715e"># fdisk /dev/sda</span>
+fdisk <span style="color:#f92672">{</span>DISK_NAME<span style="color:#f92672">}</span>
+</code></pre></div><h3 id="example-layout">Example Layout</h3>
+<h4 id="bios-with-mbr">BIOS with MBR</h4>
+<p>Detail: <a href="https://en.wikipedia.org/wiki/Partition_type">https://en.wikipedia.org/wiki/Partition_type</a></p>
+<table>
+<thead>
+<tr>
+<th>Mount point</th>
+<th>Partition</th>
+<th>Partition type</th>
+<th>Suggested size</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>[SWAP]</code></td>
+<td><code>/dev/*swap_partition*</code></td>
+<td>Linux swap</td>
+<td>More than 512 MiB</td>
+</tr>
+<tr>
+<td><code>/mnt</code></td>
+<td><code>/dev/*root_partition*</code></td>
+<td>Linux</td>
+<td>Remainder of the device</td>
+</tr>
+</tbody>
+</table>
+<h4 id="uefi-with-gpt">UEFI with GPT</h4>
+<p>GUID: <a href="https://en.wikipedia.org/wiki/GUID_Partition_Table#Partition_type_GUIDs">https://en.wikipedia.org/wiki/GUID_Partition_Table#Partition_type_GUIDs</a>
+EFI: <a href="https://wiki.archlinux.org/index.php/EFI_system_partition">https://wiki.archlinux.org/index.php/EFI_system_partition</a></p>
+<table>
+<thead>
+<tr>
+<th>Mount point</th>
+<th>Partition</th>
+<th><a href="">Partition type</a></th>
+<th>Suggested size</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/mnt/boot</code> or <code>/mnt/efi</code></td>
+<td><code>/dev/*efi_system_partition*</code></td>
+<td>EFI system partition]</td>
+<td>At least 260 MiB</td>
+</tr>
+<tr>
+<td><code>[SWAP]</code></td>
+<td><code>/dev/*swap_partition*</code></td>
+<td>Linux swap</td>
+<td>More than 512 MiB</td>
+</tr>
+<tr>
+<td><code>/mnt</code></td>
+<td><code>/dev/*root_partition*</code></td>
+<td>Linux x86-64 root (/)</td>
+<td>Remainder of the device</td>
+</tr>
+</tbody>
+</table>
+<h3 id="fdisk">Fdisk</h3>
+<p>Detail: <a href="https://wiki.archlinux.org/title/Fdisk">https://wiki.archlinux.org/title/Fdisk</a></p>
+<h3 id="example-for-gpt">Example for GPT</h3>
+<p>you can follow step by step</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"><span style="color:#75715e"># get help message</span>
+m
+
+<span style="color:#75715e"># create GPT partition table</span>
+g
+
+<span style="color:#75715e"># ---- /mnt/boot ---- #</span>
+<span style="color:#75715e"># create a new partition for /mnt/boot</span>
+n
+<span style="color:#75715e"># Partition number</span>
+<span style="color:#ae81ff">1</span>
+<span style="color:#75715e"># First Sector</span>
+<span style="color:#75715e"># use default</span>
+
+<span style="color:#75715e"># Last Sector</span>
++2G
+<span style="color:#75715e"># signature can be remove, if the disk had been partition before</span>
+
+<span style="color:#75715e"># --- [SWAP] --- #</span>
+<span style="color:#75715e"># create a new partition for [SWAP]</span>
+n
+<span style="color:#75715e"># partition number</span>
+<span style="color:#ae81ff">3</span>
+<span style="color:#75715e"># First Sector</span>
+<span style="color:#75715e"># use default</span>
+
+<span style="color:#75715e"># Last Sector</span>
++2G
+
+<span style="color:#75715e"># --- /mnt --- #</span>
+<span style="color:#75715e"># create a new partition for /mnt</span>
+n
+<span style="color:#75715e"># partition number</span>
+<span style="color:#ae81ff">2</span>
+<span style="color:#75715e"># first sector</span>
+<span style="color:#75715e"># default</span>
+<span style="color:#75715e"># last sector</span>
+<span style="color:#75715e"># to the end (default)</span>
+
+<span style="color:#75715e"># final check </span>
+p
+<span style="color:#75715e"># final write</span>
+w
+</code></pre></div><h2 id="format-partition">Format Partition</h2>
+<p>Once the partitions have been created, each newly created partition must be 
+formatted with an appropriate 
+<a href="https://wiki.archlinux.org/index.php/File_system">file system</a>.</p>
+<p>The partition of <code>/mnt/boot</code> must be <code>FAT32</code> format if you are using EFI:</p>
+<blockquote>
+<p>EFI system partition: 
+<a href="https://wiki.archlinux.org/title/EFI_system_partition#Format_the_partition">https://wiki.archlinux.org/title/EFI_system_partition#Format_the_partition</a></p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"><span style="color:#75715e"># DEVICE_PARTITION_NAME can get from</span>
+<span style="color:#75715e"># fdisk and use p command to get</span>
+<span style="color:#75715e"># example:</span>
+<span style="color:#75715e"># mkfs.fat -F32 /dev/sda1</span>
+mkfs.fat -F32 <span style="color:#f92672">{</span>DEVICE_PARTITION_NAME<span style="color:#f92672">}</span>
+</code></pre></div><p>And the root partition <code>/mnt</code> can use <code>ext4</code> format, other format See
+<a href="https://wiki.archlinux.org/index.php/File_systems#Create_a_file_system">File systems#Create a file system</a>
+for details.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"><span style="color:#75715e"># Example:</span>
+<span style="color:#75715e"># mkfs.ext4 /dev/sda2</span>
+mkfs.ext4 <span style="color:#f92672">{</span>DEVICE_PARTITION_NAME<span style="color:#f92672">}</span>
+</code></pre></div><p>created a partition for <a href="https://wiki.archlinux.org/index.php/Swap">swap</a>, initialize it with <a href="https://man.archlinux.org/man/mkswap.8">mkswap(8)</a>, enable it with <a href="https://man.archlinux.org/man/swapon.8">swapon(8)</a>:</p>
+<blockquote>
+<p>About swap partition: <a href="https://wiki.archlinux.org/title/Swap#Swap_partition">https://wiki.archlinux.org/title/Swap#Swap_partition</a></p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"><span style="color:#75715e"># Example</span>
+<span style="color:#75715e"># mkswap /dev/sda3</span>
+mkswap <span style="color:#f92672">{</span>DEVICE_PARTITION_NAME<span style="color:#f92672">}</span>
+swapon <span style="color:#f92672">{</span>DEVIEC_PARTITION_NAME<span style="color:#f92672">}</span>
+</code></pre></div><h2 id="software-manager">Software manager</h2>
+<p>manage pacman source:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">vim /etc/pacman.conf
+
+<span style="color:#75715e"># --- vim user interface --- #</span>
+<span style="color:#75715e"># Under UseSyslog, can delete # before Color section</span>
+Color
+</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">vim /etc/pacman.d/mirrorlist
+
+<span style="color:#75715e"># --- vim user interface --- #</span>
+<span style="color:#75715e"># you should put all the wanted source at the top</span>
+<span style="color:#75715e"># like Chinese user can put all the China mirror at the top</span>
+<span style="color:#75715e"># China</span>
+http://example.com
+</code></pre></div><p>Also you can add TUNA mirror manually:
+<a href="https://mirrors.tuna.tsinghua.edu.cn/help/archlinux/">https://mirrors.tuna.tsinghua.edu.cn/help/archlinux/</a></p>
+<h2 id="mount-partition-and-final-install">Mount Partition and Final Install</h2>
+<blockquote>
+<p>All the below device name like <code>/dev/sda1</code> or sda2 was mention above, replace
+them with your machine specific device name.</p>
+</blockquote>
+<p><a href="https://wiki.archlinux.org/index.php/Mount">Mount</a> the root volume to <code>/mnt</code>. 
+For example, if the root volume is <code>/dev/sda2</code></p>
+<p><strong>CARE OF ALL YOUR MOUNT ACTION</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"><span style="color:#75715e"># Check your disk name</span>
+fdisk -l
+<span style="color:#75715e"># mount the root partition to /mnt</span>
+mount /dev/sda2 /mnt
+<span style="color:#75715e"># check mount status</span>
+ls /mnt
+
+<span style="color:#75715e"># if you are BIOS boot user you don&#39;t need to mount the boot partition</span>
+<span style="color:#75715e"># create a directory for boot</span>
+mkdir /mnt/boot
+<span style="color:#75715e"># mount your boot partition to /mnt/boot or any directory</span>
+mount /dev/sda1 /mnt/boot
+</code></pre></div><p>and finally, time to install:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"><span style="color:#75715e"># install base,linux,linux-firmware to /mnt</span>
+pacstrap /mnt base linux linux-firmware
+</code></pre></div><p>If you want any other program, add them after the pacstrap command.
+For example, I will use neovim and vi next, so I also added neovim.
+Also you will need a
+<a href="https://wiki.archlinux.org/title/Network_configuration#Network_management">network tool</a>.
+Here I choose the <a href="https://wiki.archlinux.org/title/NetworkManager">NetworkManager</a>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">pacstrap /mnt base linux linux-firmware neovim vi networkmanager
+</code></pre></div><h2 id="configure">Configure</h2>
+<h3 id="generate-an-fstabhttpswikiarchlinuxorgindexphpfstab-file">Generate an <a href="https://wiki.archlinux.org/index.php/Fstab">fstab</a> file</h3>
+<p>use <code>-U</code> or <code>-L</code> to define by <a href="https://wiki.archlinux.org/index.php/UUID">UUID</a> or labels, respectively:</p>
+<pre tabindex="0"><code>genfstab -U /mnt &gt;&gt; /mnt/etc/fstab
+</code></pre><h3 id="get-into-system-installed">Get into system installed</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">arch-chroot /mnt
+</code></pre></div><p>Now you are in your system</p>
+<h3 id="create-a-symbol-link-to-system-time">Create a symbol link to system time</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"><span style="color:#75715e"># like ln -sf /usr/share/zoneinfo/Asian/Shanhai /etc/localtime</span>
+ln -sf /usr/share/zoneinfo/Region/City /etc/localtime
+</code></pre></div><h3 id="sync-system-time">Sync system time:</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">hwclock --systohc
+</code></pre></div><h3 id="manage-locale">Manage locale</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"><span style="color:#75715e"># edit the locale file in root</span>
+vim /etc/locale.gen
+
+<span style="color:#75715e"># find en_US.UTF-8 and remove # before it</span>
+en_US.UTF-8 UTF-8
+
+<span style="color:#75715e"># also if you are Chinese you will need Chinese locale support:</span>
+<span style="color:#75715e"># find zh_CN</span>
+zh_CN.GB18030 GB18030
+zh_CN.GBK GBK
+zh_CN.UTF-8 UTF-8
+zh_CN GB2312
+
+<span style="color:#75715e"># generate locale</span>
+locale-gen
+<span style="color:#75715e"># should get output: </span>
+<span style="color:#75715e">#     en_US.UTF-8... done</span>
+<span style="color:#75715e">#     zh_CN.GB18030 GB18030... done</span>
+<span style="color:#75715e">#     ......</span>
+<span style="color:#75715e">#     Generation complete.</span>
+</code></pre></div><h3 id="save-a-locale-configuration">Save a locale configuration</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">$ vim /etc/locale.conf
+<span style="color:#75715e"># Here I set English as default language</span>
+LANG<span style="color:#f92672">=</span>en_US.UTF-8
+</code></pre></div><h3 id="set-keyboard-optional">Set keyboard (OPTIONAL)</h3>
+<p>If you <a href="https://wiki.archlinux.org/index.php/Installation_guide#Set_the_keyboard_layout">set the keyboard layout</a>, make the changes persistent in <a href="https://man.archlinux.org/man/vconsole.conf.5">vconsole.conf(5)</a>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">vim /etc/vconsole.conf
+--------------------------
+KEYMAP=de-latin1
+</code></pre></div><h3 id="set-host">Set host</h3>
+<p>Set your host name like: tom, bob, sally&hellip;etc</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">$ vim /etc/hostname
+---------------------
+tom
+</code></pre></div><p>Set hosts(If your hostname is called tom)</p>
+<pre tabindex="0"><code>$ vim /mnt/etc/hosts
+--------------
+127.0.0.1     localhost
+::1           localhost
+127.0.0.1     tom.localdomain tom
+</code></pre><h3 id="set-root-password">Set root password</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"><span style="color:#75715e"># enter your root password</span>
+passwd
+</code></pre></div><h3 id="boot-loader">Boot loader</h3>
+<p>Choose and install a Linux-capable
+<a href="https://wiki.archlinux.org/index.php/Boot_loader">boot loader</a>.
+If you have an Intel or AMD CPU, enable
+<a href="https://wiki.archlinux.org/index.php/Microcode">microcode</a>
+updates in addition.</p>
+<p>UEFI user need to <a href="https://wiki.archlinux.org/title/GRUB#UEFI_systems">install grub on UEFI system</a>
+which needs packages <code>grub</code> and <code>efibootmgr</code>. BIOS boot user don&rsquo;t need this.</p>
+<p>Also I install <code>intel-ucode</code> for Intel CPU microcode support. And the
+<code>os-prober</code> package for multiple system detect.</p>
+<p>Use command below to test if you can use UEFI or not:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-console" data-lang="console">$ efivar-tester
+UEFI variables are not supported on this machine.
+# This means you need to use BIOS boot method.
+</code></pre></div><h4 id="for-bios-boot-user">For BIOS boot user</h4>
+<p>First you need to change partition type for your boot partition. In the case
+above, it is <code>/dev/sda1</code>. So using fdisk to change it&rsquo;s type:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-console" data-lang="console"># replace with your machine specific name
+$ fdisk /dev/sda
+</code></pre></div><p>Press <code>t</code> to changed disk partition type. In my case, my boot partition is the first one. So input <code>1</code>. Then select <code>20</code>, which is the <code>BIOS boot</code> type. You can input <code>L</code> to list all available type.</p>
+<p>And finally install <code>grub</code> with command:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-console" data-lang="console">pacman -S grub intel-ucode
+</code></pre></div><p>Then:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-console" data-lang="console">grub-install --target=i386-pc /dev/sda
+</code></pre></div><p>replace the <code>/dev/sda</code> with your disk name.</p>
+<p>And finally generate the config:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-console" data-lang="console">grub-mkconfig -o /boot/grub/grub.cfg
+</code></pre></div><h4 id="for-uefi-boot-user">For UEFI boot user</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">pacman -S grub efibootmgr intel-ucode os-prober
+</code></pre></div><p>Then install GRUB EFI application.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-console" data-lang="console"># check platform use uname
+$ uname -m
+# x86-64
+<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span># install
+grub-install --target=x86_64-efi --efi-directory=/efi
+<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span># generate config
+grub-mkconfig -o /boot/grub/grub.cfg
+</code></pre></div><h2 id="before-reboot">Before reboot:</h2>
+<p>You have something that must be checked:</p>
+<ul>
+<li>Network manage software (dhcpcd, NetworkManager&hellip;) installed or not.</li>
+<li>Set your root password with <code>passwd</code> or not.</li>
+</ul>
+<h2 id="thenreboot-and-enjoy">Then&hellip;reboot and enjoy!</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh">exit
+reboot
+</code></pre></div></section>
+
+  
+  
+  <footer class="post-tags">
+     
+    <a href="https://blog.sh1mar.in/tags/arch">arch</a>
+     
+    <a href="https://blog.sh1mar.in/tags/linux">linux</a>
+    
+  </footer>
+  
+
+  
+  
+  
+  <nav class="post-nav">
+    
+    <a class="prev" href="https://blog.sh1mar.in/post/%E5%BC%80%E5%8F%91%E8%80%85%E9%9C%80%E8%A6%81%E7%9A%84%E5%A5%BD%E4%B9%A0%E6%83%AF/"><span>←</span><span>8个开发者需要的好习惯</span></a>
+     
+    <a class="next" href="https://blog.sh1mar.in/post/security/canokeys/"><span>Canokeys and GPG</span><span>→</span></a>
+    
+  </nav>
+  
+
+  
+  
+</article>
+
+</main>
+
+    <footer class="footer">
+  <p>&copy; 2022 <a href="https://blog.sh1mar.in">sh1marin&#39;s Blog</a></p>
+  <p>Powered by <a href="https://gohugo.io/" rel="noopener" target="_blank">Hugo️️</a>️</p>
+  <p>
+    <a href="https://github.com/nanxiaobei/hugo-paper" rel="noopener" target="_blank">Paper 5.1</a>
+  </p>
+</footer>
+
+  </body>
+</html>

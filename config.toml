@@ -1,0 +1,10 @@
+baseURL = 'https://blog.sh1mar.in'
+languageCode = 'en-us'
+title = "sh1marin's Blog"
+theme = "paper"
+copyright = "cc-by-sa"
+hasCJKLanguage = true
+
+[params]
+  twitter="twitter.com/sh1ma_rin"
+  github="github.com/Avimitin"

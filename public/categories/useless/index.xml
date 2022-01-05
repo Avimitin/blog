@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>useless on sh1marin&#39;s Blog</title>
+    <link>https://blog.sh1mar.in/categories/useless/</link>
+    <description>Recent content in useless on sh1marin&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://blog.sh1mar.in/categories/useless/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Golang Polling Control Flow</title>
+      <link>https://blog.sh1mar.in/post/golang/circulate_job_gurdian_in_go/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.sh1mar.in/post/golang/circulate_job_gurdian_in_go/</guid>
+      <description>Go 的循环任务守护 前言 这几天在做的一个项目里，有一个功能需求是：长期运行一个轮询任务，通过轮询得到的返回的信息进行下一步操作。这个问题初一看是蛮简单的，就一个 for 循环的事情嘛。但是实际上还有很多细节的地方需要仔细处理。本篇文章建立在你有足够的 Go 语言基础且懂得 chan 、 select 、go 关键字的用法的基础上。文章代码是逐步完善的伪代码，请自行推演，不要复制粘贴。
+简单的无限循环 基于分治的思想，我们把这个任务给分成几个小任务：
+ 执行一次请求 把一次请求改为轮询 对执行中的轮询进行控制  首先先写好请求的代码：
+package main import ( &amp;#34;net/http&amp;#34; &amp;#34;log&amp;#34; &amp;#34;fmt&amp;#34; ) func Request(url string) ([]byte, error) { resp, err := http.Get(url) if err != nil { log.Println(&amp;#34;[Error]Http get error,&amp;#34;, err) return nil, err } return resp, nil } func main() { resp, err := Request() if err != nil { log.Println(&amp;#34;[Error]Request error,&amp;#34;, err) return } fmt.</description>
+    </item>
+    
+    <item>
+      <title>HashMap::Entry 的 or_insert 返回了什么</title>
+      <link>https://blog.sh1mar.in/post/rust/what_does_hashmap_entry_or_insert_return/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.sh1mar.in/post/rust/what_does_hashmap_entry_or_insert_return/</guid>
+      <description>HashMap::Entry 的 or_insert 返回了什么 Tags: Language Specific
+这几天学 Rust 的时候看到的一块代码给我带来了一点疑惑：
+use std::collections::HashMap; fn main() { let mut hashmap = HashMap::new(); let foo = hashmap.entry(&amp;#34;foo&amp;#34;).or_insert(1); println!(&amp;#34;foo has value {}&amp;#34;, foo); *foo += 1; println!(&amp;#34;foo has value {}&amp;#34;, foo); println!(&amp;#34;hashmap now store key-value pair: {:?}&amp;#34;, hashmap); } 在这里我定义了一个新的哈希表变量 hashmap，并使用 HashMap.entry().or_insert() 方法在检测到没有 &amp;quot;foo&amp;quot; 这个键的时候，插入键值对 &amp;quot;foo&amp;quot; = 1 ，并返回一个值，这个值可以进行解引用操作，并自增一位。
+编译之后程序会输出：
+$ rustc main.rs &amp;amp;&amp;amp; ./main foo has value 1 foo has value 2 hashmap now store key-value pair: {&amp;#34;foo&amp;#34;: 2} 可以看到，不止 foo 的值自增了，hashmap 里的值也自增了一位。只看代码，貌似 foo 是一个指向哈希表里的值的引用。但是没有声明 mut，为什么我可以解引用并修改他的值呢，如果要修改我难道不应该用 let mut foo = .</description>
+    </item>
+    
+    <item>
+      <title>How to write commit</title>
+      <link>https://blog.sh1mar.in/post/git/how-to-write-commit/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.sh1mar.in/post/git/how-to-write-commit/</guid>
+      <description>前言 对我而言，撰写 git commit 的内容是一个很重要的事情。因为我会把 commit 里的信息当成一份邮件，在开源社区里每个人都需要知道我做了什么，我为什么 要这么做，而编写 commit，就像在群发邮件一样。一份清晰的 commit 信息可以 给后续开发带来很多方便，也是对自己行为的一种声明。
+我也一直在实践中找出一份简单但清晰的 commit 规则，以下内容 是我目前总结出来的比较简单但清晰的一份模板，我也会在后续不断重构不断更新。
+结构 首先需要对 commit 要包含什么内容有一个清晰的概念。一个 commit 需要包含标题、 正文、脚注三个部分。每一部分都应该用一个空行分开。
+标题 commit 的标题应当简洁明了的陈述你做了什么。注意我用的字眼：“陈述”。最好不要在 标题里包含任何时态，任何语气符号以及任何夸张用词。同时为了历史记录的一致性， 推荐用全小写来书写你的标题。
+对比以下两个 commit，你更喜欢那一种呢？
+I&amp;#39;ve fixed almost all the problems! ----------------------------------- fix(socket): clean up buffer when establish to new socket 我个人的品味是更倾向于选择下面这种书写方式，清晰明了的说明了做了什么(fix)， 对什么做了修改(socket)，大概做了哪些修改(正文)。
+相信有些读者可能对这种写法非常熟悉，他来自于著名的开源框架 Angular。 Angular 的贡献指南里明确的约定了如下的标题书写格式：
+&amp;lt;type&amp;gt;(&amp;lt;scope&amp;gt;): &amp;lt;short summary&amp;gt; │ │ │ │ │ └─⫸ Summary in present tense. Not capitalized. No period at the end.</description>
+    </item>
+    
+    <item>
+      <title>neovim 的简易教程</title>
+      <link>https://blog.sh1mar.in/post/neovim/neovim-tutorial/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.sh1mar.in/post/neovim/neovim-tutorial/</guid>
+      <description>前言 最近我打算开一个 neovim 系列，这个博客系列会分成几块来讲，首先是 neovim 的一些键位和 设置，然后再讲如何配置 packer 这个插件管理器，之后就是零零碎碎的写一写插件介绍。
+我的配置文件教程会基于 Lua 和 neovim 0.5+ 来配置。所以如果你是打算用 vim 的，因为 vim 仅支持 vimscript，这篇文章可能会不太适合你。
+本来是想写一点类似于卖安利的文字的。不过最近实在疲于给别人推荐他们并不感兴趣的东西， 所以我就不在这里多费口舌介绍 neovim 的优势了。这篇文章主要还是写给那些对 neovim 感兴 趣但是不知道怎么入手的人。
+neovim 的一些基础操作 安装好 neovim 之后，在命令行输入 nvim 打开 neovim。在打开的界面的左上角，有一个长方 体，那个就是你的光标。中间有许多提示文字，提示让你输入 :help, :q, :checkhealth。
+如果你是第一次用 neovim，通常会对这个界面感到困惑，这很正常，不必担心。我会在这一节教 授你一些基础的 neovim 用法，足够你进行基本的文字编辑。
+首先我想要讲的是如何退出 neovim。对于每一个第一次使用 vim 的新手，如何退出 vim 就如同 灰烬审判者古达一样，把他们拦在熟练使用 vim 的大门之外。退出 vim 是如此困难，以至于所 有人都在玩退出 vim 的梗。虽然 neovim 默认给 &amp;lt;CTRL&amp;gt;-c 按键绑定上了退出提示，但是 搞明白 neovim 的提示也让新手们费了不少功夫。
+所有新手最不明白的一个问题可能就是 :q 到底是什么意思。在哪里输入 :q，
+配置文件 neovim 的配置通常从一个 init.</description>
+    </item>
+    
+    <item>
+      <title>一个测试终端 IO 速度的脚本</title>
+      <link>https://blog.sh1mar.in/post/linux/write-a-script-to-test-terminal-io/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.sh1mar.in/post/linux/write-a-script-to-test-terminal-io/</guid>
+      <description>前言 今天学到了一个新的知识：终端的绘制性能会影响程序的性能。当一个程序以单线程 运行时，终端输出和文件 IO 都在同一个线程，终端如果绘制速度慢，因为 IO 是阻塞的 ，程序内部的 stdout 执行速度也会下降。
+测试 那么有什么办法可以测试一下哪些终端绘制速度比较快呢？我在 Rust CN 群看到的这 么个办法：同时跑文件 IO 和终端 IO 来测试。有一个方式是用 find 来遍历系统内 所有文件，因为 find 毎找到一个文件都会输出一次，我们从根目录开始 find，就可 以实现同时高频率的文件 IO 和终端 IO 了。所以这里我们只需要简单的 find / 即 可。
+而运行时间的测试则用 shell 提供的 time 函数来测试。
+为了比对各个终端，我做了一些额外工作来获取终端的名字。具体脚本如下：
+#!/bin/bash  # 这里获取运行中的终端名字 get_terminal() { PARENT_SHELL=$(ps -p $$ -o ppid=) PARENT_TERMINAL=$(ps -p $PARENT_SHELL -o ppid=) TERMINAL=$(ps -p $PARENT_TERMINAL o args=) printf $TERMINAL } # 测试 time find / # 方便分清各个不同的终端 echo -e &amp;#34;\n\nTesting in terminal: $(get_terminal)&amp;#34; 结果 其中 Alacritty 和 simple terminal 打得不相上下，而 kitty 稍逊一筹，konsole （右下） 是最慢的。后续我再运行了几次结果都相近。</description>
+    </item>
+    
+    <item>
+      <title>白嫖博客指南</title>
+      <link>https://blog.sh1mar.in/post/hexo/build-hexo-with-cf-pages/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.sh1mar.in/post/hexo/build-hexo-with-cf-pages/</guid>
+      <description>白嫖博客指南 因为我的机子又小又弱，顶不住 DDoS，我一直是处于怂逼 状态，不敢把博客公开，都是自己用。然后最近发现，其实 我也没什么国内访问的需要，为啥不转移到托管平台呢？ 于是这周稍微折腾了一下，把博客从 vps 的 nginx 转移 到了 CloudFlare Pages 上。
+具体思路 本地建立 hexo 环境，建立 git 仓库，把源文件 stage 到 master 分支，提交到 GitHub 时使用 Actions 编译， 然后把静态文件 stage 到别的分支。CloudFlare 监听 这个静态文件的分支，有静态文件变动就生成。最后域名 CNAME 到 CloudFlare 就可以了。
+预备需求  一个 GitHub 帐号 一个 CloudFlare 帐号 一个终端 曾经使用过 hexo (没有的话看 hexo 的文档) （可选）一个自己的域名  Hexo 安装  我因为常用 Arch Linux 所以就只基于 Arch 环境来讲 一些终端操作。如果你发现环境不一样，你可以试着开个 docker 来运行。或者你也可以到我的 仓库 issues 来询问我。
+ 首先需要安装 nvm 。 跟着 README 的安装指引一步一步来就好。安装好之后 开始安装 node 和 npm</description>
+    </item>
+    
+  </channel>
+</rss>

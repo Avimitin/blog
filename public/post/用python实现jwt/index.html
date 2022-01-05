@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+<html lang="en-us">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+  
+  <title>使用 Python 实现 JSON Web Token - sh1marin&#39;s Blog</title>
+
+  
+  
+  <meta name="description" content="前言
+涉及到无状态鉴权时，Token 是比较好的验证用户身份的方案，而 Token 如何制作也是一个设计难点。只是一个 Token 去下载模块又增加依赖的负担，于是我去学习了 JWT(JSON Web Token) 的设计方式。" />
+  <meta name="author" content="" />
+  
+
+  
+  
+  
+  
+  
+  
+  <link rel="preload stylesheet" as="style" href="https://blog.sh1mar.in/app.min.css" />
+
+  
+  <link rel="preload stylesheet" as="style" href="https://blog.sh1mar.in/an-old-hope.min.css" />
+  <script
+    defer
+    src="https://blog.sh1mar.in/highlight.min.js"
+    onload="hljs.initHighlightingOnLoad();"
+  ></script>
+  
+
+  
+  <link rel="preload" as="image" href="https://blog.sh1mar.in/theme.png" />
+
+  
+
+  
+  <link rel="icon" href="https://blog.sh1mar.in/favicon.ico" />
+  <link rel="apple-touch-icon" href="https://blog.sh1mar.in/apple-touch-icon.png" />
+
+  
+  <meta name="generator" content="Hugo 0.91.2" />
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+  
+  <meta property="og:title" content="使用 Python 实现 JSON Web Token" />
+<meta property="og:description" content="前言
+涉及到无状态鉴权时，Token 是比较好的验证用户身份的方案，而 Token 如何制作也是一个设计难点。只是一个 Token 去下载模块又增加依赖的负担，于是我去学习了 JWT(JSON Web Token) 的设计方式。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://blog.sh1mar.in/post/%E7%94%A8python%E5%AE%9E%E7%8E%B0jwt/" /><meta property="article:section" content="post" />
+
+
+
+
+  
+  <meta itemprop="name" content="使用 Python 实现 JSON Web Token">
+<meta itemprop="description" content="前言
+涉及到无状态鉴权时，Token 是比较好的验证用户身份的方案，而 Token 如何制作也是一个设计难点。只是一个 Token 去下载模块又增加依赖的负担，于是我去学习了 JWT(JSON Web Token) 的设计方式。">
+
+<meta itemprop="wordCount" content="376">
+<meta itemprop="keywords" content="python,web,jwt," />
+  
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="使用 Python 实现 JSON Web Token"/>
+<meta name="twitter:description" content="前言
+涉及到无状态鉴权时，Token 是比较好的验证用户身份的方案，而 Token 如何制作也是一个设计难点。只是一个 Token 去下载模块又增加依赖的负担，于是我去学习了 JWT(JSON Web Token) 的设计方式。"/>
+
+  
+  
+</head>
+
+
+  <body class="not-ready" data-menu="false">
+    <header class="header">
+  
+  <p class="logo">
+    <a class="site-name" href="https://blog.sh1mar.in">sh1marin&#39;s Blog</a><a class="btn-dark"></a>
+  </p>
+  
+
+  <script>
+    let bodyClx = document.body.classList;
+    let btnDark = document.querySelector('.btn-dark');
+    let sysDark = window.matchMedia('(prefers-color-scheme: dark)');
+    let darkVal = localStorage.getItem('dark');
+
+    let setDark = (isDark) => {
+      bodyClx[isDark ? 'add' : 'remove']('dark');
+      localStorage.setItem('dark', isDark ? 'yes' : 'no');
+    };
+
+    setDark(darkVal ? darkVal === 'yes' : sysDark.matches);
+    requestAnimationFrame(() => bodyClx.remove('not-ready'));
+
+    btnDark.addEventListener('click', () => setDark(!bodyClx.contains('dark')));
+    sysDark.addEventListener('change', (event) => setDark(event.matches));
+  </script>
+
+  
+  
+
+  
+</header>
+
+
+    <main class="main">
+
+<article class="post-single">
+  <header class="post-title">
+    <p>
+      <time>Jan 1, 1</time>
+      
+    </p>
+    <h1>使用 Python 实现 JSON Web Token</h1>
+  </header>
+  <section class="post-content"><h2 id="前言">前言</h2>
+<p>涉及到无状态鉴权时，<code>Token</code> 是比较好的验证用户身份的方案，而 <code>Token</code> 如何制作也是一个设计难点。只是一个 <code>Token</code> 去下载模块又增加依赖的负担，于是我去学习了 <code>JWT(JSON Web Token)</code> 的设计方式。</p>
+<h2 id="jwt-简介">JWT 简介</h2>
+<blockquote>
+<p><code>JWT (JSON Web Token)</code> 是一个定义安全信息传输的公开标准(<a href="https://tools.ietf.org/html/rfc7519">RFC 7519</a>)。使用 <code>JWT</code> 标准设计的信息因为其数字签名，都可被验证和信任。</p>
+</blockquote>
+<p><code>JWT</code> 使用 <code>HMAC</code> 算法或者一个 <code>RSA</code> 或 <code>ECDSA</code> 加密的公/私钥来进行签名认证。使用 <code>JWT</code> 可以帮助实现无状态鉴权和 <code>OAuth 2.0</code> 的实现，也可以用来传输信息。</p>
+<h2 id="jwt-结构">JWT 结构</h2>
+<p><code>JWT</code> 由三部分组成：</p>
+<ul>
+<li>Header</li>
+<li>Payload</li>
+<li>Signature</li>
+</ul>
+<p>分别用点 <code>.</code> 隔开组合，一个 JWT 应该长得像下面这样:</p>
+<p><code>xxxx.yyyy.zzzz</code></p>
+<h3 id="header">Header</h3>
+<p><code>header</code> 内包含两个信息，一般来说都应该是相同的，用来告示自己使用的算法如 <code>HS256</code> 。下面是一个 <code>header</code> 的例子：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+    <span style="color:#f92672">&#34;alg&#34;</span>: <span style="color:#e6db74">&#34;HS256&#34;</span>,
+    <span style="color:#f92672">&#34;typ&#34;</span>: <span style="color:#e6db74">&#34;JWT&#34;</span>
+}
+</code></pre></div><p><strong>然后使用 Base64Url 将这个 <code>JSON</code> 编码。</strong></p>
+<h3 id="payload">Payload</h3>
+<p>Payload 用来装载关于比如用户的信息或其他更多信息，包含三部分：</p>
+<ul>
+<li>Registered claims: 这里是对 <code>Token</code> 的签发的说明，如 <code>Token</code> 签发方，<code>Token</code> 签发时间，有效时间等等。可以在 <a href="https://tools.ietf.org/html/rfc7519#section-4.1">这里</a> 看到更多关于 <em>Registered claims</em> 名词的说明。</li>
+<li>Public claims: 这里可以由签发人随意定义，但是要尽量避开 <code>Registered claims</code> 所用到的专有名词。</li>
+<li>Private claims: 这里可以装载想要使用 <code>Token</code> 分享的信息。</li>
+</ul>
+<p>下面是关于 <code>Payload</code> 的例子：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+    <span style="color:#f92672">&#34;iss&#34;</span>: <span style="color:#e6db74">&#34;Avimitin Studio&#34;</span>,
+    <span style="color:#f92672">&#34;exp&#34;</span>: <span style="color:#e6db74">&#34;1600483010&#34;</span>,
+    <span style="color:#f92672">&#34;user&#34;</span>: <span style="color:#e6db74">&#34;Tom&#34;</span>,
+    <span style="color:#f92672">&#34;admin&#34;</span>: <span style="color:#66d9ef">false</span>
+}
+</code></pre></div><p><strong>然后使用 Base64Url 将这个 <code>JSON</code> 编码。</strong></p>
+<h3 id="signature">Signature</h3>
+<p>接着使用 <code>HMAC</code> 算法对上面编码的两个 <code>JSON</code> 进行加密：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">HMACSHA256(header_b64<span style="color:#f92672">+</span><span style="color:#e6db74">&#34;.&#34;</span><span style="color:#f92672">+</span>payload_b64, secret_key)
+</code></pre></div><h3 id="组合">组合：</h3>
+<p>将上面三个部分得到的 base64 使用 <code>.</code> 组合起来，就能获得最终的 JWT 了：</p>
+<h2 id="python-实现">Python 实现</h2>
+<p>虽然 <code>JWT</code> 已经有成熟的模块了，但是在一些环境中能够原生实现相比起让用户安装依赖会更加合适一些，于是我根据上面标准，使用自带模块实现了 JWT。大概步骤如下：</p>
+<h3 id="导入包">导入包</h3>
+<p>制作 <code>Token </code> 将需要以下依赖：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># 加密</span>
+<span style="color:#f92672">import</span> hmac
+<span style="color:#75715e"># 获取时间戳</span>
+<span style="color:#f92672">import</span> time
+<span style="color:#75715e"># base64加密</span>
+<span style="color:#f92672">import</span> base64
+<span style="color:#75715e"># 获取字符</span>
+<span style="color:#f92672">import</span> string
+<span style="color:#75715e"># 比 random 更安全的随机</span>
+<span style="color:#f92672">import</span> secrets
+<span style="color:#75715e"># 加密算法</span>
+<span style="color:#f92672">from</span> hashlib <span style="color:#f92672">import</span> sha256
+</code></pre></div><h3 id="base64加密">base64加密</h3>
+<p>因为 <code>Token</code> 常用于 URL中传递，普通的 base64 加密中的 <code>\</code> <code>=</code> 等字符会造成歧义，所以我们需要加工一下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">_safe_base64_url_encode</span>(text):
+    <span style="color:#75715e"># 判断输入</span>
+    <span style="color:#66d9ef">if</span> isinstance(text, str):
+        text <span style="color:#f92672">=</span> text<span style="color:#f92672">.</span>encode(<span style="color:#e6db74">&#34;utf-8&#34;</span>)
+    <span style="color:#66d9ef">elif</span> isinstance(text, bytes):
+        <span style="color:#66d9ef">pass</span>
+    <span style="color:#66d9ef">else</span>:
+        <span style="color:#66d9ef">raise</span> <span style="color:#a6e22e">TypeError</span>(<span style="color:#e6db74">&#34;Expected string or bytes but got others&#34;</span>)
+	<span style="color:#75715e"># 使用urlsafe方法得到无歧义的base64字节</span>
+    text_b64 <span style="color:#f92672">=</span> base64<span style="color:#f92672">.</span>urlsafe_b64encode(text)
+    <span style="color:#75715e"># 用replace方法将字节里的 = 去掉</span>
+    <span style="color:#66d9ef">return</span> text_b64<span style="color:#f92672">.</span>replace(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#34;=&#34;</span>, <span style="color:#e6db74">b</span><span style="color:#e6db74">&#34;&#34;</span>)
+</code></pre></div><h3 id="生成-header">生成 Header</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">header_generate</span>(self):
+    <span style="color:#75715e"># 生成 header 之后传递base64加密后的字节 </span>
+	header <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;&#34;{&#34;alg&#34;: &#34;HS256&#34;, &#34;typ&#34;: &#34;jwt&#34;}&#34;&#34;&#34;</span>
+    <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>_safe_base64_url_encode(header)
+</code></pre></div><h3 id="生成-payload">生成 Payload</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">payload_generate</span>(self, username: str, permission: str):
+    <span style="color:#75715e"># 参数名是示例，可以自行调整</span>
+    exp <span style="color:#f92672">=</span> round(time<span style="color:#f92672">.</span>time()) <span style="color:#f92672">+</span> <span style="color:#ae81ff">50</span>
+    payload <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;&#34;{&#34;iss&#34;: &#34;Avimitin Studio&#34;, &#34;exp&#34;: &#34;</span><span style="color:#e6db74">%d</span><span style="color:#e6db74">&#34;, &#34;user&#34;: &#34;</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&#34;, &#34;admin&#34;: &#34;</span><span style="color:#e6db74">%s</span><span style="color:#e6db74">&#34;}&#34;&#34;&#34;</span> <span style="color:#f92672">%</span> (exp, username, permission)
+    <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span>_safe_base64_url_encode(payload)
+</code></pre></div><h3 id="生成加密密钥">生成加密密钥</h3>
+<p>加密用的密钥我是用的是一次性密钥的方法，你也可以换成自己熟记的密码串用来解密。</p>
+<ul>
+<li>一次性随机密码串</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">_secret_key_generate</span>(len: int):
+    current_time <span style="color:#f92672">=</span> round(time<span style="color:#f92672">.</span>time())
+    combine_text <span style="color:#f92672">=</span> string<span style="color:#f92672">.</span>ascii_letters <span style="color:#f92672">+</span> str(current_time)
+    salt <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span>
+    <span style="color:#66d9ef">while</span> len <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>:
+        salt <span style="color:#f92672">+=</span> secrets<span style="color:#f92672">.</span>choice(combine_text)
+        len <span style="color:#f92672">-=</span> <span style="color:#ae81ff">1</span>
+    <span style="color:#66d9ef">return</span> salt<span style="color:#f92672">.</span>encode(<span style="color:#e6db74">&#34;utf-8&#34;</span>)
+</code></pre></div><ul>
+<li>或者直接换成自己熟记的密码（尽量不要明文）</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">_secret_key_generate</span>():
+	<span style="color:#66d9ef">with</span> open(<span style="color:#e6db74">&#34;config/password.json&#34;</span>, <span style="color:#e6db74">&#34;r&#34;</span>) <span style="color:#66d9ef">as</span> password_file:
+        <span style="color:#66d9ef">return</span> json<span style="color:#f92672">.</span>loads(password_file)[<span style="color:#e6db74">&#34;password&#34;</span>]
+</code></pre></div><ul>
+<li>关于 Secrets 模块的<a href="https://docs.python.org/3/library/secrets.html">更多说明</a></li>
+</ul>
+<h3 id="算法加密">算法加密</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">encrypt</span>(key, msg):
+    <span style="color:#75715e"># new 方法生成一个新的HMAC对象，用digest返回加密后的抽样</span>
+    sign <span style="color:#f92672">=</span> hmac<span style="color:#f92672">.</span>new(key, msg, sha256)<span style="color:#f92672">.</span>digest()
+    <span style="color:#66d9ef">return</span> sign
+</code></pre></div><ul>
+<li>关于HMAC的<a href="https://docs.python.org/3/library/hmac.html">更多API说明</a></li>
+</ul>
+<h3 id="最终合成">最终合成</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">generate</span>(self, username, permission):
+    <span style="color:#75715e"># 生成加密用的密钥</span>
+    key <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>_secret_key_generate(<span style="color:#ae81ff">16</span>)
+    print(<span style="color:#e6db74">&#34;加密密钥： &#34;</span> <span style="color:#f92672">+</span> key<span style="color:#f92672">.</span>decode(<span style="color:#e6db74">&#34;utf-8&#34;</span>))
+	<span style="color:#75715e"># 将前两段信息的 base64 用 . 合并起来    </span>
+    message <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>header_generate() <span style="color:#f92672">+</span> <span style="color:#e6db74">b</span><span style="color:#e6db74">&#34;.&#34;</span> <span style="color:#f92672">+</span> self<span style="color:#f92672">.</span>payload_generate(username, permission)
+    <span style="color:#75715e"># 用密钥把message加密</span>
+    signature <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>encrypt(key, message)
+    <span style="color:#75715e"># 将加密后获得的抽样 base64 加密</span>
+    signature_b64 <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>_safe_base64_url_encode(signature)
+    part <span style="color:#f92672">=</span> [message, signature_b64]
+    <span style="color:#75715e"># 最终把所有的base64合并并解码为 string 字符串</span>
+    <span style="color:#66d9ef">return</span> <span style="color:#e6db74">b</span><span style="color:#e6db74">&#34;.&#34;</span><span style="color:#f92672">.</span>join(part)<span style="color:#f92672">.</span>decode(<span style="color:#e6db74">&#34;utf-8&#34;</span>)
+</code></pre></div><h3 id="输出样例">输出样例</h3>
+<p>最终程序输出样例：</p>
+<pre tabindex="0"><code>加密密钥： XWBCv6bT8FXNKV2z
+
+JWT: eyJhbGciOiAiSFMyNTYiLCAidHlwIjogImp3dCJ9.eyJpc3MiOiAiQXZpbWl0aW4gU3R1ZGlvIiwgImV4cCI6ICIxNjAwNDg1Nzc4IiwgInVzZXIiOiAiYXZpbWl0aW4iLCAiYWRtaW4iOiAiVHJ1ZSJ9.Kph2-Qin9Xrd3LwLWX5mOtGiei-1Cp2mtWuhzps3ub0
+</code></pre><h2 id="代码样本">代码样本：</h2>
+<p>你可以在我的 <a href="https://github.com/Avimitin/JWTPY">GitHub</a> 看到完整的代码演示。</p></section>
+
+  
+  
+  <footer class="post-tags">
+     
+    <a href="https://blog.sh1mar.in/tags/python">python</a>
+     
+    <a href="https://blog.sh1mar.in/tags/web">web</a>
+     
+    <a href="https://blog.sh1mar.in/tags/jwt">jwt</a>
+    
+  </footer>
+  
+
+  
+  
+  
+  <nav class="post-nav">
+    
+    <a class="prev" href="https://blog.sh1mar.in/post/%E4%BD%BF%E7%94%A8-frp-%E5%AE%9E%E7%8E%B0%E4%B8%80%E6%9C%BA%E5%A4%9A%E8%AE%BE%E5%A4%87%E7%BC%96%E7%A8%8B/"><span>←</span><span>使用 FRP 实现一机多设备编程</span></a>
+     
+    <a class="next" href="https://blog.sh1mar.in/post/%E4%BD%BF%E7%94%A8cloudflare%E5%88%86%E9%85%8Dcdn/"><span>使用CloudFlare CDN</span><span>→</span></a>
+    
+  </nav>
+  
+
+  
+  
+</article>
+
+</main>
+
+    <footer class="footer">
+  <p>&copy; 2022 <a href="https://blog.sh1mar.in">sh1marin&#39;s Blog</a></p>
+  <p>Powered by <a href="https://gohugo.io/" rel="noopener" target="_blank">Hugo️️</a>️</p>
+  <p>
+    <a href="https://github.com/nanxiaobei/hugo-paper" rel="noopener" target="_blank">Paper 5.1</a>
+  </p>
+</footer>
+
+  </body>
+</html>

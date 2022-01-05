@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>samba on sh1marin&#39;s Blog</title>
+    <link>https://blog.sh1mar.in/tags/samba/</link>
+    <description>Recent content in samba on sh1marin&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://blog.sh1mar.in/tags/samba/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>使用Linux搭建NAS</title>
+      <link>https://blog.sh1mar.in/post/linux%E4%B8%8B%E9%85%8D%E7%BD%AEnas%E7%9A%84%E4%B8%80%E4%BA%9B%E6%80%BB%E7%BB%93%E7%BB%8F%E9%AA%8C/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.sh1mar.in/post/linux%E4%B8%8B%E9%85%8D%E7%BD%AEnas%E7%9A%84%E4%B8%80%E4%BA%9B%E6%80%BB%E7%BB%93%E7%BB%8F%E9%AA%8C/</guid>
+      <description>Linux下配置NAS的一些总结经验 前言 经历了上一次的Windows Server的痛苦配置以后，我决定换成Linux来配置NAS。相对于Windows平台，Linux平台会更加自由和简洁。而且清晰的权限和后台也要比Win更加干净，唯一的弊端就是要去学不少命令。但是我这里会帮你总结好大部分要用到的命令，快速帮你搭建好Linux平台下的NAS。
+Linux的系统选择 我选择的是Ubuntu 18.04。但是对于NAS来说，稳定且更新少是必要需求，所以我更加推荐Arch Linux。简洁干净，最好减少桌面配置，减少GPU占用。
+配置思路  SMB高速传输 基于Web的离线下载 SSH命令行和Web页面管理系统   系统安装 下载好.iso文件以后，用UltraISO烧录进U盘里。然后重启，按F12进入BIOS，检查启动列表，要打开UEFI启动选项。然后保存设置退出，按F8打开启动列表，选择UEFI 你的U盘。进入系统选择第一项，直接安装。关于硬盘配置，我只有一个SSD和一个HDD，所以把系统安装在SSD，让安装程序自动分区，HDD自动挂载用来做数据盘。其余没什么好说的，按照自己的需求一直下一部就行了。
+NAS正式配置 SAMBA配置 一、安装Ubuntu SAMBA服务器
+ 更新软件源：输入命令sudo apt-get update更新软件源 安装SAMBA服务：输入命令sudo apt-get install samba安装SAMBA服务器。  二、创建SAMBA配置文件
+ 创建共享目录：sudo mkdir -p /你的共享文件夹路径 #mkdir -p 用来创建路径中不存在的路径。 修改配置文件：sudo vim /etc/samba/smb.conf #没有vim的请输入命令sudo apt-get vim  vim的使用方法  进入配置文件之后，按i进入编辑模式，把所有字段全部删除，输入以下配置(#号后注释文字要删除）：
+[你的配置名] #这里是分享路径配置 comment = User&amp;#39;s NAS #这一段是标记，对配置没有影响。 path = /你的共享文件夹路径 #写上你自己的共享路径 read only = no #是否只读 browseable = yes #是否可浏览 [另一个配置名] #如果同一台机子你想分开共享路径，就把上面的配置复制到这里。 三、创建SAMBA用户</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>commit on sh1marin&#39;s Blog</title>
+    <link>https://blog.sh1mar.in/tags/commit/</link>
+    <description>Recent content in commit on sh1marin&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://blog.sh1mar.in/tags/commit/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>How to write commit</title>
+      <link>https://blog.sh1mar.in/post/git/how-to-write-commit/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.sh1mar.in/post/git/how-to-write-commit/</guid>
+      <description>前言 对我而言，撰写 git commit 的内容是一个很重要的事情。因为我会把 commit 里的信息当成一份邮件，在开源社区里每个人都需要知道我做了什么，我为什么 要这么做，而编写 commit，就像在群发邮件一样。一份清晰的 commit 信息可以 给后续开发带来很多方便，也是对自己行为的一种声明。
+我也一直在实践中找出一份简单但清晰的 commit 规则，以下内容 是我目前总结出来的比较简单但清晰的一份模板，我也会在后续不断重构不断更新。
+结构 首先需要对 commit 要包含什么内容有一个清晰的概念。一个 commit 需要包含标题、 正文、脚注三个部分。每一部分都应该用一个空行分开。
+标题 commit 的标题应当简洁明了的陈述你做了什么。注意我用的字眼：“陈述”。最好不要在 标题里包含任何时态，任何语气符号以及任何夸张用词。同时为了历史记录的一致性， 推荐用全小写来书写你的标题。
+对比以下两个 commit，你更喜欢那一种呢？
+I&amp;#39;ve fixed almost all the problems! ----------------------------------- fix(socket): clean up buffer when establish to new socket 我个人的品味是更倾向于选择下面这种书写方式，清晰明了的说明了做了什么(fix)， 对什么做了修改(socket)，大概做了哪些修改(正文)。
+相信有些读者可能对这种写法非常熟悉，他来自于著名的开源框架 Angular。 Angular 的贡献指南里明确的约定了如下的标题书写格式：
+&amp;lt;type&amp;gt;(&amp;lt;scope&amp;gt;): &amp;lt;short summary&amp;gt; │ │ │ │ │ └─⫸ Summary in present tense. Not capitalized. No period at the end.</description>
+    </item>
+    
+  </channel>
+</rss>

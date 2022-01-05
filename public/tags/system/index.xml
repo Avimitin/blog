@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>system on sh1marin&#39;s Blog</title>
+    <link>https://blog.sh1mar.in/tags/system/</link>
+    <description>Recent content in system on sh1marin&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://blog.sh1mar.in/tags/system/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>黑苹果安装教程</title>
+      <link>https://blog.sh1mar.in/post/%E9%BB%91%E8%8B%B9%E6%9E%9C/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.sh1mar.in/post/%E9%BB%91%E8%8B%B9%E6%9E%9C/</guid>
+      <description>前言 本篇文章的目的是为了减少新手爬贴的麻烦，但是怕麻烦的人尽早放弃黑苹果。一旦决心折腾黑苹果了，就一定要耐心做下去。黑苹果的安装就是刚完成一个环节下一个环节就会有可能出问题的折腾历程。如果对自己的耐性没有信心还是尽早去淘宝叫人花50块钱给你装。
+假如出现了文章内没有出现的问题怎么办呢，这里有很多黑苹果的论坛，多查多看帖子。
+ 远景(目前关闭注册，看看教程贴就好了，资源是没法下载的了) Tonymacx86.com(资源丰富，建议去注册一个账号） Github(善用GitHub的搜索功能，里面有很多很好用的教程仓库)  准备环节 硬件 首先要清楚的了解自己的设备型号，包括但不限于主板，CPU，显卡，声卡，网卡。将你的硬件型号写个备忘录记起来。假如是AMD显卡用户，恭喜你你不仅可以安装Mojave，因为AMD免驱，还可以减少很多配置步骤。而N卡用户，就直接放弃Mojave装High Sierra吧，Mojave只有开普勒架构的N卡才能免驱，而N卡的驱动只支持到High Sierra。
+黑苹果安装的具体的硬件依赖看这：—&amp;gt; 🖥️
+假如你还没有电脑，打算低价打造高性能苹果机，这里有硬件购买指南。文章会告诉你需要避免购买哪些不支持的硬件。
+看不懂英文？这里有中文购买指南，已经帮你设计好购买套餐了。
+最后你还需要一台Windows设备和一个8G以上的U盘。
+软件  黑苹果需要很多工具，所以这里的篇幅会很长，读起来并且下载完需要费一些时间。但是还请做好准备工作，不要等出问题再去查再去下载，无意义地浪费很多时间。
+ 安装黑苹果你需要简单了解并使用：
+ GUID分区表 ESP分区 Clover config.plist [High Sierra 镜像](#High Sierra 镜像) BIOS  GUID分区  MBR 分区表的组织限制了最大可寻址存储空间为 2 TB。因此它只支持最多 4 个主分区，或者 3 个主分区和 1 个扩展分区组合。然而，随着时代的进步，更大的存储设备需要应用到计算机领域。因此,取代 MBR 分区的 GUID 分区表 (GPT) 在新电脑中被使用，GPT 可以与 MBR 共存，以便为旧系统提供某种有限形式的向后兼容性。
+ 黑苹果必须使用GPT分区表，你需要将安装Windows的硬盘数据进行备份，然后使用分区工具对硬盘重新分区。微软官方有MBR转GPT的教程。
+ESP分区  几乎所有 2012 年后生产的计算机都支持引导 UEFI，而且不再执行以前的 “Legacy” 标准。这些计算机需要一个 ESP 分区来引导。ESP 代表 EFI 系统分区，使用 FAT32/FAT16 文件系统。ESP 负责存储固件启动时使用的EFI 引导加载程序和其他实用程序。如果您不小心删除了这个分区，您的系统将无法再引导。为了安全起见，ESP 是默认隐藏的，因此它没有驱动器号。</description>
+    </item>
+    
+  </channel>
+</rss>

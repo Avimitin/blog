@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>neovim on sh1marin&#39;s Blog</title>
+    <link>https://blog.sh1mar.in/tags/neovim/</link>
+    <description>Recent content in neovim on sh1marin&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://blog.sh1mar.in/tags/neovim/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>neovim 的简易教程</title>
+      <link>https://blog.sh1mar.in/post/neovim/neovim-tutorial/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.sh1mar.in/post/neovim/neovim-tutorial/</guid>
+      <description>前言 最近我打算开一个 neovim 系列，这个博客系列会分成几块来讲，首先是 neovim 的一些键位和 设置，然后再讲如何配置 packer 这个插件管理器，之后就是零零碎碎的写一写插件介绍。
+我的配置文件教程会基于 Lua 和 neovim 0.5+ 来配置。所以如果你是打算用 vim 的，因为 vim 仅支持 vimscript，这篇文章可能会不太适合你。
+本来是想写一点类似于卖安利的文字的。不过最近实在疲于给别人推荐他们并不感兴趣的东西， 所以我就不在这里多费口舌介绍 neovim 的优势了。这篇文章主要还是写给那些对 neovim 感兴 趣但是不知道怎么入手的人。
+neovim 的一些基础操作 安装好 neovim 之后，在命令行输入 nvim 打开 neovim。在打开的界面的左上角，有一个长方 体，那个就是你的光标。中间有许多提示文字，提示让你输入 :help, :q, :checkhealth。
+如果你是第一次用 neovim，通常会对这个界面感到困惑，这很正常，不必担心。我会在这一节教 授你一些基础的 neovim 用法，足够你进行基本的文字编辑。
+首先我想要讲的是如何退出 neovim。对于每一个第一次使用 vim 的新手，如何退出 vim 就如同 灰烬审判者古达一样，把他们拦在熟练使用 vim 的大门之外。退出 vim 是如此困难，以至于所 有人都在玩退出 vim 的梗。虽然 neovim 默认给 &amp;lt;CTRL&amp;gt;-c 按键绑定上了退出提示，但是 搞明白 neovim 的提示也让新手们费了不少功夫。
+所有新手最不明白的一个问题可能就是 :q 到底是什么意思。在哪里输入 :q，
+配置文件 neovim 的配置通常从一个 init.</description>
+    </item>
+    
+    <item>
+      <title>让你的 neovim 像 IDE 一样强大</title>
+      <link>https://blog.sh1mar.in/post/neovim/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.sh1mar.in/post/neovim/</guid>
+      <description>让你的 NeoVim 和 IDE 一样强大 前言 Neovim 是一款完全拥有 vim 特性且拥有高度支持插件的编辑器软件，而他的高可自定义能力也深深吸引了像我这样的人。这篇文章我会带着你编写一个漂亮且强大的终端编辑器的配置文件，同时稍微的带你入门一点 neovim，但没那么零基础哦。
+我的配置文件在 Avimitin/nvim , 欢迎 fork 使用。
+下载安装 neovim 有一个很重要的 pop_up_windows 弹出窗口特性在 0.5.0 版本才有，还有很多 TUI 的支持，蛮多插件依赖于这些特性的，所以我不建议在默认源的包管理器中下载稳定版的 0.4 版本。关于 neovim 的安装指南在 wiki 里面有，Ubuntu 的话也可以通过添加 PPA 源的方式，添加 unstable 源用 apt 包管理器安装：
+# 如果你已经安装了，先卸载 sudo apt remove neovim # 添加 0.5.0 的源 sudo add-apt-repository ppa:neovim-ppa/unstable sudo apt-get update sudo apt install neovim 安装好 neovim 之后，还需要安装 Python3 和 NodeJS 来获得完全的插件支持：
+sudo apt install python3 python3-pip NodeJS 非常不推荐在包管理器中安装，建议查看 NVM 安装教程或参考这篇文章 。</description>
+    </item>
+    
+  </channel>
+</rss>

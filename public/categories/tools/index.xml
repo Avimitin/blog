@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>tools on sh1marin&#39;s Blog</title>
+    <link>https://blog.sh1mar.in/categories/tools/</link>
+    <description>Recent content in tools on sh1marin&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://blog.sh1mar.in/categories/tools/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>两步搞定定制Speedtest</title>
+      <link>https://blog.sh1mar.in/post/%E4%B8%A4%E6%AD%A5%E6%90%9E%E5%AE%9A%E5%AE%9A%E5%88%B6speedtest/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.sh1mar.in/post/%E4%B8%A4%E6%AD%A5%E6%90%9E%E5%AE%9A%E5%AE%9A%E5%88%B6speedtest/</guid>
+      <description>前言 欢迎使用我的定制speedtest，点击打开或者点击网页右上角的WiFi按钮打开。
+使用定制Speedtest你需要准备：
+ 一个好看的网站PNG|JPG文件 一个电话号码 一个可用域名 初中英语水平  注册SpeedTest账号 打开https://speedtest.net,点击右上角的Enterprise-Speedtest CUstom。然后会跳转页面，点击start for free。
+选择Free Plan Selected，点击下面的Next按钮。
+填写完之后点击Next然后这里就看自己的需求填写了，我是都没有所以都没有勾选。点击Next下一步
+然后只勾红框一个选项就可以了，第二个是广告，没必要勾。然后点击Create Account,跳转邮箱验证。
+定制页面 进入账户，点击custom：
+首先第一个选项框，自定义好二级域名，勾选上HTTPS：
+然后点击第二个Interface：
+ Colors: 背景色和强调色
+Company Logo选个高大上一点的，或者自己DIY一个图标
+ 假如你没有自己的服务器给人家测速，就选第一个。
+然后假如要放在自己网页里的话，在Test URLs填入你的域名白名单。</description>
+    </item>
+    
+    <item>
+      <title>使用 FRP 实现一机多设备编程</title>
+      <link>https://blog.sh1mar.in/post/%E4%BD%BF%E7%94%A8-frp-%E5%AE%9E%E7%8E%B0%E4%B8%80%E6%9C%BA%E5%A4%9A%E8%AE%BE%E5%A4%87%E7%BC%96%E7%A8%8B/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.sh1mar.in/post/%E4%BD%BF%E7%94%A8-frp-%E5%AE%9E%E7%8E%B0%E4%B8%80%E6%9C%BA%E5%A4%9A%E8%AE%BE%E5%A4%87%E7%BC%96%E7%A8%8B/</guid>
+      <description>前言 最近配了台 ChromeBook 用来方便平常通勤写代码，但是 ChromeBook 羸弱的性能和拉跨的散热使得他日常编程体验极其垃圾。同时，回到宿舍之后用主机写代码和 ChromeBook 之间也会极其脱节。
+也有考虑过用 git 分支来管理代码，但是有时候代码写了一半还有很多问题没调试，不想提交 commit 。或者使用 SAMBA 直接对笔记本的代码进行修改，这样又会遇到跨平台编译的问题。
+于是我用了一段时间的 VSCode 的 Remote SSH 插件，在外用 ChromeBook，回到宿舍之后主机 SSH 连接 ChromeBook 来写代码。但是这样有些本末倒置了：本来性能更好的主机却只做了显示器的功能。于是我这周和朋友了解了一下 frp 并重新设计了部署方案。
+设计 一机多设备编程部署方案：
+一台高性能的本地服务器主机用作编译主机，部署 frp 服务到一台有公网 IP 的 VPS主机上，然后别的设备通过 VPS 转发流量到本地主机上来操作本地服务器。
+平台 我的本地服务器用的 Ubuntu 20.4，公网服务器用的 Debian Buster。
+部署 首先下载 FRP ，根据自己的系统和处理器选择，我这边选的 linux-amd64 版本。解压之后里面有两个程序，一个是 frps ，一个是 frpc ，分别对应服务器和客户端两个程序。
+ 下面所述的字段在 FRP Docs 里都有详细介绍，你可以根据自己需求更改。
+ FRPS（服务器端） 将 frps 和 frps.ini 用 SFTP 发送到公网IP服务器，然后修改 frps.ini ：</description>
+    </item>
+    
+    <item>
+      <title>用阿里云OSS做图床</title>
+      <link>https://blog.sh1mar.in/post/%E4%BD%BF%E7%94%A8%E9%98%BF%E9%87%8C%E4%BA%91oss%E5%81%9A%E5%9B%BE%E5%BA%8A/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.sh1mar.in/post/%E4%BD%BF%E7%94%A8%E9%98%BF%E9%87%8C%E4%BA%91oss%E5%81%9A%E5%9B%BE%E5%BA%8A/</guid>
+      <description>购买资源包 直接买LRS标准就可以了，按照自己需求买，不过存几张图而已40G够用了。
+然后买下行流量包，这里的流量是每月刷新的。
+ 嫌贵的话其实可以不买，直接按实际流量扣费，0.25/GB。但是要做好被DDos或者突然高访问量然后一夜负债房子卖掉。
+ Bucket创建   Bucket名称要填独一无二的，同时也不要太长，方便自己 选择哪里都无所谓，但是一定要选国内的 存储空间选标准   下载PicGo PicGo是一个方便的批量上传图片的软件，而且也能管理自己的图片链接，在作者的GitHub Release里下载安装。
+配置图床 AccessKey获取 首先要取得OSS的访问秘钥，鼠标移至阿里云控制台右上角的头像处，点击Access Key管理，点击创建Access Key。然后点击开始使用子用户Access Key。
+接着就会跳转创建用户，输入一个账户名，勾选编程访问，点击确定创建。
+创建完成会跳转到用户信息，请一定要现在就保存好这个ID 和Secret，这里的信息只会显示现在这一次。可以下载CSV或者点复制保存。
+然后点添加权限，选择管理对象存储服务权限一个就够了。
+配置PicGo 然后打开PicGo，选择阿里云图床，输入刚刚的AccessKey和其他信息：
+  存储空间名是刚刚的bucket名。 存储区域是一开始选择的区域，可以在bucket信息里面找endpoint信息。 存储路径请一定保证OSS有这个目录。   然后就在上传区直接拖动照片上传就可以了。</description>
+    </item>
+    
+  </channel>
+</rss>

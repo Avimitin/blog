@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+<html lang="en-us">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+  
+  <title>使用CloudFlare CDN - sh1marin&#39;s Blog</title>
+
+  
+  
+  <meta name="description" content="前言
+CloudFlare是真的减速器，假如服务器在香港可能上了CF会很慢，所以假如像我一样用完延迟从60ms蹦到500ms的，就不要搞CF了。" />
+  <meta name="author" content="" />
+  
+
+  
+  
+  
+  
+  
+  
+  <link rel="preload stylesheet" as="style" href="https://blog.sh1mar.in/app.min.css" />
+
+  
+  <link rel="preload stylesheet" as="style" href="https://blog.sh1mar.in/an-old-hope.min.css" />
+  <script
+    defer
+    src="https://blog.sh1mar.in/highlight.min.js"
+    onload="hljs.initHighlightingOnLoad();"
+  ></script>
+  
+
+  
+  <link rel="preload" as="image" href="https://blog.sh1mar.in/theme.png" />
+
+  
+
+  
+  <link rel="icon" href="https://blog.sh1mar.in/favicon.ico" />
+  <link rel="apple-touch-icon" href="https://blog.sh1mar.in/apple-touch-icon.png" />
+
+  
+  <meta name="generator" content="Hugo 0.91.2" />
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+  
+  <meta property="og:title" content="使用CloudFlare CDN" />
+<meta property="og:description" content="前言
+CloudFlare是真的减速器，假如服务器在香港可能上了CF会很慢，所以假如像我一样用完延迟从60ms蹦到500ms的，就不要搞CF了。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://blog.sh1mar.in/post/%E4%BD%BF%E7%94%A8cloudflare%E5%88%86%E9%85%8Dcdn/" /><meta property="article:section" content="post" />
+
+
+
+
+  
+  <meta itemprop="name" content="使用CloudFlare CDN">
+<meta itemprop="description" content="前言
+CloudFlare是真的减速器，假如服务器在香港可能上了CF会很慢，所以假如像我一样用完延迟从60ms蹦到500ms的，就不要搞CF了。">
+
+<meta itemprop="wordCount" content="30">
+<meta itemprop="keywords" content="" />
+  
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="使用CloudFlare CDN"/>
+<meta name="twitter:description" content="前言
+CloudFlare是真的减速器，假如服务器在香港可能上了CF会很慢，所以假如像我一样用完延迟从60ms蹦到500ms的，就不要搞CF了。"/>
+
+  
+  
+</head>
+
+
+  <body class="not-ready" data-menu="false">
+    <header class="header">
+  
+  <p class="logo">
+    <a class="site-name" href="https://blog.sh1mar.in">sh1marin&#39;s Blog</a><a class="btn-dark"></a>
+  </p>
+  
+
+  <script>
+    let bodyClx = document.body.classList;
+    let btnDark = document.querySelector('.btn-dark');
+    let sysDark = window.matchMedia('(prefers-color-scheme: dark)');
+    let darkVal = localStorage.getItem('dark');
+
+    let setDark = (isDark) => {
+      bodyClx[isDark ? 'add' : 'remove']('dark');
+      localStorage.setItem('dark', isDark ? 'yes' : 'no');
+    };
+
+    setDark(darkVal ? darkVal === 'yes' : sysDark.matches);
+    requestAnimationFrame(() => bodyClx.remove('not-ready'));
+
+    btnDark.addEventListener('click', () => setDark(!bodyClx.contains('dark')));
+    sysDark.addEventListener('change', (event) => setDark(event.matches));
+  </script>
+
+  
+  
+
+  
+</header>
+
+
+    <main class="main">
+
+<article class="post-single">
+  <header class="post-title">
+    <p>
+      <time>Jan 1, 1</time>
+      
+    </p>
+    <h1>使用CloudFlare CDN</h1>
+  </header>
+  <section class="post-content"><h1 id="前言">前言</h1>
+<p>CloudFlare是真的减速器，假如服务器在香港可能上了CF会很慢，所以假如像我一样用完延迟从60ms蹦到500ms的，就不要搞CF了。</p>
+<h1 id="添加域名">添加域名</h1>
+<p>首先先注册CloudFlare，然后点击添加站点，输入你的域名。然后就会跳转计划，选择0美元的免费计划就可以了。选完之后CloudFlare就会开始扫描你现在的DNS缓存。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Avimitin/PicStorage/pic/Snipaste_2020-04-19_17-56-04.png" alt=""></p>
+<p>一般来说CloudFlare不用CNAME类型，把CNAME类型删了，再添加一条A类型记录，名称为www，指向VPS，改完应该长这样：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Avimitin/PicStorage/pic/20200419175954.png" alt=""></p>
+<p>点击继续，使用默认方法。然后跳转到域名面板，去域名购买的网站改一下域名DNS服务器。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Avimitin/PicStorage/pic/20200419180406.png" alt=""></p>
+<p>假如使用namesilo的用户就到<code>manage my domain</code>页面里，勾选域名，然后点击上面第二个图标<code>change nameserver</code>更换DNS服务器。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Avimitin/PicStorage/pic/20200419180516.png" alt=""></p>
+<p>把原来的<code>NameServer</code>删除，填入CloudFlare页面提供的名称服务器：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Avimitin/PicStorage/pic/20200419180556.png" alt=""></p>
+<p>然后等待DNS生效就可以了。</p>
+<h1 id="ip测试">IP测试</h1>
+<p>打开CMD，先刷新本地DNS：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">ipconfig/flushdns
+</code></pre></div><p>然后ping你的域名：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">ping example.com
+</code></pre></div><p>假如ping出来的不是VPS的IP而是CDN的IP那就是生效了。</p>
+<h1 id="cloudflare设置">CloudFlare设置</h1>
+<p><img src="https://cdn.jsdelivr.net/gh/Avimitin/PicStorage/pic/20200419180742.png" alt=""></p>
+<p>点击<code>SSL/TLS</code>选项，假如你的服务器有SSL认证的话，选择<code>完全(严格)</code>，没有认证的话选择灵活。</p>
+<p>CloudFlare也有提供证书认证，而且是永久免费的，可以用宝塔面板自定义证书填入。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Avimitin/PicStorage/pic/20200419181137.png" alt=""></p>
+<p>点击右上角的速度，可以把这里面能打钩的全部选上，但是效果的话，只能说&hellip; 感 知 不 强。</p>
+<h1 id="站长工具">站长工具</h1>
+<ul>
+<li>
+<p>使用<a href="https://seo.chinaz.com/">站长工具网站</a>来测试自己的站点。</p>
+</li>
+<li>
+<p><a href="https://tool.chinaz.com/sitespeed">这个网页</a>可以测试访问站点的速度。</p>
+</li>
+</ul></section>
+
+  
+  
+
+  
+  
+  
+  <nav class="post-nav">
+    
+    <a class="prev" href="https://blog.sh1mar.in/post/%E7%94%A8python%E5%AE%9E%E7%8E%B0jwt/"><span>←</span><span>使用 Python 实现 JSON Web Token</span></a>
+     
+    <a class="next" href="https://blog.sh1mar.in/post/linux%E4%B8%8B%E9%85%8D%E7%BD%AEnas%E7%9A%84%E4%B8%80%E4%BA%9B%E6%80%BB%E7%BB%93%E7%BB%8F%E9%AA%8C/"><span>使用Linux搭建NAS</span><span>→</span></a>
+    
+  </nav>
+  
+
+  
+  
+</article>
+
+</main>
+
+    <footer class="footer">
+  <p>&copy; 2022 <a href="https://blog.sh1mar.in">sh1marin&#39;s Blog</a></p>
+  <p>Powered by <a href="https://gohugo.io/" rel="noopener" target="_blank">Hugo️️</a>️</p>
+  <p>
+    <a href="https://github.com/nanxiaobei/hugo-paper" rel="noopener" target="_blank">Paper 5.1</a>
+  </p>
+</footer>
+
+  </body>
+</html>

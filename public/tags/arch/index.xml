@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>arch on sh1marin&#39;s Blog</title>
+    <link>https://blog.sh1mar.in/tags/arch/</link>
+    <description>Recent content in arch on sh1marin&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://blog.sh1mar.in/tags/arch/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Arch Linux Installation Guide</title>
+      <link>https://blog.sh1mar.in/post/arch-installation/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.sh1mar.in/post/arch-installation/</guid>
+      <description>Arch installation Get arch Download Arch Linux from https://archlinux.org/download/ and follow guide from https://wiki.archlinux.org/index.php/Installation_guide
+Before boot (OPTIONAL) You can press e to edit install configuration like:
+# If you think the screen is too small. nomodset video=800x450 Setting font (OPTIONAL) If you think the font is too small and hard to look, you can change font for a more comfortable look.
+setfont /usr/share/kbd/consolefonts/LatGrkCyr-12x12.gz Configure key (OPTIONAL) touch keys.conf #-------edit--------# keycode 1 = Caps_Lock keycode 58 = Escape #----end of edit-----# loadkeys keys.</description>
+    </item>
+    
+    <item>
+      <title>如何配置 Arch Linux</title>
+      <link>https://blog.sh1mar.in/post/configure-arch-linux/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.sh1mar.in/post/configure-arch-linux/</guid>
+      <description>Network Update 安装必要的软件 添加用户 在 VMWare 上装 Arch 的设置（可选）  添加驱动 安装   安装桌面环境  Install Display manager 自启动 HiDPI   分辨率 装点别的  输入法 Network manager 字体 终端 壁纸 通知系统   主题 常见错误  Network 如果你有跟着我上一篇文章，安装了 NetworkManager，此时你 可以输入命令 nmtui 来打开一个终端网络管理器来管理网络。
+#启动网络管理器的 daemon systemctl start NetworkManager.service #设置为开机自启动 systemctl enable NetworkManager.service #启动终端管理器 nmtui 如果没有安装，那你可能需要把 U盘插上，mount 好分区之后 重新 chroot，并安装需要的网络管理器。
+Update 然后执行命令更新：
+pacman -Syu 安装必要的软件 pacman -S man base-devel 添加用户 创建一个叫做 TOM 的用户（把 TOM 换成你的名字）：</description>
+    </item>
+    
+  </channel>
+</rss>

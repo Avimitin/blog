@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+<html lang="en-us">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+  
+  <title>一个测试终端 IO 速度的脚本 - sh1marin&#39;s Blog</title>
+
+  
+  
+  <meta name="description" content="前言 今天学到了一个新的知识：终端的绘制性能会影响程序的性能。当一个程序以单线程 运行时，终端输出和文件 IO 都在同一个线程，终端如果绘制速度慢，因为 IO 是阻塞的 ，程序内部的 stdout 执行速度也会下降。
+测试 那么有什么办法可以测试一下哪些终端绘制速度比较快呢？我在 Rust CN 群看到的这 么个办法：同时跑文件 IO 和终端 IO 来测试。有一个方式是用 find 来遍历系统内 所有文件，因为 find 毎找到一个文件都会输出一次，我们从根目录开始 find，就可 以实现同时高频率的文件 IO 和终端 IO 了。所以这里我们只需要简单的 find / 即 可。
+而运行时间的测试则用 shell 提供的 time 函数来测试。
+为了比对各个终端，我做了一些额外工作来获取终端的名字。具体脚本如下：
+#!/bin/bash  # 这里获取运行中的终端名字 get_terminal() { PARENT_SHELL=$(ps -p $$ -o ppid=) PARENT_TERMINAL=$(ps -p $PARENT_SHELL -o ppid=) TERMINAL=$(ps -p $PARENT_TERMINAL o args=) printf $TERMINAL } # 测试 time find / # 方便分清各个不同的终端 echo -e &#34;\n\nTesting in terminal: $(get_terminal)&#34; 结果 其中 Alacritty 和 simple terminal 打得不相上下，而 kitty 稍逊一筹，konsole （右下） 是最慢的。后续我再运行了几次结果都相近。" />
+  <meta name="author" content="" />
+  
+
+  
+  
+  
+  
+  
+  
+  <link rel="preload stylesheet" as="style" href="https://blog.sh1mar.in/app.min.css" />
+
+  
+  <link rel="preload stylesheet" as="style" href="https://blog.sh1mar.in/an-old-hope.min.css" />
+  <script
+    defer
+    src="https://blog.sh1mar.in/highlight.min.js"
+    onload="hljs.initHighlightingOnLoad();"
+  ></script>
+  
+
+  
+  <link rel="preload" as="image" href="https://blog.sh1mar.in/theme.png" />
+
+  
+
+  
+  <link rel="icon" href="https://blog.sh1mar.in/favicon.ico" />
+  <link rel="apple-touch-icon" href="https://blog.sh1mar.in/apple-touch-icon.png" />
+
+  
+  <meta name="generator" content="Hugo 0.91.2" />
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+  
+  <meta property="og:title" content="一个测试终端 IO 速度的脚本" />
+<meta property="og:description" content="前言 今天学到了一个新的知识：终端的绘制性能会影响程序的性能。当一个程序以单线程 运行时，终端输出和文件 IO 都在同一个线程，终端如果绘制速度慢，因为 IO 是阻塞的 ，程序内部的 stdout 执行速度也会下降。
+测试 那么有什么办法可以测试一下哪些终端绘制速度比较快呢？我在 Rust CN 群看到的这 么个办法：同时跑文件 IO 和终端 IO 来测试。有一个方式是用 find 来遍历系统内 所有文件，因为 find 毎找到一个文件都会输出一次，我们从根目录开始 find，就可 以实现同时高频率的文件 IO 和终端 IO 了。所以这里我们只需要简单的 find / 即 可。
+而运行时间的测试则用 shell 提供的 time 函数来测试。
+为了比对各个终端，我做了一些额外工作来获取终端的名字。具体脚本如下：
+#!/bin/bash  # 这里获取运行中的终端名字 get_terminal() { PARENT_SHELL=$(ps -p $$ -o ppid=) PARENT_TERMINAL=$(ps -p $PARENT_SHELL -o ppid=) TERMINAL=$(ps -p $PARENT_TERMINAL o args=) printf $TERMINAL } # 测试 time find / # 方便分清各个不同的终端 echo -e &#34;\n\nTesting in terminal: $(get_terminal)&#34; 结果 其中 Alacritty 和 simple terminal 打得不相上下，而 kitty 稍逊一筹，konsole （右下） 是最慢的。后续我再运行了几次结果都相近。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://blog.sh1mar.in/post/linux/write-a-script-to-test-terminal-io/" /><meta property="article:section" content="post" />
+
+
+
+
+  
+  <meta itemprop="name" content="一个测试终端 IO 速度的脚本">
+<meta itemprop="description" content="前言 今天学到了一个新的知识：终端的绘制性能会影响程序的性能。当一个程序以单线程 运行时，终端输出和文件 IO 都在同一个线程，终端如果绘制速度慢，因为 IO 是阻塞的 ，程序内部的 stdout 执行速度也会下降。
+测试 那么有什么办法可以测试一下哪些终端绘制速度比较快呢？我在 Rust CN 群看到的这 么个办法：同时跑文件 IO 和终端 IO 来测试。有一个方式是用 find 来遍历系统内 所有文件，因为 find 毎找到一个文件都会输出一次，我们从根目录开始 find，就可 以实现同时高频率的文件 IO 和终端 IO 了。所以这里我们只需要简单的 find / 即 可。
+而运行时间的测试则用 shell 提供的 time 函数来测试。
+为了比对各个终端，我做了一些额外工作来获取终端的名字。具体脚本如下：
+#!/bin/bash  # 这里获取运行中的终端名字 get_terminal() { PARENT_SHELL=$(ps -p $$ -o ppid=) PARENT_TERMINAL=$(ps -p $PARENT_SHELL -o ppid=) TERMINAL=$(ps -p $PARENT_TERMINAL o args=) printf $TERMINAL } # 测试 time find / # 方便分清各个不同的终端 echo -e &#34;\n\nTesting in terminal: $(get_terminal)&#34; 结果 其中 Alacritty 和 simple terminal 打得不相上下，而 kitty 稍逊一筹，konsole （右下） 是最慢的。后续我再运行了几次结果都相近。">
+
+<meta itemprop="wordCount" content="103">
+<meta itemprop="keywords" content="terminal,linux,st," />
+  
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="一个测试终端 IO 速度的脚本"/>
+<meta name="twitter:description" content="前言 今天学到了一个新的知识：终端的绘制性能会影响程序的性能。当一个程序以单线程 运行时，终端输出和文件 IO 都在同一个线程，终端如果绘制速度慢，因为 IO 是阻塞的 ，程序内部的 stdout 执行速度也会下降。
+测试 那么有什么办法可以测试一下哪些终端绘制速度比较快呢？我在 Rust CN 群看到的这 么个办法：同时跑文件 IO 和终端 IO 来测试。有一个方式是用 find 来遍历系统内 所有文件，因为 find 毎找到一个文件都会输出一次，我们从根目录开始 find，就可 以实现同时高频率的文件 IO 和终端 IO 了。所以这里我们只需要简单的 find / 即 可。
+而运行时间的测试则用 shell 提供的 time 函数来测试。
+为了比对各个终端，我做了一些额外工作来获取终端的名字。具体脚本如下：
+#!/bin/bash  # 这里获取运行中的终端名字 get_terminal() { PARENT_SHELL=$(ps -p $$ -o ppid=) PARENT_TERMINAL=$(ps -p $PARENT_SHELL -o ppid=) TERMINAL=$(ps -p $PARENT_TERMINAL o args=) printf $TERMINAL } # 测试 time find / # 方便分清各个不同的终端 echo -e &#34;\n\nTesting in terminal: $(get_terminal)&#34; 结果 其中 Alacritty 和 simple terminal 打得不相上下，而 kitty 稍逊一筹，konsole （右下） 是最慢的。后续我再运行了几次结果都相近。"/>
+
+  
+  
+</head>
+
+
+  <body class="not-ready" data-menu="false">
+    <header class="header">
+  
+  <p class="logo">
+    <a class="site-name" href="https://blog.sh1mar.in">sh1marin&#39;s Blog</a><a class="btn-dark"></a>
+  </p>
+  
+
+  <script>
+    let bodyClx = document.body.classList;
+    let btnDark = document.querySelector('.btn-dark');
+    let sysDark = window.matchMedia('(prefers-color-scheme: dark)');
+    let darkVal = localStorage.getItem('dark');
+
+    let setDark = (isDark) => {
+      bodyClx[isDark ? 'add' : 'remove']('dark');
+      localStorage.setItem('dark', isDark ? 'yes' : 'no');
+    };
+
+    setDark(darkVal ? darkVal === 'yes' : sysDark.matches);
+    requestAnimationFrame(() => bodyClx.remove('not-ready'));
+
+    btnDark.addEventListener('click', () => setDark(!bodyClx.contains('dark')));
+    sysDark.addEventListener('change', (event) => setDark(event.matches));
+  </script>
+
+  
+  
+
+  
+</header>
+
+
+    <main class="main">
+
+<article class="post-single">
+  <header class="post-title">
+    <p>
+      <time>Jan 1, 1</time>
+      
+    </p>
+    <h1>一个测试终端 IO 速度的脚本</h1>
+  </header>
+  <section class="post-content"><h2 id="前言">前言</h2>
+<p>今天学到了一个新的知识：终端的绘制性能会影响程序的性能。当一个程序以单线程
+运行时，终端输出和文件 IO 都在同一个线程，终端如果绘制速度慢，因为 IO 是阻塞的
+，程序内部的 stdout 执行速度也会下降。</p>
+<h2 id="测试">测试</h2>
+<p>那么有什么办法可以测试一下哪些终端绘制速度比较快呢？我在 Rust CN 群看到的这
+么个办法：同时跑文件 IO 和终端 IO 来测试。有一个方式是用 find 来遍历系统内
+所有文件，因为 find 毎找到一个文件都会输出一次，我们从根目录开始 find，就可
+以实现同时高频率的文件 IO 和终端 IO 了。所以这里我们只需要简单的 <code>find /</code> 即
+可。</p>
+<p>而运行时间的测试则用 shell 提供的 time 函数来测试。</p>
+<p>为了比对各个终端，我做了一些额外工作来获取终端的名字。具体脚本如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e">#!/bin/bash
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e"># 这里获取运行中的终端名字</span>
+get_terminal<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+  PARENT_SHELL<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>ps -p $$ -o ppid<span style="color:#f92672">=</span><span style="color:#66d9ef">)</span>
+  PARENT_TERMINAL<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>ps -p $PARENT_SHELL -o ppid<span style="color:#f92672">=</span><span style="color:#66d9ef">)</span>
+  TERMINAL<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>ps -p $PARENT_TERMINAL o args<span style="color:#f92672">=</span><span style="color:#66d9ef">)</span>
+  printf $TERMINAL
+<span style="color:#f92672">}</span>
+
+<span style="color:#75715e"># 测试</span>
+time find /
+
+<span style="color:#75715e"># 方便分清各个不同的终端</span>
+echo -e <span style="color:#e6db74">&#34;\n\nTesting in terminal: </span><span style="color:#66d9ef">$(</span>get_terminal<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span>
+</code></pre></div><h2 id="结果">结果</h2>
+<p><img src="/images/linux/Write-A-Script-To-Test-Terminal-IO/result.png" alt="result"></p>
+<p>其中 Alacritty 和 simple terminal 打得不相上下，而 kitty 稍逊一筹，konsole
+（右下） 是最慢的。后续我再运行了几次结果都相近。</p>
+<h3 id="数据">数据</h3>
+<table>
+<thead>
+<tr>
+<th>alacritty</th>
+<th>st</th>
+<th>kitty</th>
+<th>konsole</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4.209s</td>
+<td>4.031s</td>
+<td>5.402s</td>
+<td>8.539s</td>
+</tr>
+</tbody>
+</table>
+<h2 id="链接">链接</h2>
+<ul>
+<li>Alacritty: <a href="https://alacritty.org/">https://alacritty.org/</a></li>
+<li>Simple Terminal: <a href="https://st.suckless.org/">https://st.suckless.org/</a></li>
+</ul>
+</section>
+
+  
+  
+  <footer class="post-tags">
+     
+    <a href="https://blog.sh1mar.in/tags/terminal">terminal</a>
+     
+    <a href="https://blog.sh1mar.in/tags/linux">linux</a>
+     
+    <a href="https://blog.sh1mar.in/tags/st">st</a>
+    
+  </footer>
+  
+
+  
+  
+  
+  <nav class="post-nav">
+    
+    <a class="prev" href="https://blog.sh1mar.in/post/windows-server-2019%E6%90%AD%E5%BB%BAnas%E7%9A%84%E4%B8%80%E4%BA%9B%E6%80%BB%E7%BB%93/"><span>←</span><span>Windows Server 2019搭建NAS</span></a>
+     
+    <a class="next" href="https://blog.sh1mar.in/post/%E4%B8%A4%E6%AD%A5%E6%90%9E%E5%AE%9A%E5%AE%9A%E5%88%B6speedtest/"><span>两步搞定定制Speedtest</span><span>→</span></a>
+    
+  </nav>
+  
+
+  
+  
+</article>
+
+</main>
+
+    <footer class="footer">
+  <p>&copy; 2022 <a href="https://blog.sh1mar.in">sh1marin&#39;s Blog</a></p>
+  <p>Powered by <a href="https://gohugo.io/" rel="noopener" target="_blank">Hugo️️</a>️</p>
+  <p>
+    <a href="https://github.com/nanxiaobei/hugo-paper" rel="noopener" target="_blank">Paper 5.1</a>
+  </p>
+</footer>
+
+  </body>
+</html>

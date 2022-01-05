@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>vim on sh1marin&#39;s Blog</title>
+    <link>https://blog.sh1mar.in/categories/vim/</link>
+    <description>Recent content in vim on sh1marin&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://blog.sh1mar.in/categories/vim/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>让你的 neovim 像 IDE 一样强大</title>
+      <link>https://blog.sh1mar.in/post/neovim/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.sh1mar.in/post/neovim/</guid>
+      <description>让你的 NeoVim 和 IDE 一样强大 前言 Neovim 是一款完全拥有 vim 特性且拥有高度支持插件的编辑器软件，而他的高可自定义能力也深深吸引了像我这样的人。这篇文章我会带着你编写一个漂亮且强大的终端编辑器的配置文件，同时稍微的带你入门一点 neovim，但没那么零基础哦。
+我的配置文件在 Avimitin/nvim , 欢迎 fork 使用。
+下载安装 neovim 有一个很重要的 pop_up_windows 弹出窗口特性在 0.5.0 版本才有，还有很多 TUI 的支持，蛮多插件依赖于这些特性的，所以我不建议在默认源的包管理器中下载稳定版的 0.4 版本。关于 neovim 的安装指南在 wiki 里面有，Ubuntu 的话也可以通过添加 PPA 源的方式，添加 unstable 源用 apt 包管理器安装：
+# 如果你已经安装了，先卸载 sudo apt remove neovim # 添加 0.5.0 的源 sudo add-apt-repository ppa:neovim-ppa/unstable sudo apt-get update sudo apt install neovim 安装好 neovim 之后，还需要安装 Python3 和 NodeJS 来获得完全的插件支持：
+sudo apt install python3 python3-pip NodeJS 非常不推荐在包管理器中安装，建议查看 NVM 安装教程或参考这篇文章 。</description>
+    </item>
+    
+  </channel>
+</rss>

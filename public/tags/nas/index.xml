@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>nas on sh1marin&#39;s Blog</title>
+    <link>https://blog.sh1mar.in/tags/nas/</link>
+    <description>Recent content in nas on sh1marin&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://blog.sh1mar.in/tags/nas/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Windows Server 2019搭建NAS</title>
+      <link>https://blog.sh1mar.in/post/windows-server-2019%E6%90%AD%E5%BB%BAnas%E7%9A%84%E4%B8%80%E4%BA%9B%E6%80%BB%E7%BB%93/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.sh1mar.in/post/windows-server-2019%E6%90%AD%E5%BB%BAnas%E7%9A%84%E4%B8%80%E4%BA%9B%E6%80%BB%E7%BB%93/</guid>
+      <description>Windows Server 2019搭建NAS的一些总结 前言 前几天心血来潮想要搭建NAS，尝试在Windows Server 2019上搭建，经过30多个小时的折腾以后，被Windows的防火墙，文件权限和账户管理弄到崩溃；被Linux的众多命令和软件迭代浪费不少时间。谷歌了不少资料和文档，发现没有见到过完整的，能够手把手教学的NAS搭建教学和问题总结，走了不少弯路，有些问题到现在都还没有解决。所以为了方便自己之后的检索和其他入门朋友的学习，我把自己看的资料给整理摘录起来，并且记录一些经验。 总结分Windows Server（半成品，大多为失败的经验）和Ubuntu（完成度已经满足个人需求）两个环境，如果你是Linux平台使用者请看我下一篇文章。
+  Windows Server 2019 环境下NAS搭建问题总结
+ 我对NAS的要求是这样的：
+  SAMBA共享，做一个本地云盘，身边移动设备随时拷贝设备。 离线下载机，通过web管理任务。 家庭影院站点。 全WEB管理，不需要额外管理硬件（不用外接显示器鼠标键盘）   那么就先从系统搭建开始，黑群晖是不会去考虑的了，又不可靠也不方便，折腾起来要人命。于是就在Windows Server和Linux之间选择。考虑着自己是小白，而且已经习惯了Windows的交互方式，所以一开始选择了Windows Server（以下简称WS）。
+ 那么就开始WS的安装 (心态崩溃的说，我觉得直接用Win10搭建更省力。)
+先从MSDN上下载了WS2019【ed2k链接得用迅雷下载嗷】。
+下载完之后用UltraISO烧录进U盘。
+然后点击工具栏的启动，选择 写入硬盘映像 。
+写入完成以后重启，按F12（看你的系统boot选项），选择U盘安装，其余步骤就自己选择，不在这里细讲
+注意：最好选择带有桌面体验的版本，不然进去就是PowerShell配置，满屏命令让你怀疑人生。
+ Windows Server初步配置[1] 系统安装好以后首先第一步是要处理账户问题，对于一台NAS机来说首先最重要的就是摁下开机键马上就开始工作，所以免密登陆是必要的。
+我们用 Win+R运行gpedit.msc打开组策略编辑器，找到 计算机配置-Windows设置-安全设置-账户策略-密码策略 中，把 密码必须符合复杂性 要求禁用。然后去 控制面板-用户账户 中输入当前密码， 新密码留空 ，确认后就把密码取消了。
+虽然取消了密码，但是开机还需要按Ctrl+Alt+Del ，来开机，这个时候就需要进行账户配置。我们需要进入系统后，按Win+R键打开[运行]，输入secpol.msc回车打开 [本地安全策略-本地策略-安全选项] 找到 [交互式登录:无须按Crtl+Alt+Del] 并双击打开设为启用。
+顺便到下面找到并禁用 [账户:使用空密码的本地账户只允许进行控制台登录] ，以便在远程登陆时能够成功免密码登录，
+为了让开机直接能够进入系统，不需要任何操作，我们还需要进行一步。通过 **Win+R[运行]control userpasswords2** ，从而打开 [本地用户账户设置] ，取消勾选**[要使用本机，用户必须输入用户名和密码]**并确认。
+重启之后对账户进行修改，打开 [服务器管理器-本地服务器] 点击计算机名，可以直接在弹窗中更改你的 计算机描述 ，点击下面的更改进入二级选单，更改计算机名为“你的名字”，这里防止冲突不推荐把计算机名和管理员名设置成相同的，最好能使用两个独立的名字。</description>
+    </item>
+    
+    <item>
+      <title>使用Linux搭建NAS</title>
+      <link>https://blog.sh1mar.in/post/linux%E4%B8%8B%E9%85%8D%E7%BD%AEnas%E7%9A%84%E4%B8%80%E4%BA%9B%E6%80%BB%E7%BB%93%E7%BB%8F%E9%AA%8C/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.sh1mar.in/post/linux%E4%B8%8B%E9%85%8D%E7%BD%AEnas%E7%9A%84%E4%B8%80%E4%BA%9B%E6%80%BB%E7%BB%93%E7%BB%8F%E9%AA%8C/</guid>
+      <description>Linux下配置NAS的一些总结经验 前言 经历了上一次的Windows Server的痛苦配置以后，我决定换成Linux来配置NAS。相对于Windows平台，Linux平台会更加自由和简洁。而且清晰的权限和后台也要比Win更加干净，唯一的弊端就是要去学不少命令。但是我这里会帮你总结好大部分要用到的命令，快速帮你搭建好Linux平台下的NAS。
+Linux的系统选择 我选择的是Ubuntu 18.04。但是对于NAS来说，稳定且更新少是必要需求，所以我更加推荐Arch Linux。简洁干净，最好减少桌面配置，减少GPU占用。
+配置思路  SMB高速传输 基于Web的离线下载 SSH命令行和Web页面管理系统   系统安装 下载好.iso文件以后，用UltraISO烧录进U盘里。然后重启，按F12进入BIOS，检查启动列表，要打开UEFI启动选项。然后保存设置退出，按F8打开启动列表，选择UEFI 你的U盘。进入系统选择第一项，直接安装。关于硬盘配置，我只有一个SSD和一个HDD，所以把系统安装在SSD，让安装程序自动分区，HDD自动挂载用来做数据盘。其余没什么好说的，按照自己的需求一直下一部就行了。
+NAS正式配置 SAMBA配置 一、安装Ubuntu SAMBA服务器
+ 更新软件源：输入命令sudo apt-get update更新软件源 安装SAMBA服务：输入命令sudo apt-get install samba安装SAMBA服务器。  二、创建SAMBA配置文件
+ 创建共享目录：sudo mkdir -p /你的共享文件夹路径 #mkdir -p 用来创建路径中不存在的路径。 修改配置文件：sudo vim /etc/samba/smb.conf #没有vim的请输入命令sudo apt-get vim  vim的使用方法  进入配置文件之后，按i进入编辑模式，把所有字段全部删除，输入以下配置(#号后注释文字要删除）：
+[你的配置名] #这里是分享路径配置 comment = User&amp;#39;s NAS #这一段是标记，对配置没有影响。 path = /你的共享文件夹路径 #写上你自己的共享路径 read only = no #是否只读 browseable = yes #是否可浏览 [另一个配置名] #如果同一台机子你想分开共享路径，就把上面的配置复制到这里。 三、创建SAMBA用户</description>
+    </item>
+    
+  </channel>
+</rss>

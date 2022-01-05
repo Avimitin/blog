@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+<html lang="en-us">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+  
+  <title>Self-Hosted 的 CI/CD 软件 Drone 安装配置实战 - sh1marin&#39;s Blog</title>
+
+  
+  
+  <meta name="description" content="Drone 安装配置实战 前言 因为穷用不起 GitLab，又想拥有一个自己的代码分发平台，于是搭建了自己的 Gitea，然而因为 Gitea 没有 DevOps，我不得不设置多一条 remote 上游来嫖 GitHub action 来用。这个寒假趁着事情不多，花了2个小时折腾了一下可独立部署的 CI/CD 程序：Drone。
+安装 Drone 你需要：一台公网服务器；一台性能不错的服务器；GitHub，GitLab，Gitea 或者任意你正在使用且支持 Drone 的平台；一个域名。
+下载 为了干净和快，Server 和 Runner 都采用了 Docker 来安装。所以首先要把 Docker 装上
+安装 Docker 下面的方法仅适用于 Ubuntu，别的 Linux 发行版建议前往官网查询安装方法 。
+# 安装配置 https 源的依赖 sudo apt-get install \  apt-transport-https \  ca-certificates \  curl \  gnupg-agent \  software-properties-common # 增加 Docker 的签名 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - # 确认签名是否相同 sudo apt-key fingerprint 0EBFCD88 pub rsa4096 2017-02-22 [SCEA] 9DC8 5822 9FC7 DD38 854A E2D8 8D81 803C 0EBF CD88 uid [ unknown] Docker Release (CE deb) &lt;docker@docker." />
+  <meta name="author" content="" />
+  
+
+  
+  
+  
+  
+  
+  
+  <link rel="preload stylesheet" as="style" href="https://blog.sh1mar.in/app.min.css" />
+
+  
+  <link rel="preload stylesheet" as="style" href="https://blog.sh1mar.in/an-old-hope.min.css" />
+  <script
+    defer
+    src="https://blog.sh1mar.in/highlight.min.js"
+    onload="hljs.initHighlightingOnLoad();"
+  ></script>
+  
+
+  
+  <link rel="preload" as="image" href="https://blog.sh1mar.in/theme.png" />
+
+  
+
+  
+  <link rel="icon" href="https://blog.sh1mar.in/favicon.ico" />
+  <link rel="apple-touch-icon" href="https://blog.sh1mar.in/apple-touch-icon.png" />
+
+  
+  <meta name="generator" content="Hugo 0.91.2" />
+
+  
+  
+
+  
+  
+  
+  
+  
+  
+  
+  <meta property="og:title" content="Self-Hosted 的 CI/CD 软件 Drone 安装配置实战" />
+<meta property="og:description" content="Drone 安装配置实战 前言 因为穷用不起 GitLab，又想拥有一个自己的代码分发平台，于是搭建了自己的 Gitea，然而因为 Gitea 没有 DevOps，我不得不设置多一条 remote 上游来嫖 GitHub action 来用。这个寒假趁着事情不多，花了2个小时折腾了一下可独立部署的 CI/CD 程序：Drone。
+安装 Drone 你需要：一台公网服务器；一台性能不错的服务器；GitHub，GitLab，Gitea 或者任意你正在使用且支持 Drone 的平台；一个域名。
+下载 为了干净和快，Server 和 Runner 都采用了 Docker 来安装。所以首先要把 Docker 装上
+安装 Docker 下面的方法仅适用于 Ubuntu，别的 Linux 发行版建议前往官网查询安装方法 。
+# 安装配置 https 源的依赖 sudo apt-get install \  apt-transport-https \  ca-certificates \  curl \  gnupg-agent \  software-properties-common # 增加 Docker 的签名 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - # 确认签名是否相同 sudo apt-key fingerprint 0EBFCD88 pub rsa4096 2017-02-22 [SCEA] 9DC8 5822 9FC7 DD38 854A E2D8 8D81 803C 0EBF CD88 uid [ unknown] Docker Release (CE deb) &lt;docker@docker." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://blog.sh1mar.in/post/self-hosted-%E7%9A%84-cicd-%E8%BD%AF%E4%BB%B6-drone-%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E5%AE%9E%E6%88%98/" /><meta property="article:section" content="post" />
+
+
+
+
+  
+  <meta itemprop="name" content="Self-Hosted 的 CI/CD 软件 Drone 安装配置实战">
+<meta itemprop="description" content="Drone 安装配置实战 前言 因为穷用不起 GitLab，又想拥有一个自己的代码分发平台，于是搭建了自己的 Gitea，然而因为 Gitea 没有 DevOps，我不得不设置多一条 remote 上游来嫖 GitHub action 来用。这个寒假趁着事情不多，花了2个小时折腾了一下可独立部署的 CI/CD 程序：Drone。
+安装 Drone 你需要：一台公网服务器；一台性能不错的服务器；GitHub，GitLab，Gitea 或者任意你正在使用且支持 Drone 的平台；一个域名。
+下载 为了干净和快，Server 和 Runner 都采用了 Docker 来安装。所以首先要把 Docker 装上
+安装 Docker 下面的方法仅适用于 Ubuntu，别的 Linux 发行版建议前往官网查询安装方法 。
+# 安装配置 https 源的依赖 sudo apt-get install \  apt-transport-https \  ca-certificates \  curl \  gnupg-agent \  software-properties-common # 增加 Docker 的签名 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - # 确认签名是否相同 sudo apt-key fingerprint 0EBFCD88 pub rsa4096 2017-02-22 [SCEA] 9DC8 5822 9FC7 DD38 854A E2D8 8D81 803C 0EBF CD88 uid [ unknown] Docker Release (CE deb) &lt;docker@docker.">
+
+<meta itemprop="wordCount" content="350">
+<meta itemprop="keywords" content="devops,ci," />
+  
+  <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Self-Hosted 的 CI/CD 软件 Drone 安装配置实战"/>
+<meta name="twitter:description" content="Drone 安装配置实战 前言 因为穷用不起 GitLab，又想拥有一个自己的代码分发平台，于是搭建了自己的 Gitea，然而因为 Gitea 没有 DevOps，我不得不设置多一条 remote 上游来嫖 GitHub action 来用。这个寒假趁着事情不多，花了2个小时折腾了一下可独立部署的 CI/CD 程序：Drone。
+安装 Drone 你需要：一台公网服务器；一台性能不错的服务器；GitHub，GitLab，Gitea 或者任意你正在使用且支持 Drone 的平台；一个域名。
+下载 为了干净和快，Server 和 Runner 都采用了 Docker 来安装。所以首先要把 Docker 装上
+安装 Docker 下面的方法仅适用于 Ubuntu，别的 Linux 发行版建议前往官网查询安装方法 。
+# 安装配置 https 源的依赖 sudo apt-get install \  apt-transport-https \  ca-certificates \  curl \  gnupg-agent \  software-properties-common # 增加 Docker 的签名 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - # 确认签名是否相同 sudo apt-key fingerprint 0EBFCD88 pub rsa4096 2017-02-22 [SCEA] 9DC8 5822 9FC7 DD38 854A E2D8 8D81 803C 0EBF CD88 uid [ unknown] Docker Release (CE deb) &lt;docker@docker."/>
+
+  
+  
+</head>
+
+
+  <body class="not-ready" data-menu="false">
+    <header class="header">
+  
+  <p class="logo">
+    <a class="site-name" href="https://blog.sh1mar.in">sh1marin&#39;s Blog</a><a class="btn-dark"></a>
+  </p>
+  
+
+  <script>
+    let bodyClx = document.body.classList;
+    let btnDark = document.querySelector('.btn-dark');
+    let sysDark = window.matchMedia('(prefers-color-scheme: dark)');
+    let darkVal = localStorage.getItem('dark');
+
+    let setDark = (isDark) => {
+      bodyClx[isDark ? 'add' : 'remove']('dark');
+      localStorage.setItem('dark', isDark ? 'yes' : 'no');
+    };
+
+    setDark(darkVal ? darkVal === 'yes' : sysDark.matches);
+    requestAnimationFrame(() => bodyClx.remove('not-ready'));
+
+    btnDark.addEventListener('click', () => setDark(!bodyClx.contains('dark')));
+    sysDark.addEventListener('change', (event) => setDark(event.matches));
+  </script>
+
+  
+  
+
+  
+</header>
+
+
+    <main class="main">
+
+<article class="post-single">
+  <header class="post-title">
+    <p>
+      <time>Jan 1, 1</time>
+      
+    </p>
+    <h1>Self-Hosted 的 CI/CD 软件 Drone 安装配置实战</h1>
+  </header>
+  <section class="post-content"><h1 id="drone-安装配置实战">Drone 安装配置实战</h1>
+<h2 id="前言">前言</h2>
+<p>因为穷用不起 GitLab，又想拥有一个自己的代码分发平台，于是搭建了自己的 Gitea，然而因为 Gitea 没有 DevOps，我不得不设置多一条 remote 上游来嫖 GitHub action 来用。这个寒假趁着事情不多，花了2个小时折腾了一下可独立部署的 CI/CD 程序：Drone。</p>
+<p>安装 Drone 你需要：一台公网服务器；一台性能不错的服务器；GitHub，GitLab，Gitea 或者任意你正在使用且支持 Drone 的平台；一个域名。</p>
+<h2 id="下载">下载</h2>
+<p>为了干净和快，Server 和 Runner 都采用了 Docker 来安装。所以首先要把 Docker 装上</p>
+<h3 id="安装-docker">安装 Docker</h3>
+<p>下面的方法仅适用于 Ubuntu，别的 Linux 发行版建议前往官网查询<a href="https://docs.docker.com/engine/install/">安装方法</a> 。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># 安装配置 https 源的依赖</span>
+sudo apt-get install <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>    apt-transport-https <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>    ca-certificates <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>    curl <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>    gnupg-agent <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>    software-properties-common
+    
+<span style="color:#75715e"># 增加 Docker 的签名</span>
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+<span style="color:#75715e"># 确认签名是否相同</span>
+sudo apt-key fingerprint 0EBFCD88
+
+pub   rsa4096 2017-02-22 <span style="color:#f92672">[</span>SCEA<span style="color:#f92672">]</span>
+      9DC8 <span style="color:#ae81ff">5822</span> 9FC7 DD38 854A  E2D8 8D81 803C 0EBF CD88
+uid           <span style="color:#f92672">[</span> unknown<span style="color:#f92672">]</span> Docker Release <span style="color:#f92672">(</span>CE deb<span style="color:#f92672">)</span> &lt;docker@docker.com&gt;
+sub   rsa4096 2017-02-22 <span style="color:#f92672">[</span>S<span style="color:#f92672">]</span>
+
+<span style="color:#75715e"># 然后增加 docker(x86-64 版本) 源</span>
+sudo add-apt-repository <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>   <span style="color:#e6db74">&#34;deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+</span><span style="color:#e6db74">   </span><span style="color:#66d9ef">$(</span>lsb_release -cs<span style="color:#66d9ef">)</span><span style="color:#e6db74"> \
+</span><span style="color:#e6db74">   stable&#34;</span>
+
+<span style="color:#75715e"># 更新源并安装</span>
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io
+
+<span style="color:#75715e"># 测试安装成功与否</span>
+sudo docker run hello-world
+</code></pre></div><h3 id="拉取-drone">拉取 Drone</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sudo docker pull drone/drone:1
+</code></pre></div><h3 id="拉取-drone-worker">拉取 Drone Worker</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sudo docker pull drone/drone-runner-docker:1
+</code></pre></div><h2 id="配置">配置</h2>
+<h3 id="gitea">Gitea</h3>
+<p>首先打开你的 Gitea 主页，右上角点击 settings，点击中间的 application 进入 OAuth 页面</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Avimitin/PicStorage/pic/20210204151736.png" alt=""></p>
+<p>拖动到下面，点击 Manage OAuth2 Applications 栏目的 Create a new OAuth2 Application 表单。Application Name 随你喜欢的填写，Redirect URI 填写你的 Drone 域名。</p>
+<blockquote>
+<p>比如：Application Name = Drone; Redirect URI = <a href="https://drone.example.com">https://drone.example.com</a> 。</p>
+</blockquote>
+<p><img src="https://docs.drone.io/screenshots/gitea_application_create.png" alt=""></p>
+<p>然后 Gitea 会生成 Client ID 和 Client Secret，先不要急着点 Save，打开你的机器，先把 server 的信息填好启动。</p>
+<h3 id="drone-server">Drone Server</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sudo docker run <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  --volume<span style="color:#f92672">=</span>/var/lib/drone:/data <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  --env<span style="color:#f92672">=</span>DRONE_GITEA_SERVER<span style="color:#f92672">=</span>https://gitea.example.com <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  --env<span style="color:#f92672">=</span>DRONE_GITEA_CLIENT_ID<span style="color:#f92672">=</span>Client ID <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  --env<span style="color:#f92672">=</span>DRONE_GITEA_CLIENT_SECRET<span style="color:#f92672">=</span>Client Secret <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  --env<span style="color:#f92672">=</span>DRONE_RPC_SECRET<span style="color:#f92672">=</span>rand Hash <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  --env<span style="color:#f92672">=</span>DRONE_SERVER_HOST<span style="color:#f92672">=</span>drone.example.com <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  --env<span style="color:#f92672">=</span>DRONE_SERVER_PROTO<span style="color:#f92672">=</span>https <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  --publish<span style="color:#f92672">=</span>80:80 <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  --publish<span style="color:#f92672">=</span>443:443 <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  --restart<span style="color:#f92672">=</span>always <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  --detach<span style="color:#f92672">=</span>true <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  --name<span style="color:#f92672">=</span>drone <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  drone/drone:1
+</code></pre></div><p>上面的变量中，你需要自定义并修改</p>
+<ul>
+<li><code>DRONE_GITEA_SERVER</code> 填入你的 Gitea 域名(必须带上 http 或 https 前缀)</li>
+<li><code>DRONE_GITEA_CLIENT_ID</code> 填入刚刚 Gitea 生成的 Client ID</li>
+<li><code>DRONE_GITEA_CLIENT_SECRET</code> 填入刚刚 Gitea 生成的 Client Secret</li>
+<li><code>DRONE_RPC_SECRET</code> 填入一串密钥，你可以在命令行输入 <code>openssl rand -hex 16</code> 来随机生成。</li>
+<li><code>DRONE_SERVER_HOST</code> 填入你的 drone 服务器域名，不要填入 http 或者 https 前缀，只需要域名</li>
+<li><code>DRONE_SERVER_PROTO</code> 填 https 协议就好。</li>
+</ul>
+<p>然后回车启动服务器。在 Gitea 的 Application 页面点击 Save 保存这个 OAuth2 应用。</p>
+<p>在浏览器访问你的 Drone 域名，页面会先跳转回 Gitea 进行 OAuth2 验证，你需要点击确定来授权 Drone 访问你的仓库。如果一切顺利，在几秒的空白页之后你就能见到一列仓库了。</p>
+<h3 id="drone-worker">Drone Worker</h3>
+<p>在终端运行：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">sudo docker run -d <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  -v /var/run/docker.sock:/var/run/docker.sock <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  -e DRONE_RPC_PROTO<span style="color:#f92672">=</span>https <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  -e DRONE_RPC_HOST<span style="color:#f92672">=</span>drone.company.com <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  -e DRONE_RPC_SECRET<span style="color:#f92672">=</span>super-duper-secret <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  -e DRONE_RUNNER_CAPACITY<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span> <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  -e DRONE_RUNNER_NAME<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>HOSTNAME<span style="color:#e6db74">}</span> <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  -p 3000:3000 <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  --restart always <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  --name runner <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>  drone/drone-runner-docker:1
+</code></pre></div><p>你需要定义的配置有：</p>
+<ul>
+<li><code>DRONE_RPC_HOST</code> 设置为你的 Drone 域名</li>
+<li><code>DRONE_RPC_SECRET</code> 设置为刚刚在服务器填入的随机生成的密钥</li>
+<li><code>DRONE_RUNNER_NAME</code> 随你喜欢设置名字</li>
+</ul>
+<p>然后回车运行，输入 <code>docker logs hash(run 之后弹出的哈希值)</code>  查看 runner 是否正常运行。</p>
+<h2 id="各类问题">各类问题</h2>
+<ol>
+<li>页面一直空白，没反应</li>
+</ol>
+<p>查看一下是不是服务器的 <code>DRONE_GITEA_SERVER</code> 变量填写少写了 https 或者 http，导致跳转失败。</p>
+<ol start="2">
+<li>在仓库里加入了 <code>.drone.yml</code> 之后没反应</li>
+</ol>
+<p>打开你的仓库，点击设置，拉到 webhook 选项，试着推送一次，看看有没有错误。</p>
+</section>
+
+  
+  
+  <footer class="post-tags">
+     
+    <a href="https://blog.sh1mar.in/tags/devops">devops</a>
+     
+    <a href="https://blog.sh1mar.in/tags/ci">ci</a>
+    
+  </footer>
+  
+
+  
+  
+  
+  <nav class="post-nav">
+    
+    <a class="prev" href="https://blog.sh1mar.in/post/neovim/neovim-tutorial/"><span>←</span><span>neovim 的简易教程</span></a>
+     
+    <a class="next" href="https://blog.sh1mar.in/post/git/sign-your-commit-with-gpg/"><span>Sign Your Commit With GPG</span><span>→</span></a>
+    
+  </nav>
+  
+
+  
+  
+</article>
+
+</main>
+
+    <footer class="footer">
+  <p>&copy; 2022 <a href="https://blog.sh1mar.in">sh1marin&#39;s Blog</a></p>
+  <p>Powered by <a href="https://gohugo.io/" rel="noopener" target="_blank">Hugo️️</a>️</p>
+  <p>
+    <a href="https://github.com/nanxiaobei/hugo-paper" rel="noopener" target="_blank">Paper 5.1</a>
+  </p>
+</footer>
+
+  </body>
+</html>
