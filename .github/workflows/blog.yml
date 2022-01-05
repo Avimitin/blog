@@ -1,42 +1,33 @@
-name: blog
+name: Hugo Deploy
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - main  # Set a branch to deploy
   pull_request:
-    branches: [ master ]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
+  deploy:
+    runs-on: ubuntu-20.04
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+        with:
+          submodules: true  # Fetch Hugo themes (true OR recursive)
+          fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
 
-    - name: install theme
-      run: git submodule init && git submodule update
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: 'latest'
 
-    - name: setup node
-      uses: actions/setup-node@v2
+      - name: Build
+        run: hugo --minify
 
-    - name: install hexo
-      run: sudo npm install -g hexo
-
-    - name: setup build environment
-      run: npm install
-
-    - name: build
-      run: hexo generate
-
-    - name: deploy
-      env:
-        USER: 'avimitin'
-        EMAIL: 'avimitin@gmail.com'
-        REPO: 'github.com/Avimitin/blog'
-        TOKEN: ${{ secrets.GH_TOKEN }}
-      run: |
-        git config --global user.name $USER
-        git config --global user.email $EMAIL
-        cd public && git init -b gh-pages && git add .
-        git commit -m "update blog"
-        git push --force "https://$TOKEN@$REPO" gh-pages:gh-pages
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        if: ${{ github.ref == 'refs/heads/main' }}
+        with:
+          github_token: ${{ secrets.GH_TOKEN }}
+          publish_dir: ./public
