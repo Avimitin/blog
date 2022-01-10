@@ -1,7 +1,7 @@
 ---
 title: 'Sign Your Commit With GPG'
 author: avimitin
-date: 2021/07/06
+date: 2021-07-06
 tag: [gpg, git, privacy]
 ---
 # 使用 GPG 来签名 Commit
