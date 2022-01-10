@@ -5,7 +5,8 @@ tag = ['git', 'commit']
 +++
 ## 前言
 
-最近对自己的 commit convention 看得有点烦躁了。
+最近对自己的 [commit convention](https://commit-convention.sh1mar.in/)
+看得有点烦躁了。
 我觉得自己又再次陷入了用一堆问题来解决另一堆问题的困境。
 
 先简单讲讲具体发生了一些什么事情。
