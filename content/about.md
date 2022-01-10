@@ -4,7 +4,7 @@ title = "Who is sh1marin"
 description = "Who cares?"
 aliases = ["about-us", "contact"]
 +++
-我叫 Avimitin，我也叫 sh1marin，我还叫 CookieBacon。
+我叫 Avimitin，也叫 sh1marin，还叫 CookieBacon。
 
 叫 Avimitin 是因为高中的时候迷恋各类音乐。
 那段时间我很喜欢 Avicii 的电子乐，Coldplay 的摇滚，还有初音未来的旧曲目。
