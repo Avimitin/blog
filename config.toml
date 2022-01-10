@@ -8,3 +8,8 @@ hasCJKLanguage = true
 [params]
   twitter="sh1ma_rin"
   github="Avimitin"
+
+[menu]
+[[menu.main]]
+  name = 'RSS'
+  url = 'https://blog.sh1mar.in/index.xml'
