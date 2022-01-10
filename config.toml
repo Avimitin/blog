@@ -2,7 +2,7 @@ baseURL = 'https://blog.sh1mar.in'
 languageCode = 'en-us'
 title = "sh1marin's Blog"
 theme = "paper"
-copyright = "cc-by-sa"
+copyright = "Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)"
 hasCJKLanguage = true
 
 [params]
