@@ -1,15 +1,11 @@
 baseURL = 'https://blog.sh1mar.in'
 languageCode = 'en-us'
-title = "sh1marin's Blog"
+title = "sh1marin's blog"
 theme = "paper"
 copyright = "Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)"
 hasCJKLanguage = true
 
 [params]
-  twitter="sh1ma_rin"
-  github="Avimitin"
-
-[menu]
-[[menu.main]]
-  name = 'RSS'
-  url = 'https://blog.sh1mar.in/index.xml'
+  twitter="https://twitter.com/sh1ma_rin"
+  github="https://github.com/Avimitin"
+  rss="https://blog.sh1mar.in/index.xml"
