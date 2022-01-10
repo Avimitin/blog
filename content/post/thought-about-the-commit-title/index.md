@@ -2,6 +2,7 @@
 title = '对 commit title 的一些思考'
 date  = '2022-01-10'
 tag = ['git', 'commit']
+author = Avimitin
 +++
 ## 前言
 

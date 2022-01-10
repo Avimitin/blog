@@ -1,6 +1,7 @@
 ---
 title: How to write commit
 date: 2021-10-22
+author: Avimitin
 tags:
 - git
 - commit

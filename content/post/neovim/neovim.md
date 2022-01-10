@@ -1,6 +1,7 @@
 ---
 title: 让你的 neovim 像 IDE 一样强大
 date: 2021-02-04
+author: Avimitin
 tags:
 - neovim
 - coc.nvim

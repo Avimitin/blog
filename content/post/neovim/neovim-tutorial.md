@@ -1,6 +1,7 @@
 ---
 title: neovim 的简易教程 [WIP]
 date: 2021-10-31
+author: Avimitin
 tags:
 - neovim
 ---
