@@ -1,11 +1,46 @@
 baseURL = 'https://blog.sh1mar.in'
-languageCode = 'en-us'
+languageCode = 'zh'
 title = "sh1marin's blog"
 theme = "paper"
-copyright = "Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)"
+copyright = "Copyright © 2019-2022, Avimitin and the sh1mar.in; all rights reserved."
 hasCJKLanguage = true
+paginate = 6
 
 [params]
   twitter="https://twitter.com/sh1ma_rin"
   github="https://github.com/Avimitin"
   rss="https://blog.sh1mar.in/index.xml"
+
+[menu]
+  [[menu.main]]
+  identifier = "about"
+  name = "About"
+  url = "/about/"
+  weight = 10
+
+[privacy]
+
+  [privacy.vimeo]
+    disabled = false
+    simple = true
+
+  [privacy.twitter]
+    disabled = false
+    enableDNT = true
+    simple = true
+
+  [privacy.instagram]
+    disabled = false
+    simple = true
+
+  [privacy.youtube]
+    disabled = false
+    privacyEnhanced = true
+
+[services]
+
+  [services.instagram]
+    disableInlineCSS = true
+
+  [services.twitter]
+    disableInlineCSS = true
