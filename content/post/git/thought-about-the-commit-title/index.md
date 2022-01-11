@@ -114,3 +114,33 @@ rewrite 则对应 minor version，带感叹号的对应 major version。
 既然这样，type prefix 对我而言，最初的意义已经消失了。
 我开始考虑要不要把三明治去掉一层，只用 module: change，
 就行。不过这也要等我实践一段时间之后才能得到答案了。
+
+---
+
+睡醒之后又再思考了一番，发现自己也错过了一个盲点。
+
+给 commit 加上 type prefix 分类可以帮助我超高速的
+略读 git log。有了 type prefix，很快就能知道这个
+commit 是不是重要的。
+
+比方说，我现在有一个后端项目，关于数据库交接的部分
+曾经有一个 bug，修复了之后发现和 redis 交接的部分
+也出现了类似的 bug。现在想回过头去看看当时是怎么处理
+这个 bug 的。
+
+如果没有这种 commit 类型标注，你可能需要在数据库
+这一类的 commit 中找一段时间，看看哪个 commit 是
+修 bug 的。然后还要从一堆修 bug 的 commit 中找
+当时的修改。
+
+当然这个也很好解决，完全不需要前缀。可以固定几个
+summary 的开头动词。因为 title 是尽量以命令式
+的语气来写的，那么对于一个新功能，我可以固定使用
+add/impl 等之类动词开头。修复 bug 就固定用 fix
+开头，而普通代码更改就用 rewrite 开头。
+
+```text
+db: fix the localhost bind error
+redis: implement new API `get_setu_cache()`
+prj: rewrite the commit title format
+```
