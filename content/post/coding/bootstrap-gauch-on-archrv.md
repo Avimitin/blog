@@ -53,7 +53,7 @@ rustc 的时候会需要用到旧版的 rustc。
 > （不过这两个实际上可以采取下面说的第二种方法）
 > 2. 第二种方法是在其他架构交叉编译，典型例子是 GCC，Rust 和 JDK。
 >
-> -- By [Coelacanthus](https://github.com/CoelacanthusHex)
+> -- [Coelacanthus](https://github.com/CoelacanthusHex)
 
 所以我需要写一个新的构建脚本来构建一个新的包，给 gauche 这个包提供他自己。
 
