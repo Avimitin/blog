@@ -39,6 +39,13 @@ winetricks dotnet40
 
 他在启动的时候会问你要不要装 Gecko，也不要安装，直接取消即可。
 
+> 为什么 osu stable 和 osu lazer 不能加入到官方源呢？
+>
+> 这里有个商标问题。osu 的软件本体是用 MIT License 开源的，但 osu 这个标志则是有商标保护的，
+> 而 Arch Linux 不被授权分发。
+>
+> Peppy 的回复： https://github.com/ppy/osu/issues/3723#issuecomment-439010666
+
 # 安装驱动
 
 想要 wine 正常运行游戏还需要安装两个驱动。
@@ -168,3 +175,24 @@ export STAGING_AUDIO_DURATION=5000
 
 还有一件事，`/usr/bin/osu-stable` 这个文件会在下次更新 osu 的时候
 被覆写，建议调好变量之后做好备份，在下次更新之后 cp 覆盖回去就行了。
+
+# 文件访问
+
+OSU 的游戏目录映射到了 `$XDG_DATA_HOME/osu-stable` 下，一般如果没有
+特意设置这个变量，都会存放在 `~/.local/share/osu-stable` 下。
+下载好的皮肤和歌直接移动进去就行了。
+
+理论上来讲安装 osu 的时候，他会复制一份 `osu.desktop` 文件到
+`/usr/share/applications/` 目录下，里面写好了各类 osu 文件的 mime type。
+对于常见的 DE 直接双击文件就好了，终端用户可以用 `xdg-open` 这个命令。
+
+但如果你的系统不能正确识别 mime type ，皮肤解压就会有点麻烦。
+你可以把 `.osk` 文件复制到 `~/.local/share/osu-stable/Skins` 目录下
+之后，进入游戏按 `Ctrl-o` 打开设置，在设置最顶上有个打开游戏目录的选项，
+点击之后就能使用一个 Windows 的文件管理器，在里面双击你的 `.osk` 文件，
+就能正确识别 mime type 并调用 osu 来解压了。
+
+歌曲的话不用解压，每次导入新歌在游戏内摁 `F5` 就行了。
+
+你可以参考 [wiki](https://wiki.archlinux.org/title/XDG_MIME_Applications)
+来试着修复自己的 mime type。
