@@ -13,7 +13,7 @@ author = 'sh1marin'
 成绩不提交服务器。且 lazer 的键位机制和原版也相去甚远，需要重新适应。
 
 但好在我们还有 Wine。大约在 2009 年的时候 osu 论坛就已经有了用 Wine
-运行 osu 的教程：https://osu.ppy.sh/community/forums/topics/14614?n=1
+运行 osu 的教程：<https://osu.ppy.sh/community/forums/topics/14614?n=1>。
 2015 年 osu 修复了 Wine 里 OpenGL 引擎不能正常运行的问题，在 Linux
 上运行 osu 已经非常简单了。
 
@@ -43,7 +43,7 @@ winetricks dotnet40
 
 想要 wine 正常运行游戏还需要安装两个驱动。
 在安装驱动前你需要先启用 `multilib` 这个源：
-https://wiki.archlinux.org/title/Official_repositories#multilib
+<https://wiki.archlinux.org/title/Official_repositories#multilib>
 
 ## 声卡
 
@@ -115,14 +115,14 @@ sudo rmmod wacom
 
 至少我自己是没听出来，但你也可以参考 The Poon 的博客，把音频延迟降低到极致。
 
-https://blog.thepoon.fr/osuLinuxAudioLatency/
+<https://blog.thepoon.fr/osuLinuxAudioLatency/>
 
 The Poon 里面说的他打好 patch 的 wine 你不需要自己编译，也不需要用他的源。
 在 Arch Linux CN 已经有编译好的版本，加载 Arch Linux CN 源然后下载安装即可。
 
 ## CN 源配置
 
-参考文档： https://www.archlinuxcn.org/archlinux-cn-repo-and-mirror/
+参考文档： <https://www.archlinuxcn.org/archlinux-cn-repo-and-mirror/>
 
 ```bash
 sudo echo -e "[archlinuxcn]\nServer = https://repo.archlinuxcn.org/$arch" >> /etc/pacman.conf
@@ -131,7 +131,7 @@ sudo pacman -S archlinuxcn-keyring
 ```
 
 Arch Linux CN 也有很多国内镜像源，如果你有网络业障可以在这个 Repo 里找
-对你网络友好的镜像： https://github.com/archlinuxcn/mirrorlist-repo
+对你网络友好的镜像： <https://github.com/archlinuxcn/mirrorlist-repo>
 
 ## 下载 The Poon 的 wine
 
