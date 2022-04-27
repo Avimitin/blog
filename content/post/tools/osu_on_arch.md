@@ -196,3 +196,5 @@ OSU 的游戏目录映射到了 `$XDG_DATA_HOME/osu-stable` 下，一般如果�
 
 你可以参考 [wiki](https://wiki.archlinux.org/title/XDG_MIME_Applications)
 来试着修复自己的 mime type。
+
+> See you next time~
