@@ -63,7 +63,7 @@ R! module: rewrite blablabla
 我稍有冗余的用 `.` 来占位。同时让 module 和符号之间隔开一个
 空格。
 
-可能有的人会觉得，为什么不让普通 commit 用空格隔开，breaking
+可能有的人会觉得，为什么不让普通 commit 仅用空格隔开，breaking
 用感叹号占位这个空格。我之前也是这样设计的，但用了一段时间之后
 我觉得太丑陋了。
 
@@ -73,7 +73,7 @@ F!module: lorem ipsum dolor sit amet
 N module: qui minim labore adipisicing
 ```
 
-这里使用不使用符号占位的话，会让 type 和 module 在视觉上保持不一致，
+这里如果轮换使用空格和感叹号的话，会让 type 和 module 在视觉上产生割裂，
 而完全使用符号占位的话将无法直观的分辨出 type 和 module 两个部分。
 虽然我实用主义的删掉了累赘的全称 type，但依旧想保留一些看似冗余，
 却能提升阅读体验的设计。
