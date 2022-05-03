@@ -4,7 +4,7 @@ title = "sh1marin's blog"
 theme = "paper"
 copyright = "Copyright © 2019-2022, Avimitin and the sh1mar.in; all rights reserved."
 hasCJKLanguage = true
-paginate = 6
+paginate = 8
 
 [params]
   twitter="https://twitter.com/sh1ma_rin"
