@@ -4,6 +4,8 @@ date = '2022-04-27'
 tag = ['osu', 'Arch Linux']
 author = 'sh1marin'
 +++
+![screenshot](./images/screenshot.png)
+
 # 前言
 
 在 Arch Linux 上玩 osu 是我许久以来的愿望了。
