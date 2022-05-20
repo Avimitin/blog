@@ -1,7 +1,7 @@
 +++
 title = '2022 年中忏悔'
 date = '2022-05-20'
-tag = ['ideology' 'regret']
+tag = ['ideology', 'regret']
 author = 'sh1marin'
 +++
 <!-- vim: set tw=80 fo+=t :-->
