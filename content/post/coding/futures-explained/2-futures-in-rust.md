@@ -17,13 +17,13 @@ author = 'sh1marin'
 > - leaf-future 和 non-leaf-future 之间的区别
 > - 如何处理 CPU 密集任务
 
-## Futures
+## Future
 
 所以 future 是什么？
 
 future 用来代表一系列在现在不能立即完成，要过一段时间才能完成的操作。
 
-Async 在 Rust 里主要使用轮询(`Poll`)来实现，其中，一个异步任务将需要三个阶段来完成。
+Async Future 的完成在 Rust 里主要使用轮询(`Poll`)来实现，其中，一个异步任务将需要三个阶段来完成。
 
 1. **轮询阶段(The Poll phase)**。当一个 `Future` 被轮询时，与其对应的任务继续将执行，
 直至这个任务被执行到了某个阻塞操作，无法立刻完成而结束。
@@ -127,3 +127,5 @@ future 从睡眠状态中唤醒了。
 `Waker` 用智能指针传输（就像 `Arc<T>` 那样），所有的拷贝都指向同个地址。因此任何
 调用 `Waker` 拷贝的行为都能指向原初的 `Waker`，进而唤醒对应的 Future。
 - Future 拷贝 `Waker` 并把它传到 Reactor 来存储，等待稍后使用。
+
+在
