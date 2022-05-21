@@ -6,6 +6,8 @@ author = 'sh1marin'
 +++
 <!-- vim: set tw=80 fo+=t :-->
 
+![head](./images/TNTyFBi6r9R6g.gif)
+
 # 前言
 
 五月将尽，六月将至。眨眼间 2022 已经过去了一大半了。
