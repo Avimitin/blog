@@ -39,3 +39,10 @@ Arch Linux 在 5.18.15 内核里引入了一个修复：
 
 我用 GRUB 引导，在 /etc/default/grub 文件里的 `GRUB_CMDLINE_LINUX_DEFAULT` 的
 值里增加一个 `"ibt=off"` 即可。
+
+---
+
+2022-08-05 更新
+
+声卡也炸了。。。照旧，查看内核日志 `sudo dmesg | grep -i sof`，发现是 sof-firmware
+缺失了。装上即可 `sudo pacman -S sof-firmware`
