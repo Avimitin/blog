@@ -264,6 +264,10 @@ chown -R nobody $PWD
 sudo -u nobody makepkg -si --noconfirm
 ```
 
+> 但实际上不用这么麻烦，只是更新 binfmt 的话可以直接把 binfmt 下载下来放进去，然后 systemctl restart systemd-binfmt
+>
+> By c10s
+
 ## docker containers use host OS kernel
 
 有 binfmt 了，有 qemu-user-static 了，这下能正常调用 exec 了吧？
@@ -296,11 +300,11 @@ binfmt 是内核在做的事情，而 docker 镜像是共用宿主机内核的�
         uses: actions/upload-artifact@v3
         with:
           name: unmatched-bootloader-image
-          path: /artifact/image-*.raw
+          path: ${{ github.workspace }}/images/image-*.raw
 ```
 
-新的配置去掉了之前所有的构建步骤，去掉了 container 配置，设置上 rv64 的 binfmt
-并下载源码，然后执行源码里的 mkin-docker 脚本。
+新的配置去掉了之前所有的构建步骤，去掉了 container 配置，删掉 AUR 的构建步骤，
+设置上 rv64 的 binfmt action 并下载源码，然后执行源码里的 mkin-docker 脚本。
 
 这个脚本也很简单，就是把删掉的构建步骤移动到 docker run 里，把本地源码挂载进去，
 挂载一个构建好的镜像目录，然后用 archlinux 镜像调用 bash 执行单引号里的命令。
