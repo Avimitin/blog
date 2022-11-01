@@ -7,7 +7,7 @@ author = 'sh1marin'
 
 Unmatched 是 SiFive 发行的一款 RISC-V 的板子。
 办公室的同事写了几个脚本，给这块板子弄了个非常清真，自主可控的
-Arch Linux 固件。但是那几个脚本有些问题，并不能无脑构建出固件。
+Arch Linux 固件。但是那几个脚本有些问题，
 同时也必须需要一个 riscv64 qemu system 或者硬件来构建。
 我对这个脚本稍微做了一些修改，并加上了交叉编译支持，于是这几个脚本
 可以一键无脑在 x86_64 Arch Linux 环境里出 Unmatched 固件了。
