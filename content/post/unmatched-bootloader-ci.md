@@ -5,7 +5,7 @@ tag = ['unmatched', 'github action', 'binfmt']
 author = 'sh1marin'
 +++
 
-Unmatched 是 SiFive 发行的一款 RISC-V 的板子，出厂自带 Ubuntu 系统。
+Unmatched 是 SiFive 发行的一款 RISC-V 的板子。
 办公室的同事写了几个脚本，给这块板子弄了个非常清真，自主可控的
 Arch Linux 固件。但是那几个脚本有些问题，并不能无脑构建出固件。
 同时也必须需要一个 riscv64 qemu system 或者硬件来构建。
