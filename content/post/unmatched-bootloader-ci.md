@@ -81,6 +81,15 @@ fatal: detected dubious ownership in repository at ......
 git config --global --add safe.directory /path/to/srcdir
 ```
 
+当然还有一个更清真的做法：不要自己手动 init submodule，用 actions/checkout 提供的 recursive submodule
+来拉取。
+
+```yaml
+- uses: actions/checkout@v3
+  with:
+    submodules: 'recursive'
+```
+
 ## #2 cannot find unused loop device
 
 接下来依旧进展不顺，CI 执行到了打包镜像的环节，但设置 loop device 的时候 losetup 报错
