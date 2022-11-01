@@ -1,4 +1,9 @@
-# 给 Unmatched Bootloader 写个自动化！
++++
+title = '给 Unmatched Bootloader 写个自动化！'
+date = '2022-11-01'
+tag = ['unmatched', 'github action', 'binfmt']
+author = 'sh1marin'
++++
 
 Unmatched 是 SiFive 发行的一款 RISC-V 的板子，出厂自带 Ubuntu 系统。
 办公室的同事写了几个脚本，给这块板子弄了个非常清真，自主可控的
