@@ -282,7 +282,7 @@ function useDate(machID: string): [DateMenuOption | null, (opt: DateMenuOption) 
 同一个引用值。对于 React 而言，它只能看到用户传了一个和旧值
 一模一样的引用，它并不知道 Map 里面的数据值变化了。
 
-所以为了强制触发引用，这里可以靠创建新的 Map 并传递新的引用：
+所以为了强制触发重渲染，这里可以靠创建新的 Map 并传递新的引用：
 
 ```diff
 function useDate(machID: string): [DateMenuOption | null, (opt: DateMenuOption) => void] {
