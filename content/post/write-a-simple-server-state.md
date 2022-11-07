@@ -290,9 +290,9 @@ function useDate(machID: string): [DateMenuOption | null, (opt: DateMenuOption) 
 
   const setDate = (opt: DateMenuOption) => {
 -    const latest = storage.set(machID, opt);
-+    storage.set(machID, opt);
--    update(latest);
-+    update(new Map(storage))
++    const latest = new Map(storage);
++    latest.set(machID, opt);
+     update(latest);
   }
 
   return [storage.get(machID) || null, setDate];
@@ -300,7 +300,14 @@ function useDate(machID: string): [DateMenuOption | null, (opt: DateMenuOption) 
 ```
 
 Map 类的初始化函数可以接受一个 iterable 的对象用来作为初始化的
-数据来源，我们可以先更新旧的 map，传给初始化函数创建新的 Map。
+数据来源，我们可以从旧的 Map 上创建新的 Map，更新值，传递给 React。
+
+> Q：先改再创建和先创建再改有什么区别吗？
+>
+> Jixun: react 的想法是，你这个对象既然传给我了，就不要再改了，你要是
+> 想改，给我个新的值。
+>
+> 尽量不要对原值做修改，每次修改都通过新值来覆盖。
 
 在用 Array 存 State 的时候则可以用 Array.prototype.slice() 创建一个
 新的 Array Object。
