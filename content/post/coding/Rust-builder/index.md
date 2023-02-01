@@ -1,3 +1,10 @@
++++
+title = 'Rust Builder pattern 学习总结'
+date = '2023-02-01'
+tag = ['rust', 'builder pattern']
+author = 'sh1marin'
++++
+
 过年期间用 Rust 写了个 DeepL API 的库，学了不少 Rust Builder Pattern
 的知识，借此来水一篇新的博客。
 
