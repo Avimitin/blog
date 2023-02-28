@@ -5,7 +5,7 @@ tag = ['Rust', 'trait']
 author = 'sh1marin'
 +++
 
-Sometime I will write some code like:
+Sometimes I will write some code like:
 
 ```rust
 let client = reqwest::Client::new();
@@ -61,7 +61,7 @@ Then any struct that has the `Debug` trait implied can automatically have
 `DebugExt` trait implied, so we can put `.debug()` into the chain
 and inspect the value without breaking the existing code.
 
-Playground: <https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=d283e02ea1b1041e04b21fc478f10271>
+Playground link: <https://play.rust-lang.org/?version=stable&mode=debug&edition=2021&gist=d283e02ea1b1041e04b21fc478f10271>
 
 ## Credit
 
