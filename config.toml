@@ -11,6 +11,7 @@ paginate = 8
   github="Avimitin"
   rss = true
   monoDarkIcon = true
+  math = true
 
 [menu]
   [[menu.main]]
