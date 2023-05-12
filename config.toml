@@ -2,14 +2,14 @@ baseURL = 'https://blog.sh1mar.in'
 languageCode = 'zh'
 title = "sh1marin's blog"
 theme = "paper"
-copyright = "Copyright © 2019-2022, Avimitin and the sh1mar.in; all rights reserved."
+copyright = "Copyright © 2019-2023, Avimitin and the sh1mar.in; all rights reserved."
 hasCJKLanguage = true
 paginate = 8
 
 [params]
-  twitter="https://twitter.com/sh1ma_rin"
-  github="https://github.com/Avimitin"
-  rss="https://blog.sh1mar.in/index.xml"
+  github="Avimitin"
+  rss = true
+  monoDarkIcon = true
 
 [menu]
   [[menu.main]]
