@@ -7,6 +7,7 @@ hasCJKLanguage = true
 paginate = 8
 
 [params]
+  color = "linen"
   github="Avimitin"
   rss = true
   monoDarkIcon = true
