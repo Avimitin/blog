@@ -5,8 +5,6 @@ tag = ['mlir']
 author = 'sh1marin'
 +++
 
-# Sparse Compiler
-
 除了前一篇文章提到的 List of list 结构，还有如 Coodinate format, Compress Sparse Row/Column，
 Diagonal 等数据结构，这些结构虽然设计上大有不同，但理念上是一样的：
 一个只存数据的主存储，和一个额外的，辅助索引的坐标存储。每一种存储格式都是相当重要且
@@ -28,7 +26,7 @@ TACO (Tensor Algebra Compiler) 上，将 sparse compiler 的实现正式化并�
 Aart Bik 领头开发了 MLIR 的 sparse tensor 实现，他在研究如何为 MLIR 实现 sparse compiler
 时发现 TACO 的实现更加严谨优雅，于是最后 MLIR 这边采用了 TACO 的设计。
 
-# MLIR
+## MLIR
 
 在 MLIR 里，存在着许多 Dialect，每个 Dialect 都会定义一些类型，操作，还有属性。
 Dialect之间负责的功能不同，也有着不同层级的抽象。
@@ -142,7 +140,7 @@ MLIR 是强类型的，所以一切的类型转换都需要显示的表达，spa
 %ind = sparse_tensor.indices %t, %c3 : tensor<10x10xf64, #SparseTensor> to memref<?xindex>
 ```
 
-## Sparse Tensor 的优化
+### Sparse Tensor 的优化
 
 在 MLIR 中，Sparse Compiler 的实现是靠一组在 Sparse Tensor Dialect 里在 lowering 时加入的优化实现的。
 像上述提到的对 Sparse 存储的操作，组合和转换 Sparse 存储，遍历非零元素
