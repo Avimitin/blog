@@ -1,5 +1,5 @@
 +++
-title = 'Sparse Tensor Pass - SparsificationAndBufferizationPass'
+title = 'MLIR Sparse Compiler - SparsificationAndBufferizationPass'
 date = '2023-06-05'
 tag = ['mlir']
 author = 'sh1marin'
