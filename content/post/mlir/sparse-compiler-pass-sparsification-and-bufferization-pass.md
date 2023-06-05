@@ -157,25 +157,6 @@ X(i,j) = SUM(k, S(i,j) * A(i,j,k) * B(i,j,k) * ... )
 根据 `vl` 是否在 `sparse-compiler` pass 里设置了大于零的值，还会可选的加入 `createLoopInvariantCodeMotionPass`
 和 `SparseVectorizationPass`。
 
-```c++
-* SparsificationPass
-* PostSparsificationRewritePass
-if (vectorLength > 0) {
-  pm.addPass(mlir::createLoopInvariantCodeMotionPass());
-  pm.addPass(createSparseVectorizationPass(
-      vectorLength, enableVLAVectorization, enableSIMDIndex32));
-}
-if (enableRuntimeLibrary) {
-  pm.addPass(
-      createSparseTensorConversionPass(sparseTensorConversionOptions));
-} else {
-  pm.addPass(createSparseTensorCodegenPass(createSparseDeallocs,
-                                           enableBufferInitialization));
-  pm.addPass(createSparseBufferRewritePass(enableBufferInitialization));
-  pm.addPass(createStorageSpecifierToLLVMPass());
-}
-```
-
 除此之外，根据 `RuntimeLibrary` 选项是否启用，PassManager 还会可选的加入一部分 Pass。
 如果启用了 RuntimeLibrary，则只有 `SparseTensorConversionPass` 会被加入 `OpPassManager`，
 如果没启用，那么会加入 codegen pass `SparseTensorCodegenPass`，还有 `SparseBufferRewritePass`
