@@ -131,7 +131,9 @@ Sparse Tensor 则是通过函数 `runOnOperatoin()` lower，这个函数会跑�
 第一次跑 pipeline 主要是负责 sparse tensor 的 rewrite。在第一条 pipeline 里会创建一个新的 `OpPassManager`，
 其中加入 `PreSparsificationRewritePass` 和 `EmptyTensorToAllocTensorPass`。
 
-* PreSparsificationRewritePass (mlir/lib/Dialect/SparseTensor/Transform/SparseTensorPasses.cpp)
+#### PreSparsificationRewritePass
+
+文件位置：mlir/lib/Dialect/SparseTensor/Transform/SparseTensorPasses.cpp
 
 `PreSparsificationRewritePass` 负责处理重写 sparse tensor，像一些转换 dense tensor 到 sparse tensor，
 重塑 sparse tensor 等。其主要往 `RewritePattenSet` 里加入
@@ -149,6 +151,46 @@ X(i,j) = SUM(k, S(i,j) * A(i,j,k) * B(i,j,k) * ... )
 ```
 
 而 `FuseTensorCast` 负责将 tensor 类型转换操作优化成直接的类型覆写。
+其负责三种 rewrite：
+
+1. 消除无意义的 Type cast
+
+如果在使用 tensor.cast 的时候，cast 操作两边的类型完全相同，那么 FuseTensorCast 就会直接把这些 cast
+全部优化掉。
+
+以下的代码会被完全优化掉
+
+```mlir
+%0 = tensor.cast %a : tensor<?xf32, #SparseVector> to tensor<?xf32, #SparseVector>
+%1 = tensor.cast %0 : tensor<?xf32, #SparseVector> to tensor<?xf32, #SparseVector>
+```
+
+2. 消除多次 tensor cast
+
+如果忽视 sparse 的属性之后，`tensor.cast` 的源类型和目标类型是完全相同的，则这个 tensor.cast 操作会被消除掉，
+然后前一个操作产生的 tensor 类型属性会被修改成目标类型的属性。
+
+```mlir
+// Before
+%extracted_slice = tensor.extract_slice %a[1, 0] [1, 3] [1, 1] : tensor<2x3xi64, #SortedCOO> to tensor<1x3xi64>
+%cast = tensor.cast %extracted_slice : tensor<1x3xi64> to tensor<1x3xi64, #Slice>
+
+// After
+%extracted_slice = tensor.extract_slice %a[1, 0] [1, 3] [1, 1] : tensor<2x3xi64, #SortedCOO> to tensor<1x3xi64, #Slice>
+```
+
+3. 修复错误的 tensor.cast 使用
+
+如果用 tensor.cast 将一个 dense 的 tensor 转换到 sparse 的 tensor，`FuseTensorCast` 会把这个 operation 换回
+`sparse_tensor.convert`
+
+```mlir
+// Before
+%0 = tensor.cast %a : tensor<?xf32> to tensor<?xf32, #SparseVector>
+
+// After
+%0 = sparse_tensor.convert %a : tensor<?xf32> to tensor<?xf32, #SparseVector>
+```
 
 ### Pipeline 2
 
