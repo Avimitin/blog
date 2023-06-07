@@ -181,7 +181,7 @@ X(i,j) = SUM(k, S(i,j) * A(i,j,k) * B(i,j,k) * ... )
 
 3. 修复错误的 tensor.cast 使用
 
-如果用 tensor.cast 将一个 dense 的 tensor 转换到 sparse 的 tensor，`FuseTensorCast` 会把这个 operation 换回
+如果用 tensor.cast 的任意一个操作数有 Sparse 的属性，`FuseTensorCast` 会把这个 operation 换回
 `sparse_tensor.convert`
 
 ```mlir
