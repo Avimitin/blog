@@ -125,3 +125,20 @@ MLIR 里的 tensor 支持各类元素类型，可以用来表达 MLIR 里的各�
 * 用小型一维的 tensor 存储 index 类型，来表达 shape Dialect 中的 shapes
 * 用于表达字符串或者可变的元素集合
 
+在 MLIR 里，有两种 tensor 类型，一种是 RankedTensorType 另一种是 UnrankedTensorType。
+RankedTensorType 的 Rank 是固定的，但 Axis(或者说 Dimension) 是可以动态的。
+表达一个 Rank-2 且固定 Shape 的 Tensor 可以用 `tensor<3x2xi32>`，
+一个 shape 是 `[3,2]` 的，dtype 是 i32 的 tensor。
+也可以用 `tensor<?x?x?xi32>` 来表达 Rank-3 但动态的 tensor。
+除此之外，MLIR 的 Tensor 也可以用来表达常量，
+比如 `tensor<f32>` 表达一个 Rank 0，元素类型为 f32 的常量。
+维度的长度也可以是 0，用类似于 `tensor<0x4xf32>` 的类型来表达。
+同时这种特殊的用 `i x j` 来表达 shape 的方式，也限制住不能使用十六进制来定义 axis 的值。
+
+UnrankedTensorType 则用来表达动态 rank 的 tensor 类型，用 `tensor<*xdtype>` 来表示，
+比如 `tensor<*xi32>`。
+
+如此灵活的抽象的 tensor 类型是 MLIR 设计的一部分，
+使用者不应该操心一个 tensor 的机器表示应该是怎么样的，
+这些抽象操作到机器层级的映射最后会被 lower 到 memref Dialect 上，
+在那一个层级才有相对底层的缓存访问实现。
