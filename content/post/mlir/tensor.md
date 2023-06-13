@@ -1,5 +1,5 @@
 +++
-title = 'Tensor Concept'
+title = 'Tensor concept'
 date = '2023-06-12'
 tag = ['tensor', 'mlir']
 author = 'sh1marin'
