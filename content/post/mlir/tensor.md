@@ -142,3 +142,82 @@ UnrankedTensorType 则用来表达动态 rank 的 tensor 类型，用 `tensor<*x
 使用者不应该操心一个 tensor 的机器表示应该是怎么样的，
 这些抽象操作到机器层级的映射最后会被 lower 到 memref Dialect 上，
 在那一个层级才有相对底层的缓存访问实现。
+
+有关 tensor 相关操作的文档，可以在 [tensor Dialect](https://mlir.llvm.org/docs/Dialects/TensorOps/)
+里查看。
+
+### Bufferization
+
+在 MLIR 里，将 tensor 的操作转换到 memref 操作的这么一个过程被称作为 ***Bufferization***。
+最早的时候 MLIR 是在 tensor 到 memref Dialect 转换的时候做 bufferization，但为了
+减少内存 alloc 和复制，后来改成了用单个 pass (***One-Shot Bufferization***) 来一次性 bufferize
+整个程序。
+
+***Bufferization*** 进程有两个目标：1. 尽量少的申请内存，2. 尽量少的复制内存。
+为了实现这两个目标，bufferize 可能会为了复用内存而产生很多很复杂的算法。
+给定一个 tensor 的操作结果，***Bufferization*** 需要选择一个 memref buffer 来存储。
+最安全的做法是给所有的操作都生成一个新的 buffer，但这肯定是不符合预期的。
+而为了安全复用缓存，使得操作不会覆写一些仍然需要的数据，就使得决策变得相当困难复杂。
+除此之外，也有一些复杂的情况会影响 ***Bufferization*** 进程的决策，
+比如有时候复制内存的开销可能小于重新计算的开销，或者有些平台不支持申请新内存。
+
+为了简化这个问题，***One-Shot Bufferization*** 只对 *destination-passing style* 的操作做 *Bufferization*。
+什么是 *destination-passing style* 呢，考虑以下这个例子：
+
+```mlir
+%0 = tensor.insert %cst into %t[%idx] : tensor<?xf32>
+```
+
+`tensor.insert` 复制一份给定的 tensor，将给定常量插入 index，并返回这个复制的 tensor。
+在上述例子中， `%0` 是返回值，`%csr` 和 `%t` 是 `tensor.insert` 的操作数，
+因为 `%csr` 是常数，而 `%t` 是个 tensor，因此此处 `%t` 就是 destination，
+在考虑如何存放 `%0` 时就只有两个选择：
+
+1. 创建一个新的 buffer
+2. 复用操作数 `%t` 的 buffer
+
+在程序执行的过程中可能会存在更多的无用垃圾 buffer 可以拿来复用，
+但复用那些内存会引入更加巨量的问题。
+
+如果是不符合 *destination-passing style* 的操作，*Bufferization* 会为这些 tensor 开辟新的内存。
+
+```mlir
+%0 = tensor.generate %sz {
+^bb0(%i : index):
+  %cst = arith.constant 0.0 : f32
+  tensor.yield %cst : f32
+} : tensor<?xf32>
+```
+
+比如此处 `tensor.generate` 只接受一个 `block`，并没有任何的 "*destination*"，
+因此 *Bufferization* 会为返回的 tensor 开辟新的内存。
+也可以用 `linalg.generic` 改写成 *destination-passing style*：
+
+```mlir
+#map = affine_map<(i) -> (i)>
+%0 = linalg.generic {indexing_maps = [#map], iterator_types = ["parallel"]}
+                    outs(%t : tensor<?xf32>) {
+  ^bb0(%arg0 : f32):
+    %cst = arith.constant 0.0 : f32
+    linalg.yield %cst : f32
+} -> tensor<?xf32>
+```
+
+这里很明显的能看到 `%t` 就是 destination，但同时也能看出一点奇怪的地方，
+`outs` 里的参数似乎就是用来被覆写的，为什么还要专门传入一个参数呢？
+可以看下下面这个例子:
+
+```mlir
+%t = tensor.extract_slice %s [%idx] [%sz] [1] : tensor<?xf32> to tensor<?xf32>
+%0 = linalg.generic ... outs(%t) { ... } -> tensor<?xf32>
+%1 = tensor.insert_slice %0 into %s [%idx] [%sz] [1]
+    : tensor<?xf32> into tensor<?xf32>
+```
+
+`tensor.extract_slice` 取出一小段切片，之后会被 *bufferize* 到 `memref.subview`。
+然后把这个切片 `%t` 传入到 `linalg.generic` 的 outs 里，
+最后 `tensor.insert_slice` 则会将 `%0` 插入被取出 slice 的原 tensor 里。
+由这个例子可以看出一个设计传入特定 `out` 的原因：可以用来指定覆写哪一段的内存。
+
+除此之外，值得一提的是，`tensor.insert_slice` 最后会被优化掉。
+有 SSA 的加持，MLIR 能发现源操作数来源于目标操作数，于是这些操作能被消除掉。
