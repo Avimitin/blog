@@ -256,7 +256,7 @@ Since ninja gets an empty string as command, it doesn't generate the actual buil
 So I send a patch to llvm to fix the issue and get my first LLVM contribution: <https://reviews.llvm.org/D152418>.
 
 > My reaction `:)`
-> ![image](./bump-vector-llvm-img-1.png)
+> ![image](./img-1.png)
 
 ## It compiles, but it does not work
 
