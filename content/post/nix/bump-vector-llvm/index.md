@@ -1,5 +1,5 @@
 +++
-title = '记一次用 nix 折腾多版本 LLVM 的经历'
+title = 'Using latest LLVM in nix'
 date = '2023-06-29'
 tag = ['llvm', 'nix']
 author = 'sh1marin'
