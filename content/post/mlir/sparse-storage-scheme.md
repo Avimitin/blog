@@ -60,9 +60,13 @@ func.func @dump(%arg: tensor<*xf32, #Attr>) {
 
 %sv0 = sparse_tensor.convert %v0 : tensor<16xf32> to tensor<16xf32, #SparseVector>
 call @dump(%sv0)
-// pointers[0]: [ 0, 4 ]
-// indices[0]: [ 3, 6, 9, 12 ]
-// values: [ 1.1, 2.2, 3.3, 4.4 ]
+```
+
+
+```json
+pointers[0]: [ 0, 4 ]
+indices[0]: [ 3, 6, 9, 12 ]
+values: [ 1.1, 2.2, 3.3, 4.4 ]
 ```
 
 在上面的例子里，因为给定了一个 rank 只有 1 的 tensor，所以 `pointers` 和 `indices`
@@ -106,11 +110,14 @@ call @dump(%sv0)
 
 %sm = sparse_tensor.convert %m : tensor<8x8xf32> to tensor<8x8xf32, #CSR>
 call @dump(%sm) : (tensor<8x8xf32, #CSR>) -> ()
-// d1: dense
-// d2:
-//     pointers[1]: [ 0, 2, 2, 2, 2, 2, 2, 3, 3 ] # Length = 9
-//     indices[1]: [ 1, 4, 2 ]
-//     values: [ 1.1, 2.2, 3.3 ]
+```
+
+```json
+d1: dense
+d2:
+    pointers[1]: [ 0, 2, 2, 2, 2, 2, 2, 3, 3 ] # Length = 9
+    indices[1]: [ 1, 4, 2 ]
+    values: [ 1.1, 2.2, 3.3 ]
 ```
 
 使用 CSR 结构的存储，第一层会用 dense 的缓存来存储，第二层才使用特殊的数据结构。
