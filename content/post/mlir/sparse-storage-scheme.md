@@ -115,13 +115,13 @@ call @dump(%sm) : (tensor<8x8xf32, #CSR>) -> ()
 
 使用 CSR 结构的存储，第一层会用 dense 的缓存来存储，第二层才使用特殊的数据结构。
 其中 pointers 的含义依旧不变，仍旧是用来指引 indices 和 values 的 range。
-抽象总结的来说，对于 row $i$，设 `pointers[1][i-1]` 为 $start$，设 `pointers[1][i]` 为 $end$，
-则范围 $[start, end)$ 指引了 row $i$ 上的 indices 和 values 的取值范围。
+抽象总结的来说，对于 \\(row i\\)，设 `pointers[1][i-1]` 为 \\(start\\)，设 `pointers[1][i]` 为 \\(end\\)，
+则范围 \\([start, end)\\) 指引了 \\(row i\\) 上的 indices 和 values 的取值范围。
 
-举例来讲，假设我目前想访问 $row 1$ 上的值，则 `pointers[1][0]`, `pointers[1][1]` 设置
-访问的 range 为 $[0, 2)$，意味着仅有 `indices[1][0..2]`，`values[0..2]` 的值是属于 $row 1$ 的，
-即 `[1, 4]` 和 `[ 1.1, 2.2 ]`。而我想问 $row 8$ 上的值，则 `pointers[1][6], pointers[1][7]` 设置
-访问的 range 为 $[2, 3]$，即对应 indices 的值 `2` 和 values 的值 `3.3`。
-对于一个零值而言，访问其 row 则只能得到非法 range $[n, n)$，取不到值，则返回零。
+举例来讲，假设我目前想访问 \\(row 1\\) 上的值，则 `pointers[1][0]`, `pointers[1][1]` 设置
+访问的 range 为 \\([0, 2)\\)，意味着仅有 `indices[1][0..2]`，`values[0..2]` 的值是属于 \\(row 1\\) 的，
+即 `[1, 4]` 和 `[ 1.1, 2.2 ]`。而我想访问 \\(row 8\\) 上的值，则 `pointers[1][6], pointers[1][7]` 设置
+访问的 range 为 \\([2, 3)\\)，即对应 indices 的值 `2` 和 values 的值 `3.3`。
+对于一个零值而言，访问其 row 则只能得到非法 range \\([n, n)\\)，取不到值，则返回零。
 
 现在再和上面的矩阵对比，我想 `pointers` 的意义就一目了然了。
