@@ -46,3 +46,6 @@ paginate = 8
 
   [services.twitter]
     disableInlineCSS = true
+
+[markup.goldmark.renderer]
+unsafe = true
