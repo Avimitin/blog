@@ -86,8 +86,9 @@ if (vectorizeStmt(rewriter, op, vl, /*codegen=*/false) &&
 `vectorizeStmt` 是对传入的 `for` 操作实际进行 IR 重写（向量化) 的函数。
 为了避免有任何歧义，下面用 `ForOp` 来指代被向量化的 for 循环操作。
 
-> #### C++ 里的 `ForOp` class 和 MLIR 是什么关系？
->
+<details>
+    <summary markdown="span"><b>C++ 里的 `ForOp` class 和 MLIR 是什么关系？</b></summary>
+
 > 一个典型的 `ForOp` 通常用来描述 MLIR 里一整个 `scf.for` 的操作 block。
 >
 > ```mlir
@@ -108,6 +109,8 @@ if (vectorizeStmt(rewriter, op, vl, /*codegen=*/false) &&
 > ```
 >
 > 其可能在循环里创建新值，于是需要 `scf.yield` 返回每次迭代的结果。
+
+</details>
 
 因为在调用函数前已经检查过了 `ForOp` 里的 block 数量，
 所以此处只拿出 `ForOp` 的第一块 block 进行操作。
@@ -163,9 +166,49 @@ if (codegen) {
 ```
 
 接下来会根据 `ForOp` 的两个可能的操作目的进行两种不同的 for 操作重写。
-在 `vectorizeStmt` 里分成了两类，一类是 reduction 另一类是 store。
-判断是 `reduction` 类型还是 `store` 类型的方式很简单，只是判断 `scf.yield` 是否有操作数 (operand)。
-如果有操作数，那么就是 `reduction` 类型。
+在 `vectorizeStmt` 里分成了两类，一类是 *reduction* 另一类是 *parallel*。
+判断是 *reduction* 类型还是 *parallel* 类型的方式很简单，只是判断 `scf.yield` 是否有操作数 (operand)。
+如果有操作数，那么就是 *reduction* 类型。
+
+<details>
+    <summary markdown="span"><b>Reduction loop? Parallel loop?</b></summary>
+
+> Reduction 类型指某种依赖于遍历时创建的状态，而最终构造出的一个新的返回值的循环类型。
+>
+> 而在 reduction loop 里，如果某一层循环创造的状态被下一层循环依赖，则这个循环的状态被称作
+> *Loop-carried dependencies*。
+>
+> 一个典型的带有循环状态依赖的遍历：
+>
+> ```text
+> for i = 0..N
+>   for j = 0..M
+>     for k = 0..M
+>       A(i+1, j, k) = A(i, j+1, k+1) + A(i, j-1, k-1) - A(i,i-1,k+1) - A(i, i+1, k-1)
+> ```
+>
+> 具体细看最后的操作数，你会发现想要计算出 A(i+1, ..)， 需要 A(i, ..) 的值。
+> 即在第 i 次循环得到的结果被第 i+1 次循环依赖。像这类循环操作很难被并行化。
+>
+> 但并不是说所有 Reduction loop 都没法被并行，也有完全不依赖状态的 reduction loop：
+>
+> ```text
+> sum = 0
+> for i = 0..N
+>   sum += f(i)
+> ```
+>
+> 像上述这类操作就可以被优化成并行操作。
+>
+> 除此之外，如果某个循环完全不创造任何的新值，那么也可以被并行。比如：
+>
+> ```text
+> for i = 0..N
+>   for j = 0..M
+>     a(i) = b(i) + c(j)
+> ```
+
+</details>
 
 结构上长这样：
 
@@ -176,11 +219,11 @@ scf::YieldOp yield = cast<scf::YieldOp>(block.getTerminator());
 if (!yield.getResults().empty()) {
   // IR rewrite for reduction
 } else {
-  // IR rewrite for store
+  // IR rewrite for parallel
 }
 ```
 
-* 对于 reduction 类型的重写，`vectorizeStmt` 会为其生成一个新的循环操作 (`forOpNew`)
+* 对于 *reduction* 类型的重写，`vectorizeStmt` 会为其生成一个新的循环操作 (`forOpNew`)
 
 ```cpp
 scf::ForOp forOpNew;
@@ -207,7 +250,7 @@ rewriter.setInsertionPointToStart(forOpNew.getBody());
 而第四个操作 `rewriter.create` 则在创建新函数是，把步进的值改为新的 `step` 值。
 最后将后续操作的插入点设置到了新 `ForOp` 的 body 位置。
 
-* 对于 store 类型的重写，`vectorizeStmt` 只会调整其步进的值 (stride) 和 insert 的位置。
+* 对于 *parallel* 类型的重写，`vectorizeStmt` 只会调整其步进的值 (stride) 和 insert 的位置。
 
 ```cpp
 rewriter.updateRootInPlace(forOp, [&]() { forOp.setStep(step); });
@@ -225,12 +268,12 @@ rewriter.setInsertionPoint(yield);
 这个函数用到了 `ForOp` 的 induction variable，
 循环的上下限和步进值 `step`。
 
-> #### [induction variable](https://en.wikipedia.org/wiki/Induction_variable)
+> #### [Induction variable](https://en.wikipedia.org/wiki/Induction_variable)
 >
 > ```mlir
 > scf.for %i = %lo to %hi
 > ```
-> 在 MLIR 的 `scf.for` 操作里，induction variable 通常指 `%i`。
+> 在 MLIR 的 `scf.for` 操作里，induction variable 通常指当前 index `%i`。
 
 在 `genVectorMask` 函数里，
 首先会创建一个 1 bit 的 [conditional mask vector](https://en.wikipedia.org/wiki/Predication_(computer_architecture)) *类型*。
@@ -340,3 +383,24 @@ vector.print %vmask : vector<8xi1>
 
 // [ 1, 1, 1, 1, 1, 1, 1, 0 ]
 ```
+
+### `vectorizeStmt`
+
+回到 `vectorizeStmt`， `vmask` 和 `ForOp` 的处理结束之后，就到了实际向量化代码重写的部分了。
+依旧是分成 *reduction* 和 *store* 两类进行不同的代码生成。
+
+#### reduction
+
+首先取得 `scf.yield` 的操作数和 `ForOp` 的迭代参数，并设定好之后 reduction 时要用到的 combining kind：
+
+```cpp
+Value red = yield->getOperand(0);
+Value iter = forOp.getRegionIterArg(0);
+vector::CombiningKind kind;
+```
+
+接下来会调用 `isVectorizableReduction` 判断这个 `reduction` 类型的循环能不能做向量化，
+不能则直接返回 `false`。由于这里还没涉及 `codegen` 的判断，
+所以在第一次调用 `vectorizeStmt` 的时候就能分析出来并提前结束后续操作。
+
+TODO: 分析 `isVectorizableReduction` 是如何对 reduction 类型的操作能否向量化进行判断的
