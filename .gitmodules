@@ -1,4 +1,4 @@
 [submodule "themes/paper"]
-	path = themes/paper
-  url = https://github.com/Avimitin/hugo-paper
+  path = themes/paper
+  url = git@github.com:Avimitin/hugo-paper.git
   branch = master
