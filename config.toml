@@ -49,3 +49,6 @@ paginate = 8
 
 [markup.goldmark.renderer]
 unsafe = true
+[markup.highlight]
+style='gruvbox'
+tabWidth=2
