@@ -437,3 +437,28 @@ rewriter.replaceAllUsesWith(forOp.getRegionIterArg(0),
                             forOpNew.getRegionIterArg(0));
 rewriter.eraseOp(forOp);
 ```
+
+#### Parallel
+
+首先判断 `yield` 之前的操作，也就是 `ForOp` block 的倒数第二条操作是否为 `memref.store`。
+然后取得 `store` 操作中的 indice 和右操作数，用这两个值和前面的 vmask, vl 等值实现向量化。
+
+```cpp
+if (auto store = dyn_cast<memref::StoreOp>(last)) {
+  // Analyze/vectorize store operation.
+  auto subs = store.getIndices();
+  SmallVector<Value> idxs;
+  Value rhs = store.getValue();
+  Value vrhs;
+  if (vectorizeSubscripts(rewriter, forOp, vl, subs, codegen, vmask, idxs) &&
+      vectorizeExpr(rewriter, forOp, vl, rhs, codegen, vmask, vrhs)) {
+    if (codegen) {
+      genVectorStore(rewriter, loc, store.getMemRef(), idxs, vmask, vrhs);
+      rewriter.eraseOp(store);
+```
+
+其中 `subs` 和 `rhs` 对应下面 MLIR 代码中的 `%1` 和 `%2`。
+
+```mlir
+memref.store %3, %2[%1] : memref<1024xf32>
+```
