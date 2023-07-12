@@ -108,7 +108,10 @@ if (vectorizeStmt(rewriter, op, vl, /*codegen=*/false) &&
 > }
 > ```
 >
-> 其可能在循环里创建新值，于是需要 `scf.yield` 返回每次迭代的结果。
+> 其带有三个操作数：循环上限，循环下限和步进值，和一个循环内操作区域。
+> `scf.for` 的操作区域有且只能有一个，而且需要 `scf.yield` 来声明操作区结束了。
+> `scf.yield` 可以不带操作数，如果需要在循环内迭代值，则可以加上操作数作为单次计算返回值。
+> 如果某个操作区内没有写 `scf.yield`，IR Rewriter 会自动往里插入一个不带操作数的 `scf.yield`。
 
 </details>
 
@@ -399,8 +402,38 @@ Value iter = forOp.getRegionIterArg(0);
 vector::CombiningKind kind;
 ```
 
-接下来会调用 `isVectorizableReduction` 判断这个 `reduction` 类型的循环能不能做向量化，
+接下来会进行对向量化可行性的探测，然后生成向量值并进行进一步 IR rewrite。
+可行性的探测由函数 `isVectorizableReduction` 完成，
+用来判断这个 `reduction` 类型的循环能不能做向量化，
 不能则直接返回 `false`。由于这里还没涉及 `codegen` 的判断，
 所以在第一次调用 `vectorizeStmt` 的时候就能分析出来并提前结束后续操作。
+而向量值的生成由 `vectorizeExpr` 函数完成，其返回 boolean 值用来表达生成是否成功，
+而实际的向量值则会写进通过参数传递的 `mlir::Value` 引用里。
+
+```cpp
+Value vrhs;
+
+if (isVectorizableReduction(red, iter, kind) &&
+    vectorizeExpr(rewriter, forOp, vl, red, codegen, vmask, vrhs)) {
+      // ...
+}
+```
 
 TODO: 分析 `isVectorizableReduction` 是如何对 reduction 类型的操作能否向量化进行判断的
+TODO: 分析 `vectorizeExpr` 是如何生成 scatter/gatter/mask/maskedload 的
+
+如果两次函数调用都返回成功的值才会进行下一步的 IR rewrite。
+在 `vectorizeStmt` 函数里会操作上文提到的新创建 `ForOp`，
+通过 iter 的值创建新的 mask 和一系列 vector masked load 操作，
+更新 scf.yield 的返回值。
+然后把旧 `ForOp` 区域的 result, induction variable 和 `iter_arg` 全替换成新 `ForOp` 的。
+最后把旧 `ForOp` 给消除掉。
+
+```cpp
+rewriter.replaceAllUsesWith(forOp.getResult(0), vres);
+rewriter.replaceAllUsesWith(forOp.getInductionVar(),
+                            forOpNew.getInductionVar());
+rewriter.replaceAllUsesWith(forOp.getRegionIterArg(0),
+                            forOpNew.getRegionIterArg(0));
+rewriter.eraseOp(forOp);
+```
