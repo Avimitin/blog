@@ -394,7 +394,8 @@ vector.print %vmask : vector<8xi1>
 
 #### reduction
 
-首先取得 `scf.yield` 的操作数和 `ForOp` 的迭代参数，并设定好之后 reduction 时要用到的 combining kind：
+首先取得 `scf.yield` 的操作数 `red` 和 `ForOp` 的 `iter_arg` 的值 `iter`，
+并设定好之后 reduction 时要用到的 combining kind：
 
 ```cpp
 Value red = yield->getOperand(0);
@@ -419,7 +420,38 @@ if (isVectorizableReduction(red, iter, kind) &&
 }
 ```
 
-TODO: 分析 `isVectorizableReduction` 是如何对 reduction 类型的操作能否向量化进行判断的
+`isVectorizableReduction` 会尝试获取定义 `red` 的操作，
+如果有 `arith.addf/addi/ subf/subi mulf/muli andi/ori/xori` 之外的操作其会直接返回 `false` 值。
+接下来则是定义 vector 的 reduction 类型 `vector::CombiningKind`，
+存进传入的 `kind` 指针里。
+`addf/addi/subf/subi` 都归类于 `ADD` 类型，
+`mulf/muli` 归类于 `MUL` 类型，
+剩下的则各自分别归类于 `AND/OR/XOR` 类型。
+
+除了需要判断 `DefineOp` 的操作是否能被转换成 vector reduction，
+还需要判断 `DefineOp` 的操作数是不是 `ForOp` 的 `iter_arg`。
+
+> **什么是定义操作 (DefiningOp)？**
+>
+> 如果有 `%1 = arith.addi %0`，
+> 那么 `arith.addi` 就是 `%1` 的定义操作，`%1` 就是 `arith.addi` 的操作结果。
+
+`isVectorizableReduction` 的大致结构长这样：
+
+```cpp
+static bool isVectorizableReduction(Value red, Value iter, vector::CombiningKind &kind) {
+  if (auto addf = red.getDefiningOp<arith::AddFOp>()) {
+    kind = vector::CombiningKind::ADD;
+    return addf->getOperand(0) == iter || addf->getOperand(1) == iter;
+  }
+  // ...
+  return false;
+}
+```
+
+`vectorizeExpr` 首先会判断输入的 `scf.yield` 的操作数 `red` 的类型能不能作为 vector 的元素类型。
+接下来会判断
+
 TODO: 分析 `vectorizeExpr` 是如何生成 scatter/gatter/mask/maskedload 的
 
 如果两次函数调用都返回成功的值才会进行下一步的 IR rewrite。
