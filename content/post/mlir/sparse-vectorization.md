@@ -408,7 +408,7 @@ vector::CombiningKind kind;
 用来判断这个 `reduction` 类型的循环能不能做向量化，
 不能则直接返回 `false`。由于这里还没涉及 `codegen` 的判断，
 所以在第一次调用 `vectorizeStmt` 的时候就能分析出来并提前结束后续操作。
-而向量值的生成由 `vectorizeExpr` 函数完成，其返回 boolean 值用来表达生成是否成功，
+而如何把循环变成向量表达则由 `vectorizeExpr` 函数完成，其返回 boolean 值用来表达生成是否成功，
 而实际的向量值则会写进通过参数传递的 `mlir::Value` 引用里。
 
 ```cpp
@@ -450,9 +450,14 @@ static bool isVectorizableReduction(Value red, Value iter, vector::CombiningKind
 ```
 
 `vectorizeExpr` 首先会判断输入的 `scf.yield` 的操作数 `red` 的类型能不能作为 vector 的元素类型。
-接下来会判断
+接下来会判断 `invariant` 的类型。
 
-TODO: 分析 `vectorizeExpr` 是如何生成 scatter/gatter/mask/maskedload 的
+> loop invariant
+>
+> loop invariant 是一种逻辑断言，是循环的一种属性。
+> 其为循环内的某一个状态的断言，在每一次循环之后值永远是 true。
+> 可以用于证明循环的属性和采用循环的扩展算法。
+> 循环不变式在进入循环和每次迭代后都为真，因此在退出循环时，循环不变式和循环终止条件都能得到保证。
 
 如果两次函数调用都返回成功的值才会进行下一步的 IR rewrite。
 在 `vectorizeStmt` 函数里会操作上文提到的新创建 `ForOp`，
