@@ -5,6 +5,7 @@ theme = "paper"
 copyright = "Copyright © 2019-2024, Avimitin and the sh1mar.in; all rights reserved."
 hasCJKLanguage = true
 paginate = 8
+timeZone = "Asia/Shanghai"
 
 [params]
   color = "linen"
