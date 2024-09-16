@@ -1,0 +1,206 @@
+<!doctype html><html class="not-ready lg:text-base" style=--bg:#faf8f1 lang=zh><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><title>Rust Builder pattern 学习总结 - sh1marin's blog</title><meta name=theme-color><meta name=description content="过年期间用 Rust 写了个 DeepL API 的库，学了不少 Rust Builder Pattern 的知识，借此来水一篇新的博客。 本文的参考示例代码：Rust Playground DeepL 库源码： deepl-rs 本文将提到的 Async Builder 相关代码："><meta name=author content="sh1marin"><link rel="preload stylesheet" as=style href=https://blog.sh1mar.in/main.min.css><script defer src=https://blog.sh1mar.in/highlight.min.js onload=hljs.initHighlightingOnLoad()></script>
+<link rel=preload as=image href=https://blog.sh1mar.in/theme.png><link rel=preload as=image href=https://blog.sh1mar.in/github.svg><link rel=preload as=image href=https://blog.sh1mar.in/rss.svg><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css integrity=sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js integrity=sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous onload=renderMathInElement(document.body)></script>
+<link rel=icon href=https://blog.sh1mar.in/favicon.ico><link rel=apple-touch-icon href=https://blog.sh1mar.in/apple-touch-icon.png><meta name=generator content="Hugo 0.112.3"><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css integrity=sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js integrity=sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous onload=renderMathInElement(document.body)></script><meta property="og:title" content="Rust Builder pattern 学习总结"><meta property="og:description" content="过年期间用 Rust 写了个 DeepL API 的库，学了不少 Rust Builder Pattern 的知识，借此来水一篇新的博客。 本文的参考示例代码：Rust Playground DeepL 库源码： deepl-rs 本文将提到的 Async Builder 相关代码："><meta property="og:type" content="article"><meta property="og:url" content="https://blog.sh1mar.in/post/coding/rust-builder/"><meta property="article:section" content="post"><meta property="article:published_time" content="2023-02-01T00:00:00+08:00"><meta property="article:modified_time" content="2023-02-01T00:00:00+08:00"><meta itemprop=name content="Rust Builder pattern 学习总结"><meta itemprop=description content="过年期间用 Rust 写了个 DeepL API 的库，学了不少 Rust Builder Pattern 的知识，借此来水一篇新的博客。 本文的参考示例代码：Rust Playground DeepL 库源码： deepl-rs 本文将提到的 Async Builder 相关代码："><meta itemprop=datePublished content="2023-02-01T00:00:00+08:00"><meta itemprop=dateModified content="2023-02-01T00:00:00+08:00"><meta itemprop=wordCount content="1889"><meta itemprop=keywords content><meta name=twitter:card content="summary"><meta name=twitter:title content="Rust Builder pattern 学习总结"><meta name=twitter:description content="过年期间用 Rust 写了个 DeepL API 的库，学了不少 Rust Builder Pattern 的知识，借此来水一篇新的博客。 本文的参考示例代码：Rust Playground DeepL 库源码： deepl-rs 本文将提到的 Async Builder 相关代码："></head><body class="text-black duration-200 ease-out dark:text-white"><header class="mx-auto flex h-[4.5rem] max-w-3xl px-8 lg:justify-center"><div class="relative z-50 mr-auto flex items-center"><a class="-translate-x-[1px] -translate-y-[1px] text-2xl font-semibold" href=https://blog.sh1mar.in>sh1marin's blog</a><div class="btn-dark text-[0] ml-4 h-6 w-6 shrink-0 cursor-pointer [background:url(./theme.svg)_left_center/cover_no-repeat] dark:invert dark:[background-position:right]" role=button aria-label=Dark></div></div><div class="btn-menu relative z-50 -mr-8 flex h-[4.5rem] w-[5rem] shrink-0 cursor-pointer flex-col items-center justify-center gap-2.5 lg:hidden" role=button aria-label=Menu></div><script>const htmlClass=document.documentElement.classList;setTimeout(()=>{htmlClass.remove("not-ready")},10);const btnMenu=document.querySelector(".btn-menu");btnMenu.addEventListener("click",()=>{htmlClass.toggle("open")});const metaTheme=document.querySelector('meta[name="theme-color"]'),lightBg="#faf8f1".replace(/"/g,""),setDark=e=>{metaTheme.setAttribute("content",e?"#000":lightBg),htmlClass[e?"add":"remove"]("dark"),localStorage.setItem("dark",e)},darkScheme=window.matchMedia("(prefers-color-scheme: dark)");if(htmlClass.contains("dark"))setDark(!0);else{const e=localStorage.getItem("dark");setDark(e?e==="true":darkScheme.matches)}darkScheme.addEventListener("change",e=>{setDark(e.matches)});const btnDark=document.querySelector(".btn-dark");btnDark.addEventListener("click",()=>{setDark(localStorage.getItem("dark")!=="true")})</script><div class="nav-wrapper fixed inset-x-0 top-full z-40 flex h-full select-none flex-col justify-center pb-16 duration-200 dark:bg-black lg:static lg:h-auto lg:flex-row lg:!bg-transparent lg:pb-0 lg:transition-none"><nav class="lg:ml-12 lg:flex lg:flex-row lg:items-center lg:space-x-6"><a class="block text-center text-2xl leading-[5rem] lg:text-base lg:font-normal" href=/about/>About</a></nav><nav class="mt-12 flex justify-center space-x-10 dark:invert lg:ml-12 lg:mt-0 lg:items-center lg:space-x-6"><a class="h-8 w-8 text-[0] [background:var(--url)_center_center/cover_no-repeat] lg:h-6 lg:w-6" style=--url:url(./github.svg) href=https://github.com/Avimitin target=_blank rel=me>github</a>
+<a class="h-8 w-8 text-[0] [background:var(--url)_center_center/cover_no-repeat] lg:h-6 lg:w-6" style=--url:url(./rss.svg) href=https://blog.sh1mar.in/index.xml target=_blank rel=alternate>rss</a></nav></div></header><main class="prose prose-neutral relative mx-auto min-h-[calc(100%-9rem)] max-w-3xl px-8 pb-16 pt-12 dark:prose-invert"><article><header class=mb-16><h1 class="!my-0 pb-2.5">Rust Builder pattern 学习总结</h1><div class="text-sm antialiased opacity-60"><time>Feb 1, 2023</time>
+<span class=mx-1>&#183;</span>
+<span>sh1marin</span></div></header><section><p>过年期间用 Rust 写了个 DeepL API 的库，学了不少 Rust Builder Pattern
+的知识，借此来水一篇新的博客。</p><blockquote><ul><li>本文的参考示例代码：<a href="https://play.rust-lang.org/?version=stable&amp;mode=debug&amp;edition=2021&amp;gist=07343970399f268087aecae73906f947">Rust Playground</a></li><li>DeepL 库源码： <a href=https://github.com/Avimitin/deepl-rs>deepl-rs</a></li><li>本文将提到的 Async Builder 相关代码： <a href=https://github.com/Avimitin/deepl-rs/pull/12/files>deepl-rs #12</a></li></ul></blockquote><hr><p>在写 HTTP 请求库的时候，通常需要给开发者一个用来生成请求内容的结构体。
+请求内容会有必填的属性和可选的属性，且有些请求会有大量的属性值可填，</p><p>简单的用一个函数来生成肯定是不现实的，函数签名太长，且多个可选的内容要
+开发者不断手写 <code>None</code>。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#fe8019>struct</span> RequestProp {
+</span></span><span style=display:flex><span>    api_key: <span style=color:#fabd2f>String</span>,
+</span></span><span style=display:flex><span>    query_a: <span style=color:#fabd2f>i32</span>,
+</span></span><span style=display:flex><span>    query_b: <span style=color:#fabd2f>Option</span><span style=color:#fe8019>&lt;</span><span style=color:#fabd2f>String</span><span style=color:#fe8019>&gt;</span>,
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>impl</span> RequestProp {
+</span></span><span style=display:flex><span>    <span style=color:#fe8019>fn</span> <span style=color:#fabd2f>new</span>(api_key: <span style=color:#fabd2f>String</span>,
+</span></span><span style=display:flex><span>           query_a: <span style=color:#fabd2f>i32</span>,
+</span></span><span style=display:flex><span>           query_b: <span style=color:#fabd2f>Option</span><span style=color:#fe8019>&lt;</span><span style=color:#fabd2f>String</span><span style=color:#fe8019>&gt;</span>
+</span></span><span style=display:flex><span>    {
+</span></span><span style=display:flex><span>        <span style=color:#928374;font-style:italic>// ....
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span>    }
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>let</span> prop <span style=color:#fe8019>=</span> RequestProp::new(<span style=color:#b8bb26>&#34;key&#34;</span>, <span style=color:#d3869b>1</span>, <span style=color:#fabd2f>None</span>)
+</span></span></code></pre></div><p>builder pattern 的概念非常符合这个场景。
+其需要创建一个辅助结构体类型，
+通过依次调用这个结构体相关的函数，构造出最终的需要的实例。
+同时可以利用 <code>self</code>, <code>&amp;mut self</code> 的语言特性来实现链式调用。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#8ec07c>#[derive(Default)]</span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>struct</span> RequestPropBuilder {
+</span></span><span style=display:flex><span>    api_key: <span style=color:#fabd2f>String</span>,
+</span></span><span style=display:flex><span>    query_a: <span style=color:#fabd2f>i32</span>,
+</span></span><span style=display:flex><span>    query_b: <span style=color:#fabd2f>Option</span><span style=color:#fe8019>&lt;</span><span style=color:#fabd2f>String</span><span style=color:#fe8019>&gt;</span>,
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>impl</span> RequestPropBuilder {
+</span></span><span style=display:flex><span>    <span style=color:#fe8019>fn</span> <span style=color:#fabd2f>new</span>() -&gt; Self {
+</span></span><span style=display:flex><span>        Self::default()
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#fe8019>fn</span> <span style=color:#fabd2f>api_key</span>(<span style=color:#fe8019>&amp;</span><span style=color:#fe8019>mut</span> self, key: <span style=color:#fe8019>&amp;</span><span style=color:#fabd2f>str</span>) -&gt; <span style=color:#fe8019>&amp;</span>mut Self {
+</span></span><span style=display:flex><span>        self.api_key <span style=color:#fe8019>=</span> key.to_string();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        self
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#fe8019>fn</span> <span style=color:#fabd2f>query_a</span>(<span style=color:#fe8019>&amp;</span><span style=color:#fe8019>mut</span> self, a: <span style=color:#fabd2f>i32</span>) -&gt; <span style=color:#fe8019>&amp;</span>mut Self {
+</span></span><span style=display:flex><span>        self.query_a <span style=color:#fe8019>=</span> a;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        self
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#fe8019>fn</span> <span style=color:#fabd2f>query_b</span>(<span style=color:#fe8019>&amp;</span><span style=color:#fe8019>mut</span> self, b: <span style=color:#fabd2f>String</span>) -&gt; <span style=color:#fe8019>&amp;</span>mut Self {
+</span></span><span style=display:flex><span>        self.query_b <span style=color:#fe8019>=</span> <span style=color:#fabd2f>Some</span>(b);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        self
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#fe8019>fn</span> <span style=color:#fabd2f>build</span>(self) -&gt; RequestProp {
+</span></span><span style=display:flex><span>        RequestProp {
+</span></span><span style=display:flex><span>            api_key: self.api_key,
+</span></span><span style=display:flex><span>            query_a: self.query_a,
+</span></span><span style=display:flex><span>            query_b: self.query_b,
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>这里可以给原来的结构体加一个 <code>builder()</code> 函数来方便开发者调用：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#fe8019>impl</span> RequestProp {
+</span></span><span style=display:flex><span>    <span style=color:#fe8019>fn</span> <span style=color:#fabd2f>builder</span>() -&gt; RequestPropBuilder {
+</span></span><span style=display:flex><span>        RequestPropBuilder::new()
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>于是就可以有下面这种写法：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#fe8019>let</span> prop <span style=color:#fe8019>=</span> RequestProp::builder()
+</span></span><span style=display:flex><span>                .api_key(<span style=color:#b8bb26>&#34;key&#34;</span>)
+</span></span><span style=display:flex><span>                .query_a(<span style=color:#d3869b>13</span>)
+</span></span><span style=display:flex><span>                .query_b(<span style=color:#b8bb26>&#34;FooBarBaz&#34;</span>)
+</span></span><span style=display:flex><span>                .build();
+</span></span></code></pre></div><p>不需要设置可选 <code>query_b</code> 的时候就不再需要显示的声明了</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#fe8019>let</span> prop: RequestProp <span style=color:#fe8019>=</span> RequestProp::builder()
+</span></span><span style=display:flex><span>                            .api_key(<span style=color:#b8bb26>&#34;key&#34;</span>)
+</span></span><span style=display:flex><span>                            .query_a(<span style=color:#d3869b>13</span>)
+</span></span><span style=display:flex><span>                            .build();
+</span></span></code></pre></div><p>这样也有一个问题。<code>query_a</code> 因为是必填的值，类型没有设计成 <code>Option</code>，
+但因为 <code>derive</code> 了 <code>Default</code> trait，这里即使开发者不设置值也能正常编译，
+程序会不符合预期行为地运行。</p><p>借助 Rust 强大的类型系统，我们可以在编译期检查 builder 的值。</p><p>在实现之前，首先需要理解 Rust 的几个特性：</p><ol><li>假设有一个结构体
+<code>B</code>，其持有一个的泛型属性值，那么对于两个不同的<em>具体类型</em> T 和 F，
+<code>B&lt;T></code> 和 <code>B&lt;F></code> 不是同一个类型。对于两个不同类型的函数调用
+也是指向不同地址的。意味着，假设 <code>B&lt;T></code> 和 <code>B&lt;F></code> 都有函数
+<code>fn exec()</code>，<code>B::&lt;T>::exec()</code> 和 <code>B::&lt;F>::exec()</code> 调用的不是同一个函数。</li><li><code>()</code> 是一个特殊的类型，Zero Sized Types (ZSTs)，它是一个空的 Tuple，
+Rust 不会为它分配内存。包括像没有属性的结构体 <code>struct Nothing;</code> 这样
+的声明也不会有内存分配。</li></ol><p>利用上面的特性，我们可以构造一个泛型 builder，初始化时设置那些<em>必需</em>的
+属性类型为 <code>()</code>，给这些带有 <code>()</code> 类型的 builder 都实现一个会编译警告
+的 <code>build()</code> 函数，只给完整设置值的 builder 实现正确的 <code>build()</code> 函数。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#fe8019>struct</span> ErrorMissingField;
+</span></span><span style=display:flex><span><span style=color:#fe8019>struct</span> ErrorRepeatingField;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>struct</span> Foo {
+</span></span><span style=display:flex><span>    a: <span style=color:#fabd2f>i32</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>struct</span> Builder<span style=color:#fe8019>&lt;</span>T<span style=color:#fe8019>&gt;</span> {
+</span></span><span style=display:flex><span>    a: T,
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>impl</span> Builder<span style=color:#fe8019>&lt;</span>()<span style=color:#fe8019>&gt;</span> {
+</span></span><span style=display:flex><span>    <span style=color:#fe8019>fn</span> <span style=color:#fabd2f>a</span>(self, a: <span style=color:#fabd2f>i32</span>) -&gt; Builder<span style=color:#fe8019>&lt;</span><span style=color:#fabd2f>i32</span><span style=color:#fe8019>&gt;</span> {
+</span></span><span style=display:flex><span>        Builder { a }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#8ec07c>#[deprecated(note = </span><span style=color:#b8bb26>&#34;Missing required field `a`&#34;</span><span style=color:#8ec07c>)]</span>
+</span></span><span style=display:flex><span>    <span style=color:#fe8019>fn</span> <span style=color:#fabd2f>build</span>(self, _: ErrorMissingField) {}
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>impl</span> Builder<span style=color:#fe8019>&lt;</span><span style=color:#fabd2f>i32</span><span style=color:#fe8019>&gt;</span> {
+</span></span><span style=display:flex><span>    <span style=color:#8ec07c>#[deprecated(note = </span><span style=color:#b8bb26>&#34;Repeating field `a`&#34;</span><span style=color:#8ec07c>)]</span>
+</span></span><span style=display:flex><span>    <span style=color:#fe8019>fn</span> <span style=color:#fabd2f>a</span>(self, _: ErrorRepeatingField) {}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#fe8019>fn</span> <span style=color:#fabd2f>build</span>(self) -&gt; Foo {
+</span></span><span style=display:flex><span>        Foo {
+</span></span><span style=display:flex><span>            a: self.a,
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>impl</span> Foo {
+</span></span><span style=display:flex><span>    <span style=color:#fe8019>fn</span> <span style=color:#fabd2f>builder</span>() -&gt; Builder<span style=color:#fe8019>&lt;</span>()<span style=color:#fe8019>&gt;</span> {
+</span></span><span style=display:flex><span>        Builder {
+</span></span><span style=display:flex><span>            a: ()
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>这个实现使得调用 <code>Foo::builder()</code> 返回的 <code>Builder&lt;()></code> 类型
+拥有一个会在编译期产生警告的 <code>build()</code> 函数，当且仅当开发者调用
+拥有类型 <code>Builder&lt;i32></code> 的实例后，才有不会编译警告的 <code>build()</code>
+函数提供。</p><p>提供上面的代码给其他开发者之后，当开发者没有设置 <code>a</code> 的值
+就调用 <code>build()</code> 函数时，rustc 就会警告 <code>deprecated</code> 属性里
+设置的信息。但只是警告往往也没办法拦住他们错误的行为，所以
+在库里设置一些 <code>private</code> 的 ZST 结构体作为参数接收。
+下游开发者无法引入并新建这些结构体，于是没办法往这些函数里
+传参，我们就能在编译期阻止下游开发者错误的实现。</p><p>利用这个实现，也可以给已经设置过的属性生成一个错误的 setter 函数。
+如果开发者的编辑器支持，他甚至可以直接在补全时纠正自己的错误。</p><p><img src=./deprecated-completion.png alt=deprecated-completion></p><blockquote><p>Neovim 的 nvim-cmp 插件可以在补全菜单为 deprecated 函数显示删除线效果</p></blockquote><p>有了 Builder 之后，创建复杂的请求内容就变得更加轻松且直观了。
+但仍旧有一个问题：对于简单的请求内容而言，代码量反而增加了。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#928374;font-style:italic>// Normal
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span><span style=color:#fe8019>let</span> response <span style=color:#fe8019>=</span> api.request(<span style=color:#b8bb26>&#34;Key&#34;</span>, <span style=color:#b8bb26>&#34;Query&#34;</span>).send().<span style=color:#fe8019>await</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#928374;font-style:italic>// Builder
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span><span style=color:#fe8019>let</span> prop <span style=color:#fe8019>=</span> RequestProp::builder().api_key(<span style=color:#b8bb26>&#34;Key&#34;</span>).query(<span style=color:#b8bb26>&#34;Query&#34;</span>).build();
+</span></span><span style=display:flex><span><span style=color:#fe8019>let</span> response <span style=color:#fe8019>=</span> api.request(<span style=color:#fe8019>&amp;</span>prop).send().<span style=color:#fe8019>await</span>;
+</span></span></code></pre></div><p>这个问题其实可以抛给下游的开发者，让他们自己用一个函数来包住整个过程，
+但我学习到有另一种更加“魔法”的实现方式，
+可以用一条链式调用完成整个 “构建” “传参” “请求” 的过程，减少下游开发的代码量。</p><p>这个“魔法”的实现需要靠实现 <a href=https://doc.rust-lang.org/std/future/trait.IntoFuture.html><code>IntoFuture</code></a>
+trait 来达成。Rust 的 <code>.await</code> 关键字提供的语法糖可以自动调用
+<code>IntoFuture::into_future</code> 并 poll 这个 future 直到完成。
+于是利用这个特性，我们可以将 builder 的构造函数和请求函数
+都“藏”进 .await 调用里。</p><p>想要实现这个特性，Builder 需要额外接收一个发送请求的对象，比如 <code>reqwest::Client</code>，
+方便我们在调用 await 时直接发送请求。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#fe8019>struct</span> Builder<span style=color:#fe8019>&lt;</span>T<span style=color:#fe8019>&gt;</span> {
+</span></span><span style=display:flex><span>    client: Client,
+</span></span><span style=display:flex><span>    field: T,
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>struct</span> Response {
+</span></span><span style=display:flex><span>    msg: <span style=color:#fabd2f>String</span>,
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>type</span> BoxedFuture<span style=color:#fe8019>&lt;</span>T<span style=color:#fe8019>&gt;</span> <span style=color:#fe8019>=</span> std::pin::Pin<span style=color:#fe8019>&lt;</span><span style=color:#fabd2f>Box</span><span style=color:#fe8019>&lt;</span><span style=color:#fe8019>dyn</span> Future<span style=color:#fe8019>&lt;</span>Output <span style=color:#fe8019>=</span> T<span style=color:#fe8019>&gt;</span> <span style=color:#fe8019>+</span> <span style=color:#fabd2f>Send</span> <span style=color:#fe8019>+</span> <span style=color:#fabd2f>&#39;static</span><span style=color:#fe8019>&gt;&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>impl</span> IntoFuture <span style=color:#fe8019>for</span> Builder<span style=color:#fe8019>&lt;</span><span style=color:#fabd2f>i32</span><span style=color:#fe8019>&gt;</span> {
+</span></span><span style=display:flex><span>    <span style=color:#fe8019>type</span> Output <span style=color:#fe8019>=</span> Response;
+</span></span><span style=display:flex><span>    <span style=color:#fe8019>type</span> IntoFuture <span style=color:#fe8019>=</span> BoxedFuture<span style=color:#fe8019>&lt;</span>Self::Output<span style=color:#fe8019>&gt;</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#fe8019>fn</span> <span style=color:#fabd2f>into_future</span>(self) -&gt; Self::IntoFuture {
+</span></span><span style=display:flex><span>        <span style=color:#fe8019>let</span> client <span style=color:#fe8019>=</span> self.client.clone();
+</span></span><span style=display:flex><span>        <span style=color:#fe8019>let</span> prop <span style=color:#fe8019>=</span> self.build();
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#fe8019>let</span> future <span style=color:#fe8019>=</span> <span style=color:#fe8019>async</span> <span style=color:#fe8019>move</span> {
+</span></span><span style=display:flex><span>            <span style=color:#fe8019>let</span> response <span style=color:#fe8019>=</span> client.post(<span style=color:#b8bb26>&#34;https://example.com&#34;</span>, prop).<span style=color:#fe8019>await</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            response.unwrap()
+</span></span><span style=display:flex><span>        };
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#fabd2f>Box</span>::pin(future)
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>想要轮询一个 Future 实例，我们需要将这个实例的内存地址用 <code>std::pin::Pin</code>
+固定住，防止在轮询过程中随着 Future 的移动导致指针引用失效的情况。</p><p>借由 <code>IntoFuture</code> trait 的实现，下游开发可以保证有 builder pattern 的写法
+下，还能保持在简单请求时代码的精简：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-rust data-lang=rust><span style=display:flex><span><span style=color:#fe8019>struct</span> Api {
+</span></span><span style=display:flex><span>    client: Client,
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>impl</span> Api {
+</span></span><span style=display:flex><span>    <span style=color:#fe8019>fn</span> <span style=color:#fabd2f>get_something</span>(<span style=color:#fe8019>&amp;</span>self, a: <span style=color:#fe8019>&amp;</span><span style=color:#fabd2f>str</span>) -&gt; Builder<span style=color:#fe8019>&lt;</span><span style=color:#fabd2f>String</span><span style=color:#fe8019>&gt;</span> {
+</span></span><span style=display:flex><span>        Foo::builder(self.client.clone()) <span style=color:#928374;font-style:italic>// &lt;- 把 Api 持有的 Client 传递给 Builder
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span>            .a(a)
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>let</span> response <span style=color:#fe8019>=</span> api.get_something(<span style=color:#b8bb26>&#34;a&#34;</span>).<span style=color:#fe8019>await</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>let</span> response <span style=color:#fe8019>=</span> api.get_something(<span style=color:#b8bb26>&#34;a&#34;</span>)
+</span></span><span style=display:flex><span>                    .optional_1(<span style=color:#d3869b>123</span>)
+</span></span><span style=display:flex><span>                    .optional_2(<span style=color:#d3869b>456</span>)
+</span></span><span style=display:flex><span>                    .<span style=color:#fe8019>await</span>;
+</span></span></code></pre></div><p>当下游开发只需要填写必要值时，它可以只传递这些必要值进 builder 就直接
+调用 .await 来获取返回值。而当他需要构建复杂的请求参数时，因为 <code>api.get_something</code>
+返回了 builder，它可以继续链式调用构造请求，完成构造后再调用 await 发送请求。</p></section><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css integrity=sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js integrity=sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous onload=renderMathInElement(document.body)></script><nav class="mt-24 flex rounded-lg bg-black/[3%] text-lg dark:bg-white/[8%]"><a class="flex w-1/2 items-center rounded-l-md p-6 pr-3 font-semibold no-underline hover:bg-black/[2%] dark:hover:bg-white/[3%]" href=https://blog.sh1mar.in/post/coding/debug-in-chain-calling/><span class=mr-1.5>←</span><span>Debugging in function chain calling</span></a>
+<a class="ml-auto flex w-1/2 items-center justify-end rounded-r-md p-6 pl-3 font-semibold no-underline hover:bg-black/[2%] dark:hover:bg-white/[3%]" href=https://blog.sh1mar.in/post/write-a-simple-server-state/><span>边造车轮边学习</span><span class=ml-1.5>→</span></a></nav></article></main><footer class="opaco mx-auto flex h-[4.5rem] max-w-3xl items-center px-8 text-[0.9em] opacity-60"><div class=mr-auto>&copy; 2024
+<a class=link href=https://blog.sh1mar.in>sh1marin's blog</a></div><a class="link mx-6" href=https://gohugo.io/ rel=noopener target=_blank>Powered by Hugo️️</a>️
+<a class=link href=https://github.com/nanxiaobei/hugo-paper rel=noopener target=_blank>✎ Paper</a></footer></body></html>

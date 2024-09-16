@@ -1,0 +1,86 @@
+<!doctype html><html class="not-ready lg:text-base" style=--bg:#faf8f1 lang=zh><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><title>Sparse Compiler - sh1marin's blog</title><meta name=theme-color><meta name=description content="除了前一篇文章提到的 List of list 结构，还有如 Coodinate format, Compress Sparse Row/Column， Diagonal 等数据结构，这些结构虽然设计上大有不同，但理念上是一样的： 一个只存数据"><meta name=author content="sh1marin"><link rel="preload stylesheet" as=style href=https://blog.sh1mar.in/main.min.css><script defer src=https://blog.sh1mar.in/highlight.min.js onload=hljs.initHighlightingOnLoad()></script>
+<link rel=preload as=image href=https://blog.sh1mar.in/theme.png><link rel=preload as=image href=https://blog.sh1mar.in/github.svg><link rel=preload as=image href=https://blog.sh1mar.in/rss.svg><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css integrity=sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js integrity=sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous onload=renderMathInElement(document.body)></script>
+<link rel=icon href=https://blog.sh1mar.in/favicon.ico><link rel=apple-touch-icon href=https://blog.sh1mar.in/apple-touch-icon.png><meta name=generator content="Hugo 0.112.3"><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css integrity=sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js integrity=sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous onload=renderMathInElement(document.body)></script><meta property="og:title" content="Sparse Compiler"><meta property="og:description" content="除了前一篇文章提到的 List of list 结构，还有如 Coodinate format, Compress Sparse Row/Column， Diagonal 等数据结构，这些结构虽然设计上大有不同，但理念上是一样的： 一个只存数据"><meta property="og:type" content="article"><meta property="og:url" content="https://blog.sh1mar.in/post/sparsity/compiler/"><meta property="article:section" content="post"><meta property="article:published_time" content="2023-05-26T00:00:00+08:00"><meta property="article:modified_time" content="2023-05-26T00:00:00+08:00"><meta itemprop=name content="Sparse Compiler"><meta itemprop=description content="除了前一篇文章提到的 List of list 结构，还有如 Coodinate format, Compress Sparse Row/Column， Diagonal 等数据结构，这些结构虽然设计上大有不同，但理念上是一样的： 一个只存数据"><meta itemprop=datePublished content="2023-05-26T00:00:00+08:00"><meta itemprop=dateModified content="2023-05-26T00:00:00+08:00"><meta itemprop=wordCount content="2071"><meta itemprop=keywords content><meta name=twitter:card content="summary"><meta name=twitter:title content="Sparse Compiler"><meta name=twitter:description content="除了前一篇文章提到的 List of list 结构，还有如 Coodinate format, Compress Sparse Row/Column， Diagonal 等数据结构，这些结构虽然设计上大有不同，但理念上是一样的： 一个只存数据"></head><body class="text-black duration-200 ease-out dark:text-white"><header class="mx-auto flex h-[4.5rem] max-w-3xl px-8 lg:justify-center"><div class="relative z-50 mr-auto flex items-center"><a class="-translate-x-[1px] -translate-y-[1px] text-2xl font-semibold" href=https://blog.sh1mar.in>sh1marin's blog</a><div class="btn-dark text-[0] ml-4 h-6 w-6 shrink-0 cursor-pointer [background:url(./theme.svg)_left_center/cover_no-repeat] dark:invert dark:[background-position:right]" role=button aria-label=Dark></div></div><div class="btn-menu relative z-50 -mr-8 flex h-[4.5rem] w-[5rem] shrink-0 cursor-pointer flex-col items-center justify-center gap-2.5 lg:hidden" role=button aria-label=Menu></div><script>const htmlClass=document.documentElement.classList;setTimeout(()=>{htmlClass.remove("not-ready")},10);const btnMenu=document.querySelector(".btn-menu");btnMenu.addEventListener("click",()=>{htmlClass.toggle("open")});const metaTheme=document.querySelector('meta[name="theme-color"]'),lightBg="#faf8f1".replace(/"/g,""),setDark=e=>{metaTheme.setAttribute("content",e?"#000":lightBg),htmlClass[e?"add":"remove"]("dark"),localStorage.setItem("dark",e)},darkScheme=window.matchMedia("(prefers-color-scheme: dark)");if(htmlClass.contains("dark"))setDark(!0);else{const e=localStorage.getItem("dark");setDark(e?e==="true":darkScheme.matches)}darkScheme.addEventListener("change",e=>{setDark(e.matches)});const btnDark=document.querySelector(".btn-dark");btnDark.addEventListener("click",()=>{setDark(localStorage.getItem("dark")!=="true")})</script><div class="nav-wrapper fixed inset-x-0 top-full z-40 flex h-full select-none flex-col justify-center pb-16 duration-200 dark:bg-black lg:static lg:h-auto lg:flex-row lg:!bg-transparent lg:pb-0 lg:transition-none"><nav class="lg:ml-12 lg:flex lg:flex-row lg:items-center lg:space-x-6"><a class="block text-center text-2xl leading-[5rem] lg:text-base lg:font-normal" href=/about/>About</a></nav><nav class="mt-12 flex justify-center space-x-10 dark:invert lg:ml-12 lg:mt-0 lg:items-center lg:space-x-6"><a class="h-8 w-8 text-[0] [background:var(--url)_center_center/cover_no-repeat] lg:h-6 lg:w-6" style=--url:url(./github.svg) href=https://github.com/Avimitin target=_blank rel=me>github</a>
+<a class="h-8 w-8 text-[0] [background:var(--url)_center_center/cover_no-repeat] lg:h-6 lg:w-6" style=--url:url(./rss.svg) href=https://blog.sh1mar.in/index.xml target=_blank rel=alternate>rss</a></nav></div></header><main class="prose prose-neutral relative mx-auto min-h-[calc(100%-9rem)] max-w-3xl px-8 pb-16 pt-12 dark:prose-invert"><article><header class=mb-16><h1 class="!my-0 pb-2.5">Sparse Compiler</h1><div class="text-sm antialiased opacity-60"><time>May 26, 2023</time>
+<span class=mx-1>&#183;</span>
+<span>sh1marin</span></div></header><section><p>除了前一篇文章提到的 List of list 结构，还有如 Coodinate format, Compress Sparse Row/Column，
+Diagonal 等数据结构，这些结构虽然设计上大有不同，但理念上是一样的：
+一个只存数据的主存储，和一个额外的，辅助索引的坐标存储。每一种存储格式都是相当重要且
+在特定的 case 中能发挥出最优的性能的。因此如何选择适合自己的 Case 的存储结构，
+在特定的时机下转换存储结构，以及实现相对应的操作，会带来繁杂的工程量和许多隐藏的 BUG。
+这导致了很多开发者实际上会对着自己的项目为调用的库做优化，但这并不能解决问题，甚至
+会在数据结构变化的时候引入更差的性能瓶颈。</p><p>于是这里需要引入一个 Sparse Compiler 的概念。
+这是一种把 Sparsity 当作一种属性，而不是大量繁复的实现代码的思路。
+使用 sparse compiler，用户就可以只输入对 sparsity 的描述，生成一系列对稀疏存储的实现和操作。
+每个稀疏实现都是为同一问题的具体实例量身定做的，比如 tensor 将会在不同场景下使用不同的数据结构。
+这种自动方法不仅使非专业程序员能够快速生成稀疏代码，而且使专业程序员能够探索可能的稀疏实现的全部空间。</p><p>这种概念最早是在 1996 年由 Aart Bik 用 Fortran 实现的
+名叫 MT1 <a href=https://www.aartbik.com/sparse.php>https://www.aartbik.com/sparse.php</a> 的 sparse compiler 上实现的。
+之后由斯坦福大学的 Fredrik 教授和一群 MIT 的 CSAIL 实验室的成员合作开发的
+TACO (Tensor Algebra Compiler) 上，将 sparse compiler 的实现正式化并推广。
+Aart Bik 领头开发了 MLIR 的 sparse tensor 实现，他在研究如何为 MLIR 实现 sparse compiler
+时发现 TACO 的实现更加严谨优雅，于是最后 MLIR 这边采用了 TACO 的设计。</p><h2 id=mlir>MLIR</h2><p>在 MLIR 里，存在着许多 Dialect，每个 Dialect 都会定义一些类型，操作，还有属性。
+Dialect之间负责的功能不同，也有着不同层级的抽象。
+高抽象层级的 Dialect 会一步一步 lower 到低抽象层级的 Dialect。
+比如将高度抽象的，并不涉及内存表示的 tensor 类型 lower 到底层级的 memref 类型。
+这种在合适的抽象层次执行操作的理念，和 sparse compiler 将稀疏性当作一种属性的概念是非常匹配的。</p><p>MLIR 是如何实现 Sparse 的呢？MLIR 实现了 <code>sparse_tensor</code> 这个 Dialect。
+这个 Dialect 更像是一个胶水一样的产物，利用原有的实现而不是重新引入新的语义和实现。
+它提供了与稀疏相关的类型和属性，而操作代码则由 Linalg Dialect 提供。
+Linalg Dialect 之后将分解 lower 到 scf Dialect，生成一系列 for，while，if 的循环操作。
+以及 memref Dialect 来表达底层的内存缓存读写操作。
+sparse_tensor 也可以由 linalg Dialect lower 到 vector Dialect，这是一个平台中立的向量操作 Dialect，
+其最终会被 lower 到平台特定的 SIMD 指令。</p><div class=mermaid>flowchart LR
+ST([SparseTensor])
+T([Tensor])
+M([Memref])
+L[Linalg]
+S[SCF]
+V[Vector]
+LL[LLVM]
+ST o--o L
+T o--o L
+M o--o S
+L --> S
+L --> V
+S --> LL
+V --> LL</div><p>具体实现而言，tensor 类型支持在类型定义时加上编码属性，比如 <code>tensor&lt;0x3xf64, #ATTR></code>，
+因此将一个普通的 tensor 变成一个 sparse 的 tensor 只需要创建一个描述稀疏性的属性，并
+传递给这个 tensor 即可。</p><p>sparse_tensor Dialect 提供了 <code>sparse_tensor.encoding</code> 用来定义三个稀疏属性</p><ol><li>对每一个维度的稀疏程度的描述（ &ldquo;dense&rdquo;, &ldquo;compressed&rdquo;, &ldquo;singleton&rdquo; ）</li><li>对维度的排序的描述</li><li>指针和索引的位宽 (8-64 bit，可以用来减少部分开销)</li></ol><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-mlir data-lang=mlir><span style=display:flex><span>#DCSC = #sparse_tensor.encoding&lt;{
+</span></span><span style=display:flex><span>  <span style=color:#fb4934>lvlTypes =</span> [ <span style=color:#b8bb26>&#34;compressed&#34;</span>, <span style=color:#b8bb26>&#34;compressed&#34;</span> ],
+</span></span><span style=display:flex><span>  <span style=color:#fb4934>dimOrdering =</span> affine_map&lt;(i, j) -&gt; (j, i)&gt;,
+</span></span><span style=display:flex><span>  <span style=color:#fb4934>posWidth =</span> <span style=color:#d3869b>32</span>,
+</span></span><span style=display:flex><span>  <span style=color:#fb4934>crdWidth =</span> <span style=color:#d3869b>8</span>
+</span></span><span style=display:flex><span>}&gt;
+</span></span><span style=display:flex><span>... <span style=color:#fabd2f>tensor</span>&lt;<span style=color:#d3869b>8x8x</span><span style=color:#fe8019>f64</span>, #DCSC&gt; ...
+</span></span></code></pre></div><p>使用 sparse tensor encode 之后的 tensor 就不再像 dense 的 tensor 那样在 bufferization 的过程
+中直接用 memref 来 buffer 了，而将被 lower 到一个更紧凑的存储结构上。这个结构由三个数组组成。
+其中，一个二维数组 indices，用来指明非零元素的具体索引，其每个元素代表着 tensor 的某一维度。
+比如当我们要访问第一维度的非零元素的索引时，则使用 <code>indice[0]</code> 来读取。
+还有一个二维数组 pointers，和 indices 一样，它的每个元素也代表着 tensor 的维度，而内部数组
+用来指明非零元素可读取的范围。
+最后是一个一维数组，只用来存放非零的值。</p><p>因为设定一个 tensor 是 sparse 的只需要添加新的属性就行，所以原本的比如像</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-mlir data-lang=mlir><span style=display:flex><span>%C = linalg.matmul ins(%A, %B: <span style=color:#fabd2f>tensor</span>&lt;<span style=color:#d3869b>?x?x</span><span style=color:#fe8019>f64</span>&gt;, <span style=color:#fabd2f>tensor</span>&lt;<span style=color:#d3869b>?x?x</span><span style=color:#fe8019>f64</span>&gt;) -&gt; <span style=color:#fabd2f>tensor</span>&lt;<span style=color:#d3869b>?x?x</span><span style=color:#fe8019>f64</span>&gt;
+</span></span></code></pre></div><p>都可以简单的加个 sparse 属性变成对 sparse tensor 的操作</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-mlir data-lang=mlir><span style=display:flex><span>%C = linalg.matmul ins(%A, %B: <span style=color:#fabd2f>tensor</span>&lt;<span style=color:#d3869b>?x?x</span><span style=color:#fe8019>f64</span>, #CSR&gt;, <span style=color:#fabd2f>tensor</span>&lt;<span style=color:#d3869b>?x?x</span><span style=color:#fe8019>f64</span>, #CSR&gt;) -&gt; <span style=color:#fabd2f>tensor</span>&lt;<span style=color:#d3869b>?x?x</span><span style=color:#fe8019>f64</span>, #CSR&gt;
+</span></span></code></pre></div><p>除此之外 sparse_tensor 这个 Dialect 本身也提供一些操作，主要分三类</p><ul><li>用来生成 sparse tensor 的</li></ul><p>比如 <code>sparse_tensor.new</code>，可以从指定的文件名读取一个特定 Matrix Market Exchange 格式的文件
+然后把它转换成内部的 tensor 类型。</p><ul><li>用来转换 sparse tensor 的</li></ul><p>MLIR 是强类型的，所以一切的类型转换都需要显示的表达，sparse_tensor 提供了
+<code>sparse_tensor.convert</code> 操作用来转换 tensor 的类型</p><p><code>%to = sparse_tensor.convert %from : tensor&lt;10x10xf64, #CSR> to tensor&lt;10x10xf64, #CSC></code></p><p>这里是一个将 #CSR 属性的 tensor 转换到 #CSC 属性的操作。</p><p>除此之外，convert 操作还可以将 dense tensor 转换到 sparse tensor。比如这里用</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-mlir data-lang=mlir><span style=display:flex><span>%m = arith.<span style=color:#fabd2f>constant</span> sparse&lt;[[<span style=color:#d3869b>0</span>,<span style=color:#d3869b>0</span>], [<span style=color:#d3869b>3</span>,<span style=color:#d3869b>2</span>], [<span style=color:#d3869b>4</span>,<span style=color:#d3869b>6</span>]], [<span style=color:#d3869b>1.0</span>, <span style=color:#d3869b>3.0</span>, <span style=color:#d3869b>5.0</span>]&gt; : <span style=color:#fabd2f>tensor</span>&lt;<span style=color:#d3869b>5x7x</span><span style=color:#fe8019>f64</span>&gt;
+</span></span><span style=display:flex><span>%s = sparse_tensor.convert %m : <span style=color:#fabd2f>tensor</span>&lt;<span style=color:#d3869b>5x7x</span><span style=color:#fe8019>f64</span>&gt; to <span style=color:#fabd2f>tensor</span> &lt;<span style=color:#d3869b>5x7x</span><span style=color:#fe8019>f64</span>, #CSR&gt;
+</span></span></code></pre></div><p>声明 %m 是一个 Coodinate list 的结构，5x7 的密集矩阵。
+第一个数组记录行列值，第二个数组记录非零的值。
+然后使用 sparse_tensor.convert 操作把它转换到了 #CSR 结构的 sparse tensor.</p><ul><li>用来支持 lower 的</li></ul><p>最后，Sparse Tensor Dialect 还提供了一些用于帮助 lowering 到其他 Dialect 的操作，
+首先从加上了属性的 Tensor lower 到只存储和遍历非零元素的中间形式，
+然后再从这个中间形式 lower 到具有实际存储方案的 buffer 形式，
+最后再到运行在目标硬件上的可执行代码。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-mlir data-lang=mlir><span style=display:flex><span>%ind = sparse_tensor.indices %t, %c3 : <span style=color:#fabd2f>tensor</span>&lt;<span style=color:#d3869b>10x10x</span><span style=color:#fe8019>f64</span>, #SparseTensor&gt; to <span style=color:#fabd2f>memref</span>&lt;<span style=color:#d3869b>?x</span><span style=color:#fe8019>index</span>&gt;
+</span></span></code></pre></div><h3 id=sparse-tensor-的优化>Sparse Tensor 的优化</h3><p>在 MLIR 中，Sparse Compiler 的实现是靠一组在 Sparse Tensor Dialect 里在 lowering 时加入的优化实现的。
+像上述提到的对 Sparse 存储的操作，组合和转换 Sparse 存储，遍历非零元素
+以及用并行和向量化来优化执行效率等等，都是靠这些优化实现的。</p><p>比方说我们要实现一个简单的对向量每个元素做乘积运算的操作，即 <code>V[i] *= x</code>。
+这个操作在output中把向量作为参数，但还接受了一个特殊的 block，在 block 里单独写了乘法计算。
+使用 sparse_tensor Dialect 提供的优化之后，这个 Linalg 操作会走一个特殊的魔法 transform
+改写成 sparse 操作相关的 scf 的 mlir 代码。</p></section><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css integrity=sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js integrity=sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous onload=renderMathInElement(document.body)></script><nav class="mt-24 flex rounded-lg bg-black/[3%] text-lg dark:bg-white/[8%]"><a class="flex w-1/2 items-center rounded-l-md p-6 pr-3 font-semibold no-underline hover:bg-black/[2%] dark:hover:bg-white/[3%]" href=https://blog.sh1mar.in/post/mlir/mlir-opt/><span class=mr-1.5>←</span><span>How mlir-opt work</span></a>
+<a class="ml-auto flex w-1/2 items-center justify-end rounded-r-md p-6 pl-3 font-semibold no-underline hover:bg-black/[2%] dark:hover:bg-white/[3%]" href=https://blog.sh1mar.in/post/sparsity/intro/><span>Sparsity 初见</span><span class=ml-1.5>→</span></a></nav><script type=module>
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true });
+  </script></article></main><footer class="opaco mx-auto flex h-[4.5rem] max-w-3xl items-center px-8 text-[0.9em] opacity-60"><div class=mr-auto>&copy; 2024
+<a class=link href=https://blog.sh1mar.in>sh1marin's blog</a></div><a class="link mx-6" href=https://gohugo.io/ rel=noopener target=_blank>Powered by Hugo️️</a>️
+<a class=link href=https://github.com/nanxiaobei/hugo-paper rel=noopener target=_blank>✎ Paper</a></footer></body></html>
