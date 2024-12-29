@@ -50,3 +50,7 @@ done
 cp *.m3u8 "$STORAGE/$file"
 cp *.Cue "$STORAGE/$file"
 ```
+
+！但是！相比起自己去内嵌图片，我会更推荐用 [picard](https://picard.musicbrainz.org/) 去修正整个 metadata。
+
+12. 如果 MusicBrainZ 之类的插件用不了，可能是缺了 dotnet4.0，`winetrick dotnet40` 装上即可。
