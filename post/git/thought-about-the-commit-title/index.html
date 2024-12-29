@@ -1,0 +1,55 @@
+<!doctype html><html class="not-ready lg:text-base" style=--bg:#faf8f1 lang=zh><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><title>对 commit title 的一些思考 - sh1marin's blog</title><meta name=theme-color><meta name=description content="前言 最近对自己的 commit convention 看得有点烦躁了。 我觉得自己又再次陷入了用一堆问题来解决另一堆问题的困境。 先简单讲讲具体发生了一些什么事情。 以前我一直在用"><meta name=author content="Avimitin"><link rel="preload stylesheet" as=style href=https://blog.sh1mar.in/main.min.css><script defer src=https://blog.sh1mar.in/highlight.min.js onload=hljs.initHighlightingOnLoad()></script>
+<link rel=preload as=image href=https://blog.sh1mar.in/theme.png><link rel=preload as=image href=https://blog.sh1mar.in/github.svg><link rel=preload as=image href=https://blog.sh1mar.in/rss.svg><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css integrity=sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js integrity=sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous onload=renderMathInElement(document.body)></script>
+<link rel=icon href=https://blog.sh1mar.in/favicon.ico><link rel=apple-touch-icon href=https://blog.sh1mar.in/apple-touch-icon.png><meta name=generator content="Hugo 0.112.3"><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css integrity=sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js integrity=sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous onload=renderMathInElement(document.body)></script><meta property="og:title" content="对 commit title 的一些思考"><meta property="og:description" content="前言 最近对自己的 commit convention 看得有点烦躁了。 我觉得自己又再次陷入了用一堆问题来解决另一堆问题的困境。 先简单讲讲具体发生了一些什么事情。 以前我一直在用"><meta property="og:type" content="article"><meta property="og:url" content="https://blog.sh1mar.in/post/git/thought-about-the-commit-title/"><meta property="article:section" content="post"><meta property="article:published_time" content="2022-01-10T00:00:00+08:00"><meta property="article:modified_time" content="2022-01-10T00:00:00+08:00"><meta itemprop=name content="对 commit title 的一些思考"><meta itemprop=description content="前言 最近对自己的 commit convention 看得有点烦躁了。 我觉得自己又再次陷入了用一堆问题来解决另一堆问题的困境。 先简单讲讲具体发生了一些什么事情。 以前我一直在用"><meta itemprop=datePublished content="2022-01-10T00:00:00+08:00"><meta itemprop=dateModified content="2022-01-10T00:00:00+08:00"><meta itemprop=wordCount content="981"><meta itemprop=keywords content><meta name=twitter:card content="summary"><meta name=twitter:title content="对 commit title 的一些思考"><meta name=twitter:description content="前言 最近对自己的 commit convention 看得有点烦躁了。 我觉得自己又再次陷入了用一堆问题来解决另一堆问题的困境。 先简单讲讲具体发生了一些什么事情。 以前我一直在用"></head><body class="text-black duration-200 ease-out dark:text-white"><header class="mx-auto flex h-[4.5rem] max-w-3xl px-8 lg:justify-center"><div class="relative z-50 mr-auto flex items-center"><a class="-translate-x-[1px] -translate-y-[1px] text-2xl font-semibold" href=https://blog.sh1mar.in>sh1marin's blog</a><div class="btn-dark text-[0] ml-4 h-6 w-6 shrink-0 cursor-pointer [background:url(./theme.svg)_left_center/cover_no-repeat] dark:invert dark:[background-position:right]" role=button aria-label=Dark></div></div><div class="btn-menu relative z-50 -mr-8 flex h-[4.5rem] w-[5rem] shrink-0 cursor-pointer flex-col items-center justify-center gap-2.5 lg:hidden" role=button aria-label=Menu></div><script>const htmlClass=document.documentElement.classList;setTimeout(()=>{htmlClass.remove("not-ready")},10);const btnMenu=document.querySelector(".btn-menu");btnMenu.addEventListener("click",()=>{htmlClass.toggle("open")});const metaTheme=document.querySelector('meta[name="theme-color"]'),lightBg="#faf8f1".replace(/"/g,""),setDark=e=>{metaTheme.setAttribute("content",e?"#000":lightBg),htmlClass[e?"add":"remove"]("dark"),localStorage.setItem("dark",e)},darkScheme=window.matchMedia("(prefers-color-scheme: dark)");if(htmlClass.contains("dark"))setDark(!0);else{const e=localStorage.getItem("dark");setDark(e?e==="true":darkScheme.matches)}darkScheme.addEventListener("change",e=>{setDark(e.matches)});const btnDark=document.querySelector(".btn-dark");btnDark.addEventListener("click",()=>{setDark(localStorage.getItem("dark")!=="true")})</script><div class="nav-wrapper fixed inset-x-0 top-full z-40 flex h-full select-none flex-col justify-center pb-16 duration-200 dark:bg-black lg:static lg:h-auto lg:flex-row lg:!bg-transparent lg:pb-0 lg:transition-none"><nav class="lg:ml-12 lg:flex lg:flex-row lg:items-center lg:space-x-6"><a class="block text-center text-2xl leading-[5rem] lg:text-base lg:font-normal" href=/about/>About</a></nav><nav class="mt-12 flex justify-center space-x-10 dark:invert lg:ml-12 lg:mt-0 lg:items-center lg:space-x-6"><a class="h-8 w-8 text-[0] [background:var(--url)_center_center/cover_no-repeat] lg:h-6 lg:w-6" style=--url:url(./github.svg) href=https://github.com/Avimitin target=_blank rel=me>github</a>
+<a class="h-8 w-8 text-[0] [background:var(--url)_center_center/cover_no-repeat] lg:h-6 lg:w-6" style=--url:url(./rss.svg) href=https://blog.sh1mar.in/index.xml target=_blank rel=alternate>rss</a></nav></div></header><main class="prose prose-neutral relative mx-auto min-h-[calc(100%-9rem)] max-w-3xl px-8 pb-16 pt-12 dark:prose-invert"><article><header class=mb-16><h1 class="!my-0 pb-2.5">对 commit title 的一些思考</h1><div class="text-sm antialiased opacity-60"><time>Jan 10, 2022</time>
+<span class=mx-1>&#183;</span>
+<span>Avimitin</span></div></header><section><h2 id=前言>前言</h2><p>最近对自己的 <a href=https://commit-convention.sh1mar.in/>commit convention</a>
+看得有点烦躁了。
+我觉得自己又再次陷入了用一堆问题来解决另一堆问题的困境。</p><p>先简单讲讲具体发生了一些什么事情。
+以前我一直在用 Angular 的那一套 commit convention。
+但是某天当我在写 title 的时候，我发现他们的 type prefix
+实在是太长了，长得我只能竭尽脑汁的让 title 里的总结更加精简。</p><p>比如下面这个例子，写个 refactor，加上修改的模块名，
+我只剩下 25 个字符让我填写 title。有的人可能会说：
+“啊你干嘛不直接在后面接着写呢”。这是因为在一般的习惯里，
+commit title 都尽量建议缩窄在 50 个拉丁字符里的，方便在大量 log 中检索。
+这样在别人 review 的时候就可以一眼明白这个修改大概做了啥。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-text data-lang=text><span style=display:flex><span>refactor(module/module): blablablablablabalblablaa
+</span></span></code></pre></div><p>我英语不好，我也不想竭尽脑汁高度概括自己的工作，
+时间不应该花在这里，“这不是我想要的”。
+于是我开始设计自己的 commit convention。</p><p>之所以重新设计也要坚持这种 type module summary 的
+三明治形式，是因为我认为这种形式能帮助制定版本号
+和生成 changelog。从目前的实践来看，这种形式的确
+对我制定版本变更有一定的帮助，我甚至可以用很少的
+代码就写出一个简单的
+<a href=https://github.com/Avimitin/changelog_generator>changelog 生成器</a>。
+这个生成器可以很快的生成出分好类别的版本变更日志。</p><p>而我也可以根据不同的类别来增加版本号。
+new feature 和 fix 对应 <code>x.y.z</code> 里的 patch version。
+rewrite 则对应 minor version，带感叹号的对应 major version。</p><h2 id=设计>设计</h2><p>经过将近两个月的实践之后，我研究出了一个雅观和简洁好用的
+新 prefix。
+这套设计与原来的 Commit Convention 相似，保留 prefix <code>feat/refactor/fix/chore</code> 的原意，
+然后用他们的首字母大写来代替他们。
+feat 和 fix 都是 f 开头，所以我用了 N 来代表 feat，
+毕竟它的原意是 New Features。具体的设计如下：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-text data-lang=text><span style=display:flex><span>&lt;type&gt;[.|!] [module]: &lt;summary&gt;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Example:
+</span></span><span style=display:flex><span>N. module: blablabla
+</span></span><span style=display:flex><span>F. module: fix blablabla
+</span></span><span style=display:flex><span>R! module: rewrite blablabla
+</span></span></code></pre></div><p>在这里，感叹号代表 breaking change。为了让 commit 类型对齐，
+我稍有冗余的用 <code>.</code> 来占位。同时让 module 和符号之间隔开一个
+空格。</p><p>可能有的人会觉得，为什么不让普通 commit 仅用空格隔开，breaking
+用感叹号占位这个空格。我之前也是这样设计的，但用了一段时间之后
+我觉得太丑陋了。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-text data-lang=text><span style=display:flex><span>R!module: blablabla
+</span></span><span style=display:flex><span>F!module: lorem ipsum dolor sit amet
+</span></span><span style=display:flex><span>N module: qui minim labore adipisicing
+</span></span></code></pre></div><p>这里如果轮换使用空格和感叹号的话，会让 type 和 module 在视觉上产生割裂，
+而完全使用符号占位的话将无法直观的分辨出 type 和 module 两个部分。
+虽然我实用主义的删掉了累赘的全称 type，但依旧想保留一些看似冗余，
+却能提升阅读体验的设计。
+所以我选择了符号占位，以及多加一个空格来隔离 type 和 module 两个区域的设计。
+不仅只占用三个字符，还可以保护好 reviewer 的眼睛。</p><h2 id=结果>结果</h2><p><img src=./images/2022-05-03_16-26.png alt=image></p></section><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css integrity=sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js integrity=sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous onload=renderMathInElement(document.body)></script><nav class="mt-24 flex rounded-lg bg-black/[3%] text-lg dark:bg-white/[8%]"><a class="flex w-1/2 items-center rounded-l-md p-6 pr-3 font-semibold no-underline hover:bg-black/[2%] dark:hover:bg-white/[3%]" href=https://blog.sh1mar.in/post/ideology/summary_for_2021/><span class=mr-1.5>←</span><span>我的忏悔 2021</span></a>
+<a class="ml-auto flex w-1/2 items-center justify-end rounded-r-md p-6 pl-3 font-semibold no-underline hover:bg-black/[2%] dark:hover:bg-white/[3%]" href=https://blog.sh1mar.in/post/ideology/fuck-emo-and-involution/><span>去你的 emo 和内卷</span><span class=ml-1.5>→</span></a></nav></article></main><footer class="opaco mx-auto flex h-[4.5rem] max-w-3xl items-center px-8 text-[0.9em] opacity-60"><div class=mr-auto>&copy; 2024
+<a class=link href=https://blog.sh1mar.in>sh1marin's blog</a></div><a class="link mx-6" href=https://gohugo.io/ rel=noopener target=_blank>Powered by Hugo️️</a>️
+<a class=link href=https://github.com/nanxiaobei/hugo-paper rel=noopener target=_blank>✎ Paper</a></footer></body></html>

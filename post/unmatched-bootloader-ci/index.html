@@ -1,0 +1,179 @@
+<!doctype html><html class="not-ready lg:text-base" style=--bg:#faf8f1 lang=zh><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><title>给 Unmatched Bootloader 写个自动化！ - sh1marin's blog</title><meta name=theme-color><meta name=description content="Unmatched 是 SiFive 发行的一款 RISC-V 的板子。 办公室的同事写了几个脚本，给这块板子弄了个非常清真，自主可控的 Arch Linux 固件。但是那几个脚本有些问题， 同时也必须需要一个"><meta name=author content="sh1marin"><link rel="preload stylesheet" as=style href=https://blog.sh1mar.in/main.min.css><script defer src=https://blog.sh1mar.in/highlight.min.js onload=hljs.initHighlightingOnLoad()></script>
+<link rel=preload as=image href=https://blog.sh1mar.in/theme.png><link rel=preload as=image href=https://blog.sh1mar.in/github.svg><link rel=preload as=image href=https://blog.sh1mar.in/rss.svg><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css integrity=sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js integrity=sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous onload=renderMathInElement(document.body)></script>
+<link rel=icon href=https://blog.sh1mar.in/favicon.ico><link rel=apple-touch-icon href=https://blog.sh1mar.in/apple-touch-icon.png><meta name=generator content="Hugo 0.112.3"><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css integrity=sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js integrity=sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous onload=renderMathInElement(document.body)></script><meta property="og:title" content="给 Unmatched Bootloader 写个自动化！"><meta property="og:description" content="Unmatched 是 SiFive 发行的一款 RISC-V 的板子。 办公室的同事写了几个脚本，给这块板子弄了个非常清真，自主可控的 Arch Linux 固件。但是那几个脚本有些问题， 同时也必须需要一个"><meta property="og:type" content="article"><meta property="og:url" content="https://blog.sh1mar.in/post/unmatched-bootloader-ci/"><meta property="article:section" content="post"><meta property="article:published_time" content="2022-11-01T00:00:00+08:00"><meta property="article:modified_time" content="2022-11-01T00:00:00+08:00"><meta itemprop=name content="给 Unmatched Bootloader 写个自动化！"><meta itemprop=description content="Unmatched 是 SiFive 发行的一款 RISC-V 的板子。 办公室的同事写了几个脚本，给这块板子弄了个非常清真，自主可控的 Arch Linux 固件。但是那几个脚本有些问题， 同时也必须需要一个"><meta itemprop=datePublished content="2022-11-01T00:00:00+08:00"><meta itemprop=dateModified content="2022-11-01T00:00:00+08:00"><meta itemprop=wordCount content="3633"><meta itemprop=keywords content><meta name=twitter:card content="summary"><meta name=twitter:title content="给 Unmatched Bootloader 写个自动化！"><meta name=twitter:description content="Unmatched 是 SiFive 发行的一款 RISC-V 的板子。 办公室的同事写了几个脚本，给这块板子弄了个非常清真，自主可控的 Arch Linux 固件。但是那几个脚本有些问题， 同时也必须需要一个"></head><body class="text-black duration-200 ease-out dark:text-white"><header class="mx-auto flex h-[4.5rem] max-w-3xl px-8 lg:justify-center"><div class="relative z-50 mr-auto flex items-center"><a class="-translate-x-[1px] -translate-y-[1px] text-2xl font-semibold" href=https://blog.sh1mar.in>sh1marin's blog</a><div class="btn-dark text-[0] ml-4 h-6 w-6 shrink-0 cursor-pointer [background:url(./theme.svg)_left_center/cover_no-repeat] dark:invert dark:[background-position:right]" role=button aria-label=Dark></div></div><div class="btn-menu relative z-50 -mr-8 flex h-[4.5rem] w-[5rem] shrink-0 cursor-pointer flex-col items-center justify-center gap-2.5 lg:hidden" role=button aria-label=Menu></div><script>const htmlClass=document.documentElement.classList;setTimeout(()=>{htmlClass.remove("not-ready")},10);const btnMenu=document.querySelector(".btn-menu");btnMenu.addEventListener("click",()=>{htmlClass.toggle("open")});const metaTheme=document.querySelector('meta[name="theme-color"]'),lightBg="#faf8f1".replace(/"/g,""),setDark=e=>{metaTheme.setAttribute("content",e?"#000":lightBg),htmlClass[e?"add":"remove"]("dark"),localStorage.setItem("dark",e)},darkScheme=window.matchMedia("(prefers-color-scheme: dark)");if(htmlClass.contains("dark"))setDark(!0);else{const e=localStorage.getItem("dark");setDark(e?e==="true":darkScheme.matches)}darkScheme.addEventListener("change",e=>{setDark(e.matches)});const btnDark=document.querySelector(".btn-dark");btnDark.addEventListener("click",()=>{setDark(localStorage.getItem("dark")!=="true")})</script><div class="nav-wrapper fixed inset-x-0 top-full z-40 flex h-full select-none flex-col justify-center pb-16 duration-200 dark:bg-black lg:static lg:h-auto lg:flex-row lg:!bg-transparent lg:pb-0 lg:transition-none"><nav class="lg:ml-12 lg:flex lg:flex-row lg:items-center lg:space-x-6"><a class="block text-center text-2xl leading-[5rem] lg:text-base lg:font-normal" href=/about/>About</a></nav><nav class="mt-12 flex justify-center space-x-10 dark:invert lg:ml-12 lg:mt-0 lg:items-center lg:space-x-6"><a class="h-8 w-8 text-[0] [background:var(--url)_center_center/cover_no-repeat] lg:h-6 lg:w-6" style=--url:url(./github.svg) href=https://github.com/Avimitin target=_blank rel=me>github</a>
+<a class="h-8 w-8 text-[0] [background:var(--url)_center_center/cover_no-repeat] lg:h-6 lg:w-6" style=--url:url(./rss.svg) href=https://blog.sh1mar.in/index.xml target=_blank rel=alternate>rss</a></nav></div></header><main class="prose prose-neutral relative mx-auto min-h-[calc(100%-9rem)] max-w-3xl px-8 pb-16 pt-12 dark:prose-invert"><article><header class=mb-16><h1 class="!my-0 pb-2.5">给 Unmatched Bootloader 写个自动化！</h1><div class="text-sm antialiased opacity-60"><time>Nov 1, 2022</time>
+<span class=mx-1>&#183;</span>
+<span>sh1marin</span></div></header><section><p>Unmatched 是 SiFive 发行的一款 RISC-V 的板子。
+办公室的同事写了几个脚本，给这块板子弄了个非常清真，自主可控的
+Arch Linux 固件。但是那几个脚本有些问题，
+同时也必须需要一个 riscv64 qemu system 或者硬件环境来构建。
+我对这个脚本稍微做了一些修改，并加上了交叉编译支持，于是这几个脚本
+可以一键无脑在 x86_64 Arch Linux 环境里出 Unmatched 固件了。</p><p>那么需求来了，既然有脚本了，理论上我们是不是可以用 GitHub Action 来自动化
+这个过程？每次 push，甚至每周，或者每过几天就自动 build 一次，我们要用
+的时候只需要下载固件就可以了，这多方便啊。于是我接下了这个任务（大坑），
+试着给我们的仓库加上 CI workflow。</p><h2 id=1-dubious-ownership-in-repository>#1 Dubious ownership in repository</h2><p>年幼无知的我以为，在 Action 里跑个 Arch Linux 的 docker image，加几句脚本调用，
+剩下的就交给时间就可以了。于是先出了一版简单的 ci workflow：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#fb4934>name</span>: bootloader-builder
+</span></span><span style=display:flex><span><span style=color:#fb4934>on</span>:
+</span></span><span style=display:flex><span>  <span style=color:#fb4934>push</span>:
+</span></span><span style=display:flex><span>    <span style=color:#fb4934>branches</span>:
+</span></span><span style=display:flex><span>      - master
+</span></span><span style=display:flex><span>      - ci
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fb4934>jobs</span>:
+</span></span><span style=display:flex><span>  <span style=color:#fb4934>bootloader-build-job</span>:
+</span></span><span style=display:flex><span>    <span style=color:#fb4934>runs-on</span>: ubuntu-latest
+</span></span><span style=display:flex><span>    <span style=color:#fb4934>container</span>: archlinux:latest
+</span></span><span style=display:flex><span>    <span style=color:#fb4934>steps</span>:
+</span></span><span style=display:flex><span>      - <span style=color:#fb4934>run</span>: pacman -Syu --noconfirm git
+</span></span><span style=display:flex><span>      - <span style=color:#fb4934>uses</span>: actions/checkout@v3
+</span></span><span style=display:flex><span>      - <span style=color:#fb4934>name</span>: Install deps
+</span></span><span style=display:flex><span>        <span style=color:#fb4934>run</span>: |<span style=color:#b8bb26>
+</span></span></span><span style=display:flex><span><span style=color:#b8bb26>          git submodule update --init
+</span></span></span><span style=display:flex><span><span style=color:#b8bb26>          ./install-deps.sh</span>          
+</span></span><span style=display:flex><span>      - <span style=color:#fb4934>name</span>: Build-opensbi.sh
+</span></span><span style=display:flex><span>        <span style=color:#fb4934>run</span>: ./build-opensbi.sh cross-compile
+</span></span><span style=display:flex><span>      - <span style=color:#fb4934>name</span>: Build U-Boot
+</span></span><span style=display:flex><span>        <span style=color:#fb4934>run</span>: ./build-u-boot.sh cross-compile
+</span></span><span style=display:flex><span>      - <span style=color:#fb4934>name</span>: Make image
+</span></span><span style=display:flex><span>        <span style=color:#fb4934>run</span>: ./mk-image.sh cross-compile
+</span></span></code></pre></div><p>这个 action 很简单，设置了仅在 <code>master</code>, <code>ci</code> 两个分支做变动的时候触发脚本，
+接着在 ubuntu 的宿主机起一个 archlinux 的 docker container，并依次执行固件
+的构建脚本。
+因为我们的仓库 vendor 了 u-boot 和 opensbi 这两个仓库，所以安装好
+依赖之后还需要记得 <code>git submodule init & update</code> 来拉取上游仓库。</p><p>因为我们是在 Arch Linux 镜像里，而不是在 Ubuntu 这个 Host 主机里
+执行 checkout action，而默认 Arch Linux 镜像是不带 git 的，要记得在 checkout 之前装好 git，
+不然 checkout action 就会用 curl 来下载源码的 tar 文件，这样是不会带上 .git 目录的，
+然后就会不得不重新 init 仓库了。</p><p>好，push 一下看看 GitHub Action 怎么说。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-text data-lang=text><span style=display:flex><span>...
+</span></span><span style=display:flex><span>fatal: detected dubious ownership in repository at ......
+</span></span><span style=display:flex><span>...
+</span></span></code></pre></div><p>嗯？这是什么问题？稍微查了一下发现原来 git 在 init 的时候会探测执行 git 指令的
+用户和这个仓库的用户是否一致，这样可以减少一些在共享环境里的风险。
+而 CI 的用户环境和本地的用户环境不一样，自然会有这个报错。</p><blockquote><p>关于这个探测的详细可以看这条 commit:
+<a href=https://github.com/git/git/commit/8959555cee7ec045958f9b6dd62e541affb7e7d9>https://github.com/git/git/commit/8959555cee7ec045958f9b6dd62e541affb7e7d9</a></p></blockquote><p>当然这个行为可以手动取消，在 git config 里设置一下 <code>safe.directory</code> 这个选项即可：</p><pre tabindex=0><code>git config --global --add safe.directory /path/to/srcdir
+</code></pre><p>当然还有一个更清真的做法：不要自己手动 init submodule，用 actions/checkout 提供的 recursive submodule
+来拉取。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-yaml data-lang=yaml><span style=display:flex><span>- <span style=color:#fb4934>uses</span>: actions/checkout@v3
+</span></span><span style=display:flex><span>  <span style=color:#fb4934>with</span>:
+</span></span><span style=display:flex><span>    <span style=color:#fb4934>submodules</span>: <span style=color:#b8bb26>&#39;recursive&#39;</span>
+</span></span></code></pre></div><h2 id=2-cannot-find-unused-loop-device>#2 cannot find unused loop device</h2><p>接下来依旧进展不顺，CI 执行到了打包镜像的环节，但设置 loop device 的时候 losetup 报错
+<code>losetup: cannot find an unused loop device</code>。思索了一下，感觉可能是 docker container
+屏蔽了宿主机的设备读取。查了一下 <code>docker-run</code> 的 man page 发现了这么一条参数：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-text data-lang=text><span style=display:flex><span>--privileged [true|false]
+</span></span><span style=display:flex><span>  Give extended privileges to this container. A &#34;privileged&#34; container is given access to all devices.
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>When the operator executes docker run --privileged, Docker will enable access to all devices on the host as well
+</span></span><span style=display:flex><span>as set some configuration in AppArmor to allow the container nearly all the same access to the host as processes
+</span></span><span style=display:flex><span>running outside of a container on the host.
+</span></span></code></pre></div><p>好，启用！修改一下 CI 配置文件的 container 部分，加上这个选项：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-diff data-lang=diff><span style=display:flex><span><span style=color:#282828;background-color:#fb4934>-    container: archlinux:latest
+</span></span></span><span style=display:flex><span><span style=color:#282828;background-color:#fb4934></span><span style=color:#282828;background-color:#b8bb26>+    container:
+</span></span></span><span style=display:flex><span><span style=color:#282828;background-color:#b8bb26>+      image: archlinux:latest
+</span></span></span><span style=display:flex><span><span style=color:#282828;background-color:#b8bb26>+      options: &#34;--privileged&#34;
+</span></span></span></code></pre></div><h2 id=3-snapd-is-shit>#3 snapd is shit</h2><p>现在能在 docker 内读写设备了，push 一版看看还有啥问题。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-text data-lang=text><span style=display:flex><span>mke2fs
+</span></span><span style=display:flex><span>The file /dev/loop0p3 does not exist and no size was specified.
+</span></span><span style=display:flex><span>mount: special device /dev/loop0p3 does not exist
+</span></span></code></pre></div><p>嗯？CI 的 host 居然不止一个 loop 设备吗。在脚本里加上 <code>losetup -a</code>，发现原来
+给 Ubuntu 的 Snapd 吃了三个 loop device，而手写的 <code>/dev/loop0p3</code> 指定错设备了。</p><blockquote><p>吐槽：怎么会有 snapd 这种东西在 CI 环境里</p></blockquote><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-text data-lang=text><span style=display:flex><span>/dev/loop0: [2049]:71364 (/var/lib/snapd/snaps/core20_1623.snap)
+</span></span><span style=display:flex><span>/dev/loop1: [2049]:71365 (/var/lib/snapd/snaps/snapd_17029.snap)
+</span></span><span style=display:flex><span>/dev/loop2: [2049]:71363 (/var/lib/snapd/snaps/lxd_22753.snap)
+</span></span><span style=display:flex><span>/dev/loop3: [2049]:1586605 (...)
+</span></span></code></pre></div><p>问题不大，给 <code>losetup</code> 加上 <code>--show</code> 参数之后，他会往 stdout 输出当前使用的
+loop device 的名字，用一个变量来存这个名字就行：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-diff data-lang=diff><span style=display:flex><span><span style=color:#282828;background-color:#fb4934>-losetup -f -P $IMAGE_FILE
+</span></span></span><span style=display:flex><span><span style=color:#282828;background-color:#fb4934></span><span style=color:#282828;background-color:#b8bb26>+LODEV=$(losetup -f --show -P $IMAGE_FILE)
+</span></span></span><span style=display:flex><span><span style=color:#282828;background-color:#b8bb26></span><span style=color:#282828;background-color:#fb4934>-mkfs.ext4 /dev/loop0p3
+</span></span></span><span style=display:flex><span><span style=color:#282828;background-color:#fb4934></span><span style=color:#282828;background-color:#b8bb26>+mkfs.ext4 &#34;${LODEV}p3&#34;
+</span></span></span><span style=display:flex><span><span style=color:#282828;background-color:#b8bb26></span> mkdir rootfs
+</span></span><span style=display:flex><span><span style=color:#282828;background-color:#fb4934>-mount /dev/loop0p3 rootfs/
+</span></span></span><span style=display:flex><span><span style=color:#282828;background-color:#fb4934></span><span style=color:#282828;background-color:#b8bb26>+mount &#34;${LODEV}p3&#34; rootfs/
+</span></span></span></code></pre></div><p>再推一版到 CI 上，格式化的参数终于是对了，但还是遇到了这一小节开头的问题。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-text data-lang=text><span style=display:flex><span>The file /dev/loop3p3 does not exist and no size was specified.
+</span></span></code></pre></div><h2 id=4-partition-not-found>#4 partition not found</h2><p>既然 <code>losetup -a</code> 可以看到 <code>/dev/loop3</code> 这个设备，那么问题就应该出在分区上，
+为什么 <code>/dev/loop3p3</code>，<code>/dev/loop3</code> 的第三个分区挂不上呢？</p><p>在研究这个问题之前先提前说明一下为什么会有三个分区。这个固件脚本会在本地
+truncate 一个新的文件，分好三个区，前两个区一个写 spl 另一个写 uboot，最后
+一个分区写系统镜像。这就是为什么上面在做 mkfs 和 mount 的操作。</p><p><code>losetup -f -P $IMAGE_FILE</code> 将这个新 truncate 的分区连接到 loop device 上，
+连接好之后我们就应该可以操作 <code>/dev/loopNp3</code> 这个分区，如果访问不到的话，我想
+只有可能是分区有问题。往上翻了翻日志，发现分区的时候 <code>sgdisk</code> 发了一条 warning：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-text data-lang=text><span style=display:flex><span>Warning: The kernel is still using the old partition table.
+</span></span><span style=display:flex><span>The new table will be used at the next reboot or after you
+</span></span><span style=display:flex><span>run partprobe(8) or kpartx(8)
+</span></span></code></pre></div><p>难道是因为命令执行得太快了，系统没有分区信息？装上 parted 这个包，
+尝试用命令 <code>partprobe</code> 通知系统关于分区的变动，然后再执行了一下
+<code>partprobe -s</code> 命令查看分区，居然在 <code>/dev/loop3</code> 这个设备上看不到任何
+分区。</p><p>这下头皮发麻了，为啥呢，为啥没有分区信息呢？百思不得其解的我请来了我伟大的鴨鴨走搜索引擎神，
+发现了这么一条 issue: <a href=https://github.com/moby/moby/issues/27886>https://github.com/moby/moby/issues/27886</a>。终于理解了 docker 的申必奥义。</p><p>简单的来讲，当你加上 <code>--privileged</code> 参数的时候，docker 会将 <code>/dev</code> 下所有的文件复制进容器里，
+但容器起了之后，任何对 <code>/dev</code> 做的修改都不会被更新。</p><p>在我们的例子里，起容器的时候 docker 将 <code>/dev/loop3</code> 这个文件复制进了容器。在容器内我们执行了
+<code>losetup -D</code> 并连接上我们的分区文件，虽然宿主机（Ubuntu）里设备文件更新了，但 docker 并不会
+把这个新文件复制到容器里，docker 只复制一次，然后它就摆了。</p><p>那咋办呢？往下翻 issue，tonyfahrion 给我们提供了<a href=https://github.com/moby/moby/issues/27886#issuecomment-417074845>答案</a>:</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>LOOPDEV<span style=color:#fe8019>=</span><span style=color:#fe8019>$(</span>losetup --find --show --partscan <span style=color:#b8bb26>${</span>IMAGE_FILE<span style=color:#b8bb26>}</span><span style=color:#fe8019>)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>PARTITIONS<span style=color:#fe8019>=</span><span style=color:#fe8019>$(</span>lsblk --raw --output <span style=color:#b8bb26>&#34;MAJ:MIN&#34;</span> --noheadings <span style=color:#b8bb26>${</span>LOOPDEV<span style=color:#b8bb26>}</span> | tail -n +2<span style=color:#fe8019>)</span>
+</span></span><span style=display:flex><span>COUNTER<span style=color:#fe8019>=</span><span style=color:#d3869b>1</span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>for</span> i in $PARTITIONS; <span style=color:#fe8019>do</span>
+</span></span><span style=display:flex><span>    MAJ<span style=color:#fe8019>=</span><span style=color:#fe8019>$(</span><span style=color:#fabd2f>echo</span> $i | cut -d: -f1<span style=color:#fe8019>)</span>
+</span></span><span style=display:flex><span>    MIN<span style=color:#fe8019>=</span><span style=color:#fe8019>$(</span><span style=color:#fabd2f>echo</span> $i | cut -d: -f2<span style=color:#fe8019>)</span>
+</span></span><span style=display:flex><span>    <span style=color:#fe8019>if</span> <span style=color:#fe8019>[</span> ! -e <span style=color:#b8bb26>&#34;</span><span style=color:#b8bb26>${</span>LOOPDEV<span style=color:#b8bb26>}</span><span style=color:#b8bb26>p</span><span style=color:#b8bb26>${</span>COUNTER<span style=color:#b8bb26>}</span><span style=color:#b8bb26>&#34;</span> <span style=color:#fe8019>]</span>; <span style=color:#fe8019>then</span> mknod <span style=color:#b8bb26>${</span>LOOPDEV<span style=color:#b8bb26>}</span>p<span style=color:#b8bb26>${</span>COUNTER<span style=color:#b8bb26>}</span> b $MAJ $MIN; <span style=color:#fe8019>fi</span>
+</span></span><span style=display:flex><span>    COUNTER<span style=color:#fe8019>=</span><span style=color:#fe8019>$((</span>COUNTER <span style=color:#fe8019>+</span> <span style=color:#d3869b>1</span><span style=color:#fe8019>))</span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>done</span>
+</span></span></code></pre></div><p>他从 lsblk 读取指定的 loop 设备文件的信息，然后用 mknod 手动创建这些设备文件。
+非常感谢他，我马上抄了一份放进镜像打包文件里，加上一个 docker 环境的判断：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#fe8019>if</span> <span style=color:#fe8019>[[</span> -f /.dockerenv <span style=color:#fe8019>]]</span>; <span style=color:#fe8019>then</span>
+</span></span><span style=display:flex><span>    ...
+</span></span><span style=display:flex><span><span style=color:#fe8019>fi</span>
+</span></span></code></pre></div><p>docker 必会在容器的根目录下放一个 .dockerenv 文件，只要这个文件存在，我们就可以
+假设这个脚本在 docker 里运行。</p><h2 id=exec-format-error>exec format error</h2><p>修 loop device 找不到的问题已经把我累得半死不活了，抱着 “这回应该可以了吧” 的 kimoji，
+我又 push 了一版到 Action 上。很开心，mount 能挂上了，pacstrap 也跑起来了，这下完事大吉了，哈哈。</p><p>然而 binfmt 又给了我一重锤：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-text data-lang=text><span style=display:flex><span>call to execv failed (Exec format error)
+</span></span><span style=display:flex><span>error: command failed to execute correctly
+</span></span></code></pre></div><p>关于 binfmt 的详细介绍可以看<a href=https://en.wikipedia.org/wiki/Binfmt_misc>维基</a>，简单来说
+它是内核用来判断如何执行一个可执行文件的一串格式符号，识别架构是 binfmt 的工作
+。出现 <code>(Exec format error)</code> 说明 kernel 不能正确识别可执行文件的二进制代码。</p><p>那么为什么不能正确识别呢？首先先看日志，这段报错出在 pacstrap 的安装包和 post-transaction hook
+两个阶段，而这两个阶段都是在 RISC-V 环境里运行的，大致可以推断用了 x86_64 环境跑 riscv64 的软件。
+于是和同事商量了一下之后，猜测可能是 binfmt 没有挂上。</p><p>因为官方仓库的 qemu-user-static-binfmt 没有开 P flag 不能用，需要用同事特别打包过的
+devtools-riscv64 包来提供可用的 binfmt，这个包官方库里没有，archlinuxcn 有但已经过时，
+我们只好手动从 AUR 上拉取下来自己手动 build。</p><p>手动打 AUR 的包很简单，但有几个小问题需要注意</p><ol><li>关于打包用户</li></ol><p>首先 Arch Linux 的打包工具 makepkg 不能用 root 执行，我也不想创建新用户,
+因此这里用默认自带的 nobody 账户来打包，而 <code>makepkg -si</code> 包含了 sync 和 install 两个需要
+root 权限的操作，会默认调用 sudo，GitHub Action 是没有用来交互的 shell 的，
+那么这里就要记住给 <code>/etc/sudoers</code> 配置免密码。</p><ol start=2><li>关于文件权限</li></ol><p>跑 ci 的时候当前目录下所有文件都是归属于 root 用户的，要记得给 nobody 用户当前目录的写权限，
+不然会有 permission denied 的问题。</p><ol start=3><li>去掉确认步骤</li></ol><p>还是因为 Action 没有交互 Shell，makepkg -si 包括了 install 这个需要确认的步骤，所以记得
+加上 <code>--noconfirm</code> 参数。</p><p>完整的打包流程如下：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#928374;font-style:italic># 让任何人都能免密码使用 sudo</span>
+</span></span><span style=display:flex><span><span style=color:#fabd2f>echo</span> <span style=color:#b8bb26>&#34;ALL ALL=(ALL:ALL) NOPASSWD: ALL&#34;</span> &gt;&gt; /etc/sudoers
+</span></span><span style=display:flex><span><span style=color:#928374;font-style:italic># 克隆打包脚本</span>
+</span></span><span style=display:flex><span>git clone https://aur.archlinux.org/devtools-riscv64.git
+</span></span><span style=display:flex><span><span style=color:#fabd2f>cd</span> devtools-riscv64
+</span></span><span style=display:flex><span><span style=color:#928374;font-style:italic># 配置目录权限</span>
+</span></span><span style=display:flex><span>chown -R nobody $PWD
+</span></span><span style=display:flex><span><span style=color:#928374;font-style:italic># 切换到 nobody 账户来执行 makepkg -si</span>
+</span></span><span style=display:flex><span>sudo -u nobody makepkg -si --noconfirm
+</span></span></code></pre></div><blockquote><p>但实际上不用这么麻烦，只是更新 binfmt 的话可以直接把 binfmt 下载下来放进去，然后 systemctl restart systemd-binfmt</p><p>By c10s</p></blockquote><h2 id=docker-containers-use-host-os-kernel>docker containers use host OS kernel</h2><p>有 binfmt 了，有 qemu-user-static 了，这下能正常调用 exec 了吧？
+把修好的 ci 脚本 push 上去，发现问题依旧。抓耳挠腮也想不明白还有哪里有问题。</p><p>又和同事请教了一番，发现我思路对了，但忘记了关键的一环：我在 docker 内。</p><p>binfmt 是内核在做的事情，而 docker 镜像是共用宿主机内核的。我在镜像内
+配置 binfmt 并不会影响 Ubuntu 内核。所以得换个解决方案：先在宿主机配好 binfmt，
+然后再起 docker。</p><p>给宿主机配 binfmt 已经有 actions 可以复用了：<a href=https://github.com/docker/setup-qemu-action>https://github.com/docker/setup-qemu-action</a>。
+但是因为我给所有的 step 配置了: <code>container: archlinux:latest</code>，
+直接往 workflow 里直接加一个新的 step 只是在 arch 的镜像里再跑一个 docker 罢了，
+遍历 GitHub Action 的文档，也没有什么 <code>pre-container</code> 之类的 hook。</p><p>那咋办呢，思索了一下，干脆不破不立，直接把整个 container 的配置删了，我不需要 GitHub
+帮我传递命令了，我自己手动来。最后的 CI 配置变成了这样：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-yaml data-lang=yaml><span style=display:flex><span>...
+</span></span><span style=display:flex><span>    <span style=color:#fb4934>runs-on</span>: ubuntu-latest
+</span></span><span style=display:flex><span>    <span style=color:#fb4934>steps</span>:
+</span></span><span style=display:flex><span>      - <span style=color:#fb4934>name</span>: Setup rv64 binfmt
+</span></span><span style=display:flex><span>        <span style=color:#fb4934>uses</span>: docker/setup-qemu-action@v2
+</span></span><span style=display:flex><span>      - <span style=color:#fb4934>uses</span>: actions/checkout@v3
+</span></span><span style=display:flex><span>      - <span style=color:#fb4934>name</span>: Build Image
+</span></span><span style=display:flex><span>        <span style=color:#fb4934>run</span>: ./mkin-docker
+</span></span><span style=display:flex><span>      - <span style=color:#fb4934>name</span>: Upload Image
+</span></span><span style=display:flex><span>        <span style=color:#fb4934>uses</span>: actions/upload-artifact@v3
+</span></span><span style=display:flex><span>        <span style=color:#fb4934>with</span>:
+</span></span><span style=display:flex><span>          <span style=color:#fb4934>name</span>: unmatched-bootloader-image
+</span></span><span style=display:flex><span>          <span style=color:#fb4934>path</span>: ${{ github.workspace }}/images/image-*.raw
+</span></span></code></pre></div><p>新的配置去掉了之前所有的构建步骤，去掉了 container 配置，删掉 AUR 的构建步骤，
+设置上 rv64 的 binfmt action 并下载源码，然后执行源码里的 mkin-docker 脚本。</p><p>这个脚本也很简单，就是把删掉的构建步骤移动到 docker run 里，把本地源码挂载进去，
+挂载一个构建好的镜像目录，然后用 archlinux 镜像调用 bash 执行单引号里的命令。
+单引号里的命令就是正常写脚本那样写就行了，-c 选项会把所有文本吃进去当作命令执行：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-bash data-lang=bash><span style=display:flex><span>docker run <span style=color:#b8bb26>\
+</span></span></span><span style=display:flex><span><span style=color:#b8bb26></span>  -v $PWD:/srcdir <span style=color:#b8bb26>\
+</span></span></span><span style=display:flex><span><span style=color:#b8bb26></span>  -v $PWD/images:/artifact <span style=color:#b8bb26>\
+</span></span></span><span style=display:flex><span><span style=color:#b8bb26></span>  --privileged <span style=color:#b8bb26>\
+</span></span></span><span style=display:flex><span><span style=color:#b8bb26></span>  archlinux:latest <span style=color:#b8bb26>\
+</span></span></span><span style=display:flex><span><span style=color:#b8bb26></span>  bash -lc <span style=color:#b8bb26>&#39;
+</span></span></span><span style=display:flex><span><span style=color:#b8bb26>  ...
+</span></span></span><span style=display:flex><span><span style=color:#b8bb26>&#39;</span>
+</span></span></code></pre></div><p>And finally，我终于看到了无报错的完整日志和可用的固件了，可喜可贺可喜可贺。</p><hr><ul><li>一些小吐槽</li></ul><p>本来以为很轻松的 Action 构建，结果花了两天来从坑里爬出来，真心很累。
+配置 GitHub Action 也很蛋疼，Debug 只能 push 上去，等构建，然后看日志，
+改，再推，再等&mldr;&mldr;同时你的邮箱会被塞满各种 build fail 的邮件。</p><p>这期间我的心态发生了一点变化：不觉得 yaml 工程师很酷吗，
+非常符合我对程序员的想象，哈哈。</p></section><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css integrity=sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js integrity=sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous onload=renderMathInElement(document.body)></script><nav class="mt-24 flex rounded-lg bg-black/[3%] text-lg dark:bg-white/[8%]"><a class="flex w-1/2 items-center rounded-l-md p-6 pr-3 font-semibold no-underline hover:bg-black/[2%] dark:hover:bg-white/[3%]" href=https://blog.sh1mar.in/post/write-a-simple-server-state/><span class=mr-1.5>←</span><span>边造车轮边学习</span></a>
+<a class="ml-auto flex w-1/2 items-center justify-end rounded-r-md p-6 pl-3 font-semibold no-underline hover:bg-black/[2%] dark:hover:bg-white/[3%]" href=https://blog.sh1mar.in/post/linux/thinkbook16p/><span>记我在 ThinkBook 16P 遇到的一些坑</span><span class=ml-1.5>→</span></a></nav></article></main><footer class="opaco mx-auto flex h-[4.5rem] max-w-3xl items-center px-8 text-[0.9em] opacity-60"><div class=mr-auto>&copy; 2024
+<a class=link href=https://blog.sh1mar.in>sh1marin's blog</a></div><a class="link mx-6" href=https://gohugo.io/ rel=noopener target=_blank>Powered by Hugo️️</a>️
+<a class=link href=https://github.com/nanxiaobei/hugo-paper rel=noopener target=_blank>✎ Paper</a></footer></body></html>

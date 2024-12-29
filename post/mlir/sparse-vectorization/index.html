@@ -1,0 +1,248 @@
+<!doctype html><html class="not-ready lg:text-base" style=--bg:#faf8f1 lang=zh><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><title>MLIR - Sparse Vectorization - sh1marin's blog</title><meta name=theme-color><meta name=description content="MLIR Sparse Compiler 里对循环做向量化的方式是靠 Transform OP 的代码重写。 向量化的初步实现实现位于 lib/Dialect/SparseTensor/Transforms/SparseVectorization.cpp 里。 Transform 选项 Sparse Vectorization transform 的操作支持三个自定义选项， 通过 sparse_tensor::VL 结构体传递。 struct VL {"><meta name=author content="sh1marin"><link rel="preload stylesheet" as=style href=https://blog.sh1mar.in/main.min.css><script defer src=https://blog.sh1mar.in/highlight.min.js onload=hljs.initHighlightingOnLoad()></script>
+<link rel=preload as=image href=https://blog.sh1mar.in/theme.png><link rel=preload as=image href=https://blog.sh1mar.in/github.svg><link rel=preload as=image href=https://blog.sh1mar.in/rss.svg><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css integrity=sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js integrity=sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous onload=renderMathInElement(document.body)></script>
+<link rel=icon href=https://blog.sh1mar.in/favicon.ico><link rel=apple-touch-icon href=https://blog.sh1mar.in/apple-touch-icon.png><meta name=generator content="Hugo 0.112.3"><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css integrity=sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js integrity=sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous onload=renderMathInElement(document.body)></script><meta property="og:title" content="MLIR - Sparse Vectorization"><meta property="og:description" content="MLIR Sparse Compiler 里对循环做向量化的方式是靠 Transform OP 的代码重写。 向量化的初步实现实现位于 lib/Dialect/SparseTensor/Transforms/SparseVectorization.cpp 里。 Transform 选项 Sparse Vectorization transform 的操作支持三个自定义选项， 通过 sparse_tensor::VL 结构体传递。 struct VL {"><meta property="og:type" content="article"><meta property="og:url" content="https://blog.sh1mar.in/post/mlir/sparse-vectorization/"><meta property="article:section" content="post"><meta property="article:published_time" content="2023-07-10T00:00:00+08:00"><meta property="article:modified_time" content="2023-07-10T00:00:00+08:00"><meta itemprop=name content="MLIR - Sparse Vectorization"><meta itemprop=description content="MLIR Sparse Compiler 里对循环做向量化的方式是靠 Transform OP 的代码重写。 向量化的初步实现实现位于 lib/Dialect/SparseTensor/Transforms/SparseVectorization.cpp 里。 Transform 选项 Sparse Vectorization transform 的操作支持三个自定义选项， 通过 sparse_tensor::VL 结构体传递。 struct VL {"><meta itemprop=datePublished content="2023-07-10T00:00:00+08:00"><meta itemprop=dateModified content="2023-07-10T00:00:00+08:00"><meta itemprop=wordCount content="4107"><meta itemprop=keywords content><meta name=twitter:card content="summary"><meta name=twitter:title content="MLIR - Sparse Vectorization"><meta name=twitter:description content="MLIR Sparse Compiler 里对循环做向量化的方式是靠 Transform OP 的代码重写。 向量化的初步实现实现位于 lib/Dialect/SparseTensor/Transforms/SparseVectorization.cpp 里。 Transform 选项 Sparse Vectorization transform 的操作支持三个自定义选项， 通过 sparse_tensor::VL 结构体传递。 struct VL {"></head><body class="text-black duration-200 ease-out dark:text-white"><header class="mx-auto flex h-[4.5rem] max-w-3xl px-8 lg:justify-center"><div class="relative z-50 mr-auto flex items-center"><a class="-translate-x-[1px] -translate-y-[1px] text-2xl font-semibold" href=https://blog.sh1mar.in>sh1marin's blog</a><div class="btn-dark text-[0] ml-4 h-6 w-6 shrink-0 cursor-pointer [background:url(./theme.svg)_left_center/cover_no-repeat] dark:invert dark:[background-position:right]" role=button aria-label=Dark></div></div><div class="btn-menu relative z-50 -mr-8 flex h-[4.5rem] w-[5rem] shrink-0 cursor-pointer flex-col items-center justify-center gap-2.5 lg:hidden" role=button aria-label=Menu></div><script>const htmlClass=document.documentElement.classList;setTimeout(()=>{htmlClass.remove("not-ready")},10);const btnMenu=document.querySelector(".btn-menu");btnMenu.addEventListener("click",()=>{htmlClass.toggle("open")});const metaTheme=document.querySelector('meta[name="theme-color"]'),lightBg="#faf8f1".replace(/"/g,""),setDark=e=>{metaTheme.setAttribute("content",e?"#000":lightBg),htmlClass[e?"add":"remove"]("dark"),localStorage.setItem("dark",e)},darkScheme=window.matchMedia("(prefers-color-scheme: dark)");if(htmlClass.contains("dark"))setDark(!0);else{const e=localStorage.getItem("dark");setDark(e?e==="true":darkScheme.matches)}darkScheme.addEventListener("change",e=>{setDark(e.matches)});const btnDark=document.querySelector(".btn-dark");btnDark.addEventListener("click",()=>{setDark(localStorage.getItem("dark")!=="true")})</script><div class="nav-wrapper fixed inset-x-0 top-full z-40 flex h-full select-none flex-col justify-center pb-16 duration-200 dark:bg-black lg:static lg:h-auto lg:flex-row lg:!bg-transparent lg:pb-0 lg:transition-none"><nav class="lg:ml-12 lg:flex lg:flex-row lg:items-center lg:space-x-6"><a class="block text-center text-2xl leading-[5rem] lg:text-base lg:font-normal" href=/about/>About</a></nav><nav class="mt-12 flex justify-center space-x-10 dark:invert lg:ml-12 lg:mt-0 lg:items-center lg:space-x-6"><a class="h-8 w-8 text-[0] [background:var(--url)_center_center/cover_no-repeat] lg:h-6 lg:w-6" style=--url:url(./github.svg) href=https://github.com/Avimitin target=_blank rel=me>github</a>
+<a class="h-8 w-8 text-[0] [background:var(--url)_center_center/cover_no-repeat] lg:h-6 lg:w-6" style=--url:url(./rss.svg) href=https://blog.sh1mar.in/index.xml target=_blank rel=alternate>rss</a></nav></div></header><main class="prose prose-neutral relative mx-auto min-h-[calc(100%-9rem)] max-w-3xl px-8 pb-16 pt-12 dark:prose-invert"><article><header class=mb-16><h1 class="!my-0 pb-2.5">MLIR - Sparse Vectorization</h1><div class="text-sm antialiased opacity-60"><time>Jul 10, 2023</time>
+<span class=mx-1>&#183;</span>
+<span>sh1marin</span></div></header><section><p>MLIR Sparse Compiler 里对循环做向量化的方式是靠 Transform OP 的代码重写。
+向量化的初步实现实现位于 <em>lib/Dialect/SparseTensor/Transforms/SparseVectorization.cpp</em> 里。</p><h2 id=transform-选项>Transform 选项</h2><p>Sparse Vectorization transform 的操作支持三个自定义选项，
+通过 <code>sparse_tensor::VL</code> 结构体传递。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-cpp data-lang=cpp><span style=display:flex><span><span style=color:#fe8019>struct</span> VL {
+</span></span><span style=display:flex><span>  <span style=color:#fabd2f>unsigned</span> vectorLength;
+</span></span><span style=display:flex><span>  <span style=color:#fabd2f>bool</span> enableVLAVectorization;
+</span></span><span style=display:flex><span>  <span style=color:#fabd2f>bool</span> enableSIMDIndex32;
+</span></span><span style=display:flex><span>};
+</span></span></code></pre></div><ul><li><code>vectorLength</code>：用来指定向量化时，一个向量的元素数量。
+比如 <code>vector&lt;16xf32></code> 有 16 个元素。</li><li><code>enableVLAVectorization</code>：用来指定是否启用可变长向量，
+启用则提供对 ARMSVE 这类的架构的支持。</li><li><code>enableSIMDIndex32</code>：用来指定是否对 <code>gather/scatter</code> 操作使用 32 bit 的索引。</li></ul><p><code>VL</code> 结构体会被用在很多地方，比如用来构建 <code>VectorType</code>:</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-cpp data-lang=cpp><span style=display:flex><span><span style=color:#928374;font-style:italic>/// Constructs vector type for element type.
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span><span style=color:#fe8019>static</span> VectorType <span style=color:#fabd2f>vectorType</span>(VL vl, Type etp) {
+</span></span><span style=display:flex><span>  <span style=color:#fe8019>return</span> VectorType<span style=color:#fe8019>::</span>get(vl.vectorLength, etp, vl.enableVLAVectorization);
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p><code>VectorType</code> 是 MLIR 里用来表达多维的 SIMD 向量的高抽象层级的类型。
+在 <code>VectorType::get</code> 里，<code>vectorLength</code> 用于指定 <code>vector</code> 的 shape，
+因为传递进的是一个 <code>unsigned int</code>，所以这里会构造一个 rank-1，size-1，值为 <code>vectorLength</code> 的 <code>llvm::ArrayRef</code>，
+用来指明 <code>VectorType</code> 的 shape。
+<code>etp</code> 是 Element Type 的缩写，顾名思义用来指定 <code>vector</code> 元素的类型。
+而 <code>enableVLAVectorization</code> 值会传递进第三个参数 <code>numScalableDims</code> 里。
+<code>numScalableDims</code> 是个 <code>unsigned int</code> 的参数，默认值是 0。
+传递 <code>enableVLAVectorization</code> 这个 boolean 值进入 <code>numScalableDims</code> 会出现一个 implicit cast，
+把这个 field 的值设置为 1，指明可拓展的维度有 1 个。</p><h2 id=sparse-vectorization-rewrite>Sparse vectorization rewrite</h2><p>在 <code>mlir::populateSparseVectorizationPatterns</code> 会为 <code>RewritePatternSet</code> 加入两个 <code>Rewriter</code>，
+分别是 <code>ForOpRewriter</code> 和 <code>ReducChainRewriter</code>，由这两个 <code>Rewriter</code> 来负责初步的向量化实现。</p><h3 id=foroprewriter>ForOpRewriter</h3><p>首先先看 <code>ForOpRewriter</code>， 其支持上述的三个自定义选项，
+主要负责用于向量化对 tensor 的 <code>for</code> 操作。
+在 <code>ForOpRewriter</code> 里，<code>matchAndRewrite</code> 成员函数负责代码重写和生成。
+其只负责对仅有一个 block 的，步长为 1 的，且由 Sparse Compiler 生成的 for 循环实现向量化。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-cpp data-lang=cpp><span style=display:flex><span><span style=color:#928374;font-style:italic>// ForOpRewriter::matchAndRewrite(...)
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span><span style=color:#fe8019>if</span> (<span style=color:#fe8019>!</span>op.getRegion().hasOneBlock() <span style=color:#fe8019>||</span> <span style=color:#fe8019>!</span>isConstantIntValue(op.getStep(), <span style=color:#d3869b>1</span>) <span style=color:#fe8019>||</span>
+</span></span><span style=display:flex><span>    <span style=color:#fe8019>!</span>op<span style=color:#fe8019>-&gt;</span>hasAttr(LoopEmitter<span style=color:#fe8019>::</span>getLoopEmitterLoopAttrName()))
+</span></span><span style=display:flex><span>  <span style=color:#fe8019>return</span> failure();
+</span></span></code></pre></div><blockquote><ul><li><p><code>isConstantIntValue</code> 只有在第一个参数是常量，且值等于第二个参数的时候返回 <code>true</code>。
+在此处表示，只有 for 循环的 step 是常量 1 时返回 <code>true</code>。</p></li><li><p><code>LoopEmitter</code> 是一个用来管理 sparse tensors 并帮助生成循环操作的一个类。
+此处用来帮助判断该循环是由 Sparse Compiler 生成的。</p></li></ul></blockquote><p>区域条件判定结束之后，<code>matchAndRewrite</code> 会调用两次 <code>vectorizeStmt</code> 函数，
+一次传递 <code>false</code> 给 <code>vectorizeStmt</code> 函数的 <code>codegen</code> 参数，用来对原代码做 Analyze；
+只有第一次 IR analyze 成功了，才会第二次调用并传递 <code>true</code> 以开始对 IR 做向量化。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-cpp data-lang=cpp><span style=display:flex><span><span style=color:#fe8019>if</span> (vectorizeStmt(rewriter, op, vl, <span style=color:#928374;font-style:italic>/*codegen=*/</span><span style=color:#fabd2f>false</span>) <span style=color:#fe8019>&amp;&amp;</span>
+</span></span><span style=display:flex><span>    vectorizeStmt(rewriter, op, vl, <span style=color:#928374;font-style:italic>/*codegen=*/</span><span style=color:#fabd2f>true</span>))
+</span></span><span style=display:flex><span>  <span style=color:#fe8019>return</span> success();
+</span></span></code></pre></div><h3 id=vectorizestmt><code>vectorizeStmt</code></h3><p><code>vectorizeStmt</code> 是对传入的 <code>for</code> 操作实际进行 IR 重写（向量化) 的函数。
+为了避免有任何歧义，下面用 <code>ForOp</code> 来指代被向量化的 for 循环操作。</p><details><summary markdown=span><b>C++ 里的 `ForOp` class 和 MLIR 是什么关系？</b></summary><blockquote><p>一个典型的 <code>ForOp</code> 通常用来描述 MLIR 里一整个 <code>scf.for</code> 的操作 block。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-mlir data-lang=mlir><span style=display:flex><span>%c0  = arith.<span style=color:#fabd2f>constant</span> <span style=color:#d3869b>0</span> : <span style=color:#fe8019>index</span>
+</span></span><span style=display:flex><span>%c1  = arith.<span style=color:#fabd2f>constant</span> <span style=color:#d3869b>1</span> : <span style=color:#fe8019>index</span>
+</span></span><span style=display:flex><span>%c8  = arith.<span style=color:#fabd2f>constant</span> <span style=color:#d3869b>8</span> : <span style=color:#fe8019>index</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>scf.for %i = %c0 to %c8 step %c1 {
+</span></span><span style=display:flex><span>  <span style=color:#928374;font-style:italic>// ...
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>%0 = arith.<span style=color:#fabd2f>constant</span> <span style=color:#d3869b>0.0</span> : <span style=color:#fe8019>f64</span>
+</span></span><span style=display:flex><span>%1 = scf.for %i = %c0 to %c8 step %c1 iter_args(%vin = %0) -&gt; <span style=color:#fe8019>f64</span> {
+</span></span><span style=display:flex><span>  <span style=color:#928374;font-style:italic>// ...
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span>  %vout = <span style=color:#928374;font-style:italic>// operation to %vin
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span>  scf.yield %vout : <span style=color:#fe8019>f64</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>其带有三个操作数：循环上限，循环下限和步进值，和一个循环内操作区域。
+<code>scf.for</code> 的操作区域有且只能有一个，而且需要 <code>scf.yield</code> 来声明操作区结束了。
+<code>scf.yield</code> 可以不带操作数，如果需要在循环内迭代值，则可以加上操作数作为单次计算返回值。
+如果某个操作区内没有写 <code>scf.yield</code>，IR Rewriter 会自动往里插入一个不带操作数的 <code>scf.yield</code>。</p></blockquote></details><p>因为在调用函数前已经检查过了 <code>ForOp</code> 里的 block 数量，
+所以此处只拿出 <code>ForOp</code> 的第一块 block 进行操作。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-cpp data-lang=cpp><span style=display:flex><span>Block <span style=color:#fe8019>&amp;</span>block <span style=color:#fe8019>=</span> forOp.getRegion().front();
+</span></span></code></pre></div><p>如果这块 block 里只有不超过一个的操作，那么只有可能是最后的 <code>yield</code> 操作。
+这类 <code>ForOp</code> 不会被向量化。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-cpp data-lang=cpp><span style=display:flex><span><span style=color:#fe8019>if</span> (block.getOperations().size() <span style=color:#fe8019>&lt;=</span> <span style=color:#d3869b>1</span>)
+</span></span><span style=display:flex><span>  <span style=color:#fe8019>return</span> <span style=color:#fabd2f>false</span>;
+</span></span></code></pre></div><p>之后会生成一些之后要用到的变量：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-cpp data-lang=cpp><span style=display:flex><span><span style=color:#928374;font-style:italic>// 当前 For 操作的位置
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span>Location loc <span style=color:#fe8019>=</span> forOp.getLoc();
+</span></span><span style=display:flex><span><span style=color:#928374;font-style:italic>// 将 for 操作 block 内最后一个操作 cast 成 scf.yield
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span>scf<span style=color:#fe8019>::</span>YieldOp yield <span style=color:#fe8019>=</span> cast<span style=color:#fe8019>&lt;</span>scf<span style=color:#fe8019>::</span>YieldOp<span style=color:#fe8019>&gt;</span>(block.getTerminator());
+</span></span><span style=display:flex><span><span style=color:#928374;font-style:italic>// 拿到 yield 操作的前一个操作（倒数第二个操作）
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span><span style=color:#fe8019>auto</span> <span style=color:#fe8019>&amp;</span>last <span style=color:#fe8019>=</span> <span style=color:#fe8019>*++</span>block.rbegin();
+</span></span></code></pre></div><p>接下来是生成 <code>vmask</code>。这部分代码只有第二次调用，也就是设置 <code>codegen</code> 为 <code>true</code> 时调用。
+首先会用上述的 <code>vectorLength</code> 选项，先创建一个 <code>step</code> 常量的 IR。
+接下来，如果启用了对 ARMSVE 平台的编译支持，就会启用上述 <code>enableVLAVectorization</code> 变量，
+然后在当前操作位置创建 <code>VectorScaleOp</code> 操作，并用 <code>arith.muli</code> 操作将 <code>step</code> 和 <code>vscale</code> 的值相加。</p><blockquote><p>总结一下，不开 vla：<code>step = vlen</code>，开 vla：<code>step = vlen + vscale</code></p></blockquote><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-cpp data-lang=cpp><span style=display:flex><span>Value vmask;
+</span></span><span style=display:flex><span><span style=color:#fe8019>if</span> (codegen) {
+</span></span><span style=display:flex><span>  Value step <span style=color:#fe8019>=</span> constantIndex(rewriter, loc, vl.vectorLength);
+</span></span><span style=display:flex><span>  <span style=color:#fe8019>if</span> (vl.enableVLAVectorization) {
+</span></span><span style=display:flex><span>    Value vscale <span style=color:#fe8019>=</span>
+</span></span><span style=display:flex><span>        rewriter.create<span style=color:#fe8019>&lt;</span>vector<span style=color:#fe8019>::</span>VectorScaleOp<span style=color:#fe8019>&gt;</span>(loc, rewriter.getIndexType());
+</span></span><span style=display:flex><span>    step <span style=color:#fe8019>=</span> rewriter.create<span style=color:#fe8019>&lt;</span>arith<span style=color:#fe8019>::</span>MulIOp<span style=color:#fe8019>&gt;</span>(loc, vscale, step);
+</span></span><span style=display:flex><span><span style=color:#928374;font-style:italic>// ...
+</span></span></span></code></pre></div><p>上面的 cpp 代码在传递 <code>vl=4</code> 和 <code>enable-vla-vectorization=true</code> 给 <code>sparse-vectorization</code> pipeline 后
+的重写 MLIR 里长这样：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-mlir data-lang=mlir><span style=display:flex><span>%c4 = arith.<span style=color:#fabd2f>constant</span> <span style=color:#d3869b>4</span> : <span style=color:#fe8019>index</span>
+</span></span><span style=display:flex><span>%vscale = <span style=color:#fabd2f>vector</span>.vscale
+</span></span><span style=display:flex><span>%step = arith.muli %vscale, %c4 : <span style=color:#fe8019>index</span>
+</span></span></code></pre></div><p>接下来会根据 <code>ForOp</code> 的两个可能的操作目的进行两种不同的 for 操作重写。
+在 <code>vectorizeStmt</code> 里分成了两类，一类是 <em>reduction</em> 另一类是 <em>parallel</em>。
+判断是 <em>reduction</em> 类型还是 <em>parallel</em> 类型的方式很简单，只是判断 <code>scf.yield</code> 是否有操作数 (operand)。
+如果有操作数，那么就是 <em>reduction</em> 类型。</p><details><summary markdown=span><b>Reduction loop? Parallel loop?</b></summary><blockquote><p>Reduction 类型指某种依赖于遍历时创建的状态，而最终构造出的一个新的返回值的循环类型。</p><p>而在 reduction loop 里，如果某一层循环创造的状态被下一层循环依赖，则这个循环的状态被称作
+<em>Loop-carried dependencies</em>。</p><p>一个典型的带有循环状态依赖的遍历：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-text data-lang=text><span style=display:flex><span>for i = 0..N
+</span></span><span style=display:flex><span>  for j = 0..M
+</span></span><span style=display:flex><span>    for k = 0..M
+</span></span><span style=display:flex><span>      A(i+1, j, k) = A(i, j+1, k+1) + A(i, j-1, k-1) - A(i,i-1,k+1) - A(i, i+1, k-1)
+</span></span></code></pre></div><p>具体细看最后的操作数，你会发现想要计算出 A(i+1, ..)， 需要 A(i, ..) 的值。
+即在第 i 次循环得到的结果被第 i+1 次循环依赖。像这类循环操作很难被并行化。</p><p>但并不是说所有 Reduction loop 都没法被并行，也有完全不依赖状态的 reduction loop：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-text data-lang=text><span style=display:flex><span>sum = 0
+</span></span><span style=display:flex><span>for i = 0..N
+</span></span><span style=display:flex><span>  sum += f(i)
+</span></span></code></pre></div><p>像上述这类操作就可以被优化成并行操作。</p><p>除此之外，如果某个循环完全不创造任何的新值，那么也可以被并行。比如：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-text data-lang=text><span style=display:flex><span>for i = 0..N
+</span></span><span style=display:flex><span>  for j = 0..M
+</span></span><span style=display:flex><span>    a(i) = b(i) + c(j)
+</span></span></code></pre></div></blockquote></details><p>结构上长这样：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-cpp data-lang=cpp><span style=display:flex><span><span style=color:#928374;font-style:italic>// if codegen block 上面准备的变量
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span>scf<span style=color:#fe8019>::</span>YieldOp yield <span style=color:#fe8019>=</span> cast<span style=color:#fe8019>&lt;</span>scf<span style=color:#fe8019>::</span>YieldOp<span style=color:#fe8019>&gt;</span>(block.getTerminator());
+</span></span><span style=display:flex><span><span style=color:#928374;font-style:italic>// if (codegen) ...
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span><span style=color:#fe8019>if</span> (<span style=color:#fe8019>!</span>yield.getResults().empty()) {
+</span></span><span style=display:flex><span>  <span style=color:#928374;font-style:italic>// IR rewrite for reduction
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span>} <span style=color:#fe8019>else</span> {
+</span></span><span style=display:flex><span>  <span style=color:#928374;font-style:italic>// IR rewrite for parallel
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span>}
+</span></span></code></pre></div><ul><li>对于 <em>reduction</em> 类型的重写，<code>vectorizeStmt</code> 会为其生成一个新的循环操作 (<code>forOpNew</code>)</li></ul><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-cpp data-lang=cpp><span style=display:flex><span>scf<span style=color:#fe8019>::</span>ForOp forOpNew;
+</span></span></code></pre></div><p>然后先把旧 <code>ForOp</code> 的一些状态和设定都复制到新 <code>ForOp</code> 上，然后修改其迭代的步进值为上述设置的 <code>step</code>。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-cpp data-lang=cpp><span style=display:flex><span><span style=color:#928374;font-style:italic>// if (codegen)
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic>// ...
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span>Value init <span style=color:#fe8019>=</span> forOp.getInitArgs()[<span style=color:#d3869b>0</span>];
+</span></span><span style=display:flex><span>VectorType vtp <span style=color:#fe8019>=</span> vectorType(vl, init.getType());
+</span></span><span style=display:flex><span>Value vinit <span style=color:#fe8019>=</span> genVectorReducInit(rewriter, loc, yield<span style=color:#fe8019>-&gt;</span>getOperand(<span style=color:#d3869b>0</span>),
+</span></span><span style=display:flex><span>                                 forOp.getRegionIterArg(<span style=color:#d3869b>0</span>), init, vtp);
+</span></span><span style=display:flex><span>forOpNew <span style=color:#fe8019>=</span> rewriter.create<span style=color:#fe8019>&lt;</span>scf<span style=color:#fe8019>::</span>ForOp<span style=color:#fe8019>&gt;</span>(
+</span></span><span style=display:flex><span>    loc, forOp.getLowerBound(), forOp.getUpperBound(), step, vinit);
+</span></span><span style=display:flex><span>forOpNew<span style=color:#fe8019>-&gt;</span>setAttr(
+</span></span><span style=display:flex><span>    LoopEmitter<span style=color:#fe8019>::</span>getLoopEmitterLoopAttrName(),
+</span></span><span style=display:flex><span>    forOp<span style=color:#fe8019>-&gt;</span>getAttr(LoopEmitter<span style=color:#fe8019>::</span>getLoopEmitterLoopAttrName()));
+</span></span><span style=display:flex><span>rewriter.setInsertionPointToStart(forOpNew.getBody());
+</span></span></code></pre></div><p>其中前三个函数调用和 <code>forOpNew->setAttr(...)</code> 将原来的 <code>ForOp</code> 的内容设置到新的 <code>ForOp</code> 上，
+而第四个操作 <code>rewriter.create</code> 则在创建新函数是，把步进的值改为新的 <code>step</code> 值。
+最后将后续操作的插入点设置到了新 <code>ForOp</code> 的 body 位置。</p><ul><li>对于 <em>parallel</em> 类型的重写，<code>vectorizeStmt</code> 只会调整其步进的值 (stride) 和 insert 的位置。</li></ul><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-cpp data-lang=cpp><span style=display:flex><span>rewriter.updateRootInPlace(forOp, [<span style=color:#fe8019>&amp;</span>]() { forOp.setStep(step); });
+</span></span><span style=display:flex><span>rewriter.setInsertionPoint(yield);
+</span></span></code></pre></div><p>第一个函数调用修改了 <code>ForOp</code> 的步进值。
+第二个函数调用将后续 IR 的插入点设置在原来 for 循环的 <code>yield</code> 操作之前。</p><h4 id=genvectormask><code>genVectorMask</code></h4><p>初步调整 <code>ForOp</code> 之后，就需要使用 <code>ForOp</code> 的参数生成 <code>vmask</code> 了。</p><p><code>vmask</code> 的值由 <code>genVectorMask</code> 函数生成，
+这个函数用到了 <code>ForOp</code> 的 induction variable，
+循环的上下限和步进值 <code>step</code>。</p><blockquote><h4 id=induction-variablehttpsenwikipediaorgwikiinduction_variable><a href=https://en.wikipedia.org/wiki/Induction_variable>Induction variable</a></h4><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-mlir data-lang=mlir><span style=display:flex><span>scf.for %i = %lo to %hi
+</span></span></code></pre></div><p>在 MLIR 的 <code>scf.for</code> 操作里，induction variable 通常指当前 index <code>%i</code>。</p></blockquote><p>在 <code>genVectorMask</code> 函数里，
+首先会创建一个 1 bit 的 <a href=https://en.wikipedia.org/wiki/Predication_(computer_architecture)>conditional mask vector</a> <em>类型</em>。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-cpp data-lang=cpp><span style=display:flex><span>VectorType mtp <span style=color:#fe8019>=</span> vectorType(vl, rewriter.getI1Type());
+</span></span><span style=display:flex><span><span style=color:#928374;font-style:italic>// Equals to `vector&lt;4xi1&gt;` when vlen = 4 in MLIR
+</span></span></span></code></pre></div><p>然后判断传入的 <code>ForOp</code> 的上下限和步进值的关系。</p><ul><li>关系满足</li></ul><p>如果上下限的差值可以被步进值整除（<code>((hi - lo) % step) == 0</code>），
+则上面创建的 mask vector 会被全设置为 <code>true</code>。
+其中 <code>matchPattern</code> 还会再一次检查上下限和步进值 <code>step</code> 是不是都是常量。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-cpp data-lang=cpp><span style=display:flex><span>IntegerAttr loInt, hiInt, stepInt;
+</span></span><span style=display:flex><span><span style=color:#fe8019>if</span> (matchPattern(lo, m_Constant(<span style=color:#fe8019>&amp;</span>loInt)) <span style=color:#fe8019>&amp;&amp;</span>
+</span></span><span style=display:flex><span>    matchPattern(hi, m_Constant(<span style=color:#fe8019>&amp;</span>hiInt)) <span style=color:#fe8019>&amp;&amp;</span>
+</span></span><span style=display:flex><span>    matchPattern(step, m_Constant(<span style=color:#fe8019>&amp;</span>stepInt))) {
+</span></span><span style=display:flex><span>  <span style=color:#fe8019>if</span> (((hiInt.getInt() <span style=color:#fe8019>-</span> loInt.getInt()) <span style=color:#fe8019>%</span> stepInt.getInt()) <span style=color:#fe8019>==</span> <span style=color:#d3869b>0</span>) {
+</span></span><span style=display:flex><span>    Value trueVal <span style=color:#fe8019>=</span> constantI1(rewriter, loc, <span style=color:#fabd2f>true</span>);
+</span></span><span style=display:flex><span>    <span style=color:#fe8019>return</span> rewriter.create<span style=color:#fe8019>&lt;</span>vector<span style=color:#fe8019>::</span>BroadcastOp<span style=color:#fe8019>&gt;</span>(loc, mtp, trueVal);
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>结合上一层的 <code>vmask = genVectorMask(..)</code> 调用，这一段 <code>ForOp</code> 改写后生成的 MLIR 类似于：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-mlir data-lang=mlir><span style=display:flex><span><span style=color:#928374;font-style:italic>// vlen = 8
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span>
+</span></span><span style=display:flex><span><span style=color:#928374;font-style:italic>// Value trueVal = constantI1(...);
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span>%true = arith.<span style=color:#fabd2f>constant</span> <span style=color:#d3869b>1</span> : <span style=color:#fe8019>i1</span>
+</span></span><span style=display:flex><span><span style=color:#928374;font-style:italic>// VectorType mtp = vectorType(vl, I1Type) =&gt; vector&lt;8xi1&gt;
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic>// vmask = rewriter.create&lt;vector::BroadcastOp&gt;(loc, mtp, trueVal);
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span>%vmask = <span style=color:#fabd2f>vector</span>.broadcast %true : <span style=color:#fe8019>i1</span> to <span style=color:#fabd2f>vector</span>&lt;<span style=color:#d3869b>8x</span><span style=color:#fe8019>i1</span>&gt;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#928374;font-style:italic>// %vmask is has value ( 1, 1, 1, 1, 1, 1, 1, 1 )
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span><span style=color:#fabd2f>vector</span>.print %vmask : <span style=color:#fabd2f>vector</span>&lt;<span style=color:#d3869b>8x</span><span style=color:#fe8019>i1</span>&gt;
+</span></span></code></pre></div><ul><li>关系不满足</li></ul><p>如果迭代的长度不能被步进的量整除，比如遍历下限 0 上限 128，但是每次步进量为 3，
+那么就要生成另一种 mask 对余数做处理，防止下一次步进会越过 for 循环的上限。</p><p>在 <code>genVectorMask</code> 里，首先生成了一个新的 AffineMap：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-cpp data-lang=cpp><span style=display:flex><span><span style=color:#fe8019>auto</span> min <span style=color:#fe8019>=</span> AffineMap<span style=color:#fe8019>::</span>get(
+</span></span><span style=display:flex><span>    <span style=color:#928374;font-style:italic>/*dimCount=*/</span><span style=color:#d3869b>2</span>, <span style=color:#928374;font-style:italic>/*symbolCount=*/</span><span style=color:#d3869b>1</span>,
+</span></span><span style=display:flex><span>    {rewriter.getAffineSymbolExpr(<span style=color:#d3869b>0</span>),
+</span></span><span style=display:flex><span>     rewriter.getAffineDimExpr(<span style=color:#d3869b>0</span>) <span style=color:#fe8019>-</span> rewriter.getAffineDimExpr(<span style=color:#d3869b>1</span>)},
+</span></span><span style=display:flex><span>    rewriter.getContext());
+</span></span></code></pre></div><p>这一段生成出来的 MLIR 代码等价于：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-mlir data-lang=mlir><span style=display:flex><span>#min = affine_map&lt;(d0, d1)[s0] -&gt; (s0, d0 - d1)&gt;
+</span></span></code></pre></div><p>接下来会把 <code>ForOp</code> 的上限，induction variable 和步进值做成 <code>ValueRange</code>，
+把它和上面的 <code>AffineMap</code> 作为参数传入 <code>affine.min</code> 操作中。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-cpp data-lang=cpp><span style=display:flex><span>Value end <span style=color:#fe8019>=</span> rewriter.createOrFold<span style=color:#fe8019>&lt;</span>affine<span style=color:#fe8019>::</span>AffineMinOp<span style=color:#fe8019>&gt;</span>(
+</span></span><span style=display:flex><span>    loc, min, ValueRange{hi, iv, step});
+</span></span></code></pre></div><p>这里只是看 C++ 代码可能稍微有点难懂，
+在这里，rewriter 会创建（或者直接 inline 成值）<code>affine.min</code> 操作，
+生成类似于以下的代码：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-mlir data-lang=mlir><span style=display:flex><span>scf.for %iv = %lo to %hi step %step {
+</span></span><span style=display:flex><span>  %end = affine.min #map (%hi, %iv)[%step]
+</span></span></code></pre></div><p>根据上述 <code>#map</code> 的定义，
+这一个 <code>affine.min</code> 操作会变成，
+取 <code>ForOp</code> 的上限 <code>%hi</code> 减去 induction variable <code>%iv</code> 的差值，和步进值 <code>%step</code> 相比，
+返回这两个值中间的最小值。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-python data-lang=python><span style=display:flex><span><span style=color:#928374;font-style:italic># Pseudo Python code</span>
+</span></span><span style=display:flex><span><span style=color:#fabd2f>min</span>( step, (hi <span style=color:#fe8019>-</span> iv) )
+</span></span></code></pre></div><p>最后传入 <code>VectorType</code>, <code>end</code> 到 <code>vector.create_mask</code> 里生成 vmask 值。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-cpp data-lang=cpp><span style=display:flex><span><span style=color:#928374;font-style:italic>// VectorType mtp = vectorType(vl, I1Type) =&gt; vector&lt;vl x i1&gt;
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span><span style=color:#fe8019>return</span> rewriter.create<span style=color:#fe8019>&lt;</span>vector<span style=color:#fe8019>::</span>CreateMaskOp<span style=color:#fe8019>&gt;</span>(loc, mtp, end);
+</span></span></code></pre></div><p>这个操作最后会返回一个 \([0, end]\) 都设置为 1 的 vector mask。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-mlir data-lang=mlir><span style=display:flex><span><span style=color:#928374;font-style:italic>// 假设 vl = 8，affine.min 返回 6
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span>
+</span></span><span style=display:flex><span>%vmask = <span style=color:#fabd2f>vector</span>.create_mask %end : <span style=color:#fabd2f>vector</span>&lt;<span style=color:#d3869b>8x</span><span style=color:#fe8019>i1</span>&gt;
+</span></span><span style=display:flex><span><span style=color:#fabd2f>vector</span>.print %vmask : <span style=color:#fabd2f>vector</span>&lt;<span style=color:#d3869b>8x</span><span style=color:#fe8019>i1</span>&gt;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#928374;font-style:italic>// [ 1, 1, 1, 1, 1, 1, 1, 0 ]
+</span></span></span></code></pre></div><h3 id=vectorizestmt-1><code>vectorizeStmt</code></h3><p>回到 <code>vectorizeStmt</code>， <code>vmask</code> 和 <code>ForOp</code> 的处理结束之后，就到了实际向量化代码重写的部分了。
+依旧是分成 <em>reduction</em> 和 <em>store</em> 两类进行不同的代码生成。</p><h4 id=reduction>reduction</h4><p>首先取得 <code>scf.yield</code> 的操作数 <code>red</code> 和 <code>ForOp</code> 的 <code>iter_arg</code> 的值 <code>iter</code>，
+并设定好之后 reduction 时要用到的 combining kind：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-cpp data-lang=cpp><span style=display:flex><span>Value red <span style=color:#fe8019>=</span> yield<span style=color:#fe8019>-&gt;</span>getOperand(<span style=color:#d3869b>0</span>);
+</span></span><span style=display:flex><span>Value iter <span style=color:#fe8019>=</span> forOp.getRegionIterArg(<span style=color:#d3869b>0</span>);
+</span></span><span style=display:flex><span>vector<span style=color:#fe8019>::</span>CombiningKind kind;
+</span></span></code></pre></div><p>接下来会进行对向量化可行性的探测，然后生成向量值并进行进一步 IR rewrite。
+可行性的探测由函数 <code>isVectorizableReduction</code> 完成，
+用来判断这个 <code>reduction</code> 类型的循环能不能做向量化，
+不能则直接返回 <code>false</code>。由于这里还没涉及 <code>codegen</code> 的判断，
+所以在第一次调用 <code>vectorizeStmt</code> 的时候就能分析出来并提前结束后续操作。
+而如何把循环变成向量表达则由 <code>vectorizeExpr</code> 函数完成，其返回 boolean 值用来表达生成是否成功，
+而实际的向量值则会写进通过参数传递的 <code>mlir::Value</code> 引用里。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-cpp data-lang=cpp><span style=display:flex><span>Value vrhs;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>if</span> (isVectorizableReduction(red, iter, kind) <span style=color:#fe8019>&amp;&amp;</span>
+</span></span><span style=display:flex><span>    vectorizeExpr(rewriter, forOp, vl, red, codegen, vmask, vrhs)) {
+</span></span><span style=display:flex><span>      <span style=color:#928374;font-style:italic>// ...
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span>}
+</span></span></code></pre></div><p><code>isVectorizableReduction</code> 会尝试获取定义 <code>red</code> 的操作，
+如果有 <code>arith.addf/addi/ subf/subi mulf/muli andi/ori/xori</code> 之外的操作其会直接返回 <code>false</code> 值。
+接下来则是定义 vector 的 reduction 类型 <code>vector::CombiningKind</code>，
+存进传入的 <code>kind</code> 指针里。
+<code>addf/addi/subf/subi</code> 都归类于 <code>ADD</code> 类型，
+<code>mulf/muli</code> 归类于 <code>MUL</code> 类型，
+剩下的则各自分别归类于 <code>AND/OR/XOR</code> 类型。</p><p>除了需要判断 <code>DefineOp</code> 的操作是否能被转换成 vector reduction，
+还需要判断 <code>DefineOp</code> 的操作数是不是 <code>ForOp</code> 的 <code>iter_arg</code>。</p><blockquote><p><strong>什么是定义操作 (DefiningOp)？</strong></p><p>如果有 <code>%1 = arith.addi %0</code>，
+那么 <code>arith.addi</code> 就是 <code>%1</code> 的定义操作，<code>%1</code> 就是 <code>arith.addi</code> 的操作结果。</p></blockquote><p><code>isVectorizableReduction</code> 的大致结构长这样：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-cpp data-lang=cpp><span style=display:flex><span><span style=color:#fe8019>static</span> <span style=color:#fabd2f>bool</span> <span style=color:#fabd2f>isVectorizableReduction</span>(Value red, Value iter, vector<span style=color:#fe8019>::</span>CombiningKind <span style=color:#fe8019>&amp;</span>kind) {
+</span></span><span style=display:flex><span>  <span style=color:#fe8019>if</span> (<span style=color:#fe8019>auto</span> addf <span style=color:#fe8019>=</span> red.getDefiningOp<span style=color:#fe8019>&lt;</span>arith<span style=color:#fe8019>::</span>AddFOp<span style=color:#fe8019>&gt;</span>()) {
+</span></span><span style=display:flex><span>    kind <span style=color:#fe8019>=</span> vector<span style=color:#fe8019>::</span>CombiningKind<span style=color:#fe8019>::</span>ADD;
+</span></span><span style=display:flex><span>    <span style=color:#fe8019>return</span> addf<span style=color:#fe8019>-&gt;</span>getOperand(<span style=color:#d3869b>0</span>) <span style=color:#fe8019>==</span> iter <span style=color:#fe8019>||</span> addf<span style=color:#fe8019>-&gt;</span>getOperand(<span style=color:#d3869b>1</span>) <span style=color:#fe8019>==</span> iter;
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>  <span style=color:#928374;font-style:italic>// ...
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span>  <span style=color:#fe8019>return</span> <span style=color:#fabd2f>false</span>;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p><code>vectorizeExpr</code> 首先会判断输入的 <code>scf.yield</code> 的操作数 <code>red</code> 的类型能不能作为 vector 的元素类型。
+接下来会判断 <code>invariant</code> 的类型。</p><blockquote><p>loop invariant</p><p>loop invariant 是一种逻辑断言，是循环的一种属性。
+其为循环内的某一个状态的断言，在每一次循环之后值永远是 true。
+可以用于证明循环的属性和采用循环的扩展算法。
+循环不变式在进入循环和每次迭代后都为真，因此在退出循环时，循环不变式和循环终止条件都能得到保证。</p></blockquote><p>如果两次函数调用都返回成功的值才会进行下一步的 IR rewrite。
+在 <code>vectorizeStmt</code> 函数里会操作上文提到的新创建 <code>ForOp</code>，
+通过 iter 的值创建新的 mask 和一系列 vector masked load 操作，
+更新 scf.yield 的返回值。
+然后把旧 <code>ForOp</code> 区域的 result, induction variable 和 <code>iter_arg</code> 全替换成新 <code>ForOp</code> 的。
+最后把旧 <code>ForOp</code> 给消除掉。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-cpp data-lang=cpp><span style=display:flex><span>rewriter.replaceAllUsesWith(forOp.getResult(<span style=color:#d3869b>0</span>), vres);
+</span></span><span style=display:flex><span>rewriter.replaceAllUsesWith(forOp.getInductionVar(),
+</span></span><span style=display:flex><span>                            forOpNew.getInductionVar());
+</span></span><span style=display:flex><span>rewriter.replaceAllUsesWith(forOp.getRegionIterArg(<span style=color:#d3869b>0</span>),
+</span></span><span style=display:flex><span>                            forOpNew.getRegionIterArg(<span style=color:#d3869b>0</span>));
+</span></span><span style=display:flex><span>rewriter.eraseOp(forOp);
+</span></span></code></pre></div><h4 id=parallel>Parallel</h4><p>首先判断 <code>yield</code> 之前的操作，也就是 <code>ForOp</code> block 的倒数第二条操作是否为 <code>memref.store</code>。
+然后取得 <code>store</code> 操作中的 indice 和右操作数，用这两个值和前面的 vmask, vl 等值实现向量化。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-cpp data-lang=cpp><span style=display:flex><span><span style=color:#fe8019>if</span> (<span style=color:#fe8019>auto</span> store <span style=color:#fe8019>=</span> dyn_cast<span style=color:#fe8019>&lt;</span>memref<span style=color:#fe8019>::</span>StoreOp<span style=color:#fe8019>&gt;</span>(last)) {
+</span></span><span style=display:flex><span>  <span style=color:#928374;font-style:italic>// Analyze/vectorize store operation.
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span>  <span style=color:#fe8019>auto</span> subs <span style=color:#fe8019>=</span> store.getIndices();
+</span></span><span style=display:flex><span>  SmallVector<span style=color:#fe8019>&lt;</span>Value<span style=color:#fe8019>&gt;</span> idxs;
+</span></span><span style=display:flex><span>  Value rhs <span style=color:#fe8019>=</span> store.getValue();
+</span></span><span style=display:flex><span>  Value vrhs;
+</span></span><span style=display:flex><span>  <span style=color:#fe8019>if</span> (vectorizeSubscripts(rewriter, forOp, vl, subs, codegen, vmask, idxs) <span style=color:#fe8019>&amp;&amp;</span>
+</span></span><span style=display:flex><span>      vectorizeExpr(rewriter, forOp, vl, rhs, codegen, vmask, vrhs)) {
+</span></span><span style=display:flex><span>    <span style=color:#fe8019>if</span> (codegen) {
+</span></span><span style=display:flex><span>      genVectorStore(rewriter, loc, store.getMemRef(), idxs, vmask, vrhs);
+</span></span><span style=display:flex><span>      rewriter.eraseOp(store);
+</span></span></code></pre></div><p>其中 <code>subs</code> 和 <code>rhs</code> 对应下面 MLIR 代码中的 <code>%1</code> 和 <code>%2</code>。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-mlir data-lang=mlir><span style=display:flex><span><span style=color:#fabd2f>memref</span>.store %3, %2[%1] : <span style=color:#fabd2f>memref</span>&lt;<span style=color:#d3869b>1024x</span><span style=color:#fe8019>f32</span>&gt;
+</span></span></code></pre></div></section><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css integrity=sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js integrity=sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous onload=renderMathInElement(document.body)></script><nav class="mt-24 flex rounded-lg bg-black/[3%] text-lg dark:bg-white/[8%]"><a class="flex w-1/2 items-center rounded-l-md p-6 pr-3 font-semibold no-underline hover:bg-black/[2%] dark:hover:bg-white/[3%]" href=https://blog.sh1mar.in/post/cmcc-rax3000m/><span class=mr-1.5>←</span><span>在中国移动 RAX3000M 上使用主线 openwrt 记录</span></a>
+<a class="ml-auto flex w-1/2 items-center justify-end rounded-r-md p-6 pl-3 font-semibold no-underline hover:bg-black/[2%] dark:hover:bg-white/[3%]" href=https://blog.sh1mar.in/post/mlir/sparse-storage-scheme/><span>Sparse storage scheme used in MLIR</span><span class=ml-1.5>→</span></a></nav></article></main><footer class="opaco mx-auto flex h-[4.5rem] max-w-3xl items-center px-8 text-[0.9em] opacity-60"><div class=mr-auto>&copy; 2024
+<a class=link href=https://blog.sh1mar.in>sh1marin's blog</a></div><a class="link mx-6" href=https://gohugo.io/ rel=noopener target=_blank>Powered by Hugo️️</a>️
+<a class=link href=https://github.com/nanxiaobei/hugo-paper rel=noopener target=_blank>✎ Paper</a></footer></body></html>

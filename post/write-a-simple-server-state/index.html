@@ -1,0 +1,174 @@
+<!doctype html><html class="not-ready lg:text-base" style=--bg:#faf8f1 lang=zh><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><title>边造车轮边学习 - sh1marin's blog</title><meta name=theme-color><meta name=description content="国庆几天把 Ruby，TypeScript 和 React 都粗粗浅浅地学了一下。 光看肯定不够，而学习新语言的一个办法之一就是造个轮子。 学 Ruby 的原因是想拿它来"><meta name=author content="sh1marin"><link rel="preload stylesheet" as=style href=https://blog.sh1mar.in/main.min.css><script defer src=https://blog.sh1mar.in/highlight.min.js onload=hljs.initHighlightingOnLoad()></script>
+<link rel=preload as=image href=https://blog.sh1mar.in/theme.png><link rel=preload as=image href=https://blog.sh1mar.in/github.svg><link rel=preload as=image href=https://blog.sh1mar.in/rss.svg><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css integrity=sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js integrity=sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous onload=renderMathInElement(document.body)></script>
+<link rel=icon href=https://blog.sh1mar.in/favicon.ico><link rel=apple-touch-icon href=https://blog.sh1mar.in/apple-touch-icon.png><meta name=generator content="Hugo 0.112.3"><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css integrity=sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js integrity=sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous onload=renderMathInElement(document.body)></script><meta property="og:title" content="边造车轮边学习"><meta property="og:description" content="国庆几天把 Ruby，TypeScript 和 React 都粗粗浅浅地学了一下。 光看肯定不够，而学习新语言的一个办法之一就是造个轮子。 学 Ruby 的原因是想拿它来"><meta property="og:type" content="article"><meta property="og:url" content="https://blog.sh1mar.in/post/write-a-simple-server-state/"><meta property="article:section" content="post"><meta property="article:published_time" content="2022-11-07T00:00:00+08:00"><meta property="article:modified_time" content="2022-11-07T00:00:00+08:00"><meta itemprop=name content="边造车轮边学习"><meta itemprop=description content="国庆几天把 Ruby，TypeScript 和 React 都粗粗浅浅地学了一下。 光看肯定不够，而学习新语言的一个办法之一就是造个轮子。 学 Ruby 的原因是想拿它来"><meta itemprop=datePublished content="2022-11-07T00:00:00+08:00"><meta itemprop=dateModified content="2022-11-07T00:00:00+08:00"><meta itemprop=wordCount content="3853"><meta itemprop=keywords content><meta name=twitter:card content="summary"><meta name=twitter:title content="边造车轮边学习"><meta name=twitter:description content="国庆几天把 Ruby，TypeScript 和 React 都粗粗浅浅地学了一下。 光看肯定不够，而学习新语言的一个办法之一就是造个轮子。 学 Ruby 的原因是想拿它来"></head><body class="text-black duration-200 ease-out dark:text-white"><header class="mx-auto flex h-[4.5rem] max-w-3xl px-8 lg:justify-center"><div class="relative z-50 mr-auto flex items-center"><a class="-translate-x-[1px] -translate-y-[1px] text-2xl font-semibold" href=https://blog.sh1mar.in>sh1marin's blog</a><div class="btn-dark text-[0] ml-4 h-6 w-6 shrink-0 cursor-pointer [background:url(./theme.svg)_left_center/cover_no-repeat] dark:invert dark:[background-position:right]" role=button aria-label=Dark></div></div><div class="btn-menu relative z-50 -mr-8 flex h-[4.5rem] w-[5rem] shrink-0 cursor-pointer flex-col items-center justify-center gap-2.5 lg:hidden" role=button aria-label=Menu></div><script>const htmlClass=document.documentElement.classList;setTimeout(()=>{htmlClass.remove("not-ready")},10);const btnMenu=document.querySelector(".btn-menu");btnMenu.addEventListener("click",()=>{htmlClass.toggle("open")});const metaTheme=document.querySelector('meta[name="theme-color"]'),lightBg="#faf8f1".replace(/"/g,""),setDark=e=>{metaTheme.setAttribute("content",e?"#000":lightBg),htmlClass[e?"add":"remove"]("dark"),localStorage.setItem("dark",e)},darkScheme=window.matchMedia("(prefers-color-scheme: dark)");if(htmlClass.contains("dark"))setDark(!0);else{const e=localStorage.getItem("dark");setDark(e?e==="true":darkScheme.matches)}darkScheme.addEventListener("change",e=>{setDark(e.matches)});const btnDark=document.querySelector(".btn-dark");btnDark.addEventListener("click",()=>{setDark(localStorage.getItem("dark")!=="true")})</script><div class="nav-wrapper fixed inset-x-0 top-full z-40 flex h-full select-none flex-col justify-center pb-16 duration-200 dark:bg-black lg:static lg:h-auto lg:flex-row lg:!bg-transparent lg:pb-0 lg:transition-none"><nav class="lg:ml-12 lg:flex lg:flex-row lg:items-center lg:space-x-6"><a class="block text-center text-2xl leading-[5rem] lg:text-base lg:font-normal" href=/about/>About</a></nav><nav class="mt-12 flex justify-center space-x-10 dark:invert lg:ml-12 lg:mt-0 lg:items-center lg:space-x-6"><a class="h-8 w-8 text-[0] [background:var(--url)_center_center/cover_no-repeat] lg:h-6 lg:w-6" style=--url:url(./github.svg) href=https://github.com/Avimitin target=_blank rel=me>github</a>
+<a class="h-8 w-8 text-[0] [background:var(--url)_center_center/cover_no-repeat] lg:h-6 lg:w-6" style=--url:url(./rss.svg) href=https://blog.sh1mar.in/index.xml target=_blank rel=alternate>rss</a></nav></div></header><main class="prose prose-neutral relative mx-auto min-h-[calc(100%-9rem)] max-w-3xl px-8 pb-16 pt-12 dark:prose-invert"><article><header class=mb-16><h1 class="!my-0 pb-2.5">边造车轮边学习</h1><div class="text-sm antialiased opacity-60"><time>Nov 7, 2022</time>
+<span class=mx-1>&#183;</span>
+<span>sh1marin</span></div></header><section><p>国庆几天把 Ruby，TypeScript 和 React 都粗粗浅浅地学了一下。
+光看肯定不够，而学习新语言的一个办法之一就是造个轮子。
+学 Ruby 的原因是想拿它来代替 Perl 和 BASH。
+那有啥东西是又需要前端又和系统维护相关的呢？探针！我来写个
+CPU 占用率的探针吧。用 Ruby 写脚本获取服务器 CPU 占用率，
+前端用 React 写个展示页，完美的结合两个刚学的新知识。</p><ul><li>前端的 Demo 可以看这里： <a href=https://unmatched-status.sh1mar.in>https://unmatched-status.sh1mar.in</a>，</li><li>整个项目的源码在这里：<a href=https://github.com/Avimitin/uptime-collector>https://github.com/Avimitin/uptime-collector</a>。</li></ul><p>我把一些我写项目时用到的教程列在这里，这些教程写的都很好很详尽。</p><ul><li><a href=https://www.ruby-lang.org/en/documentation/quickstart/https://www.ruby-lang.org/en/documentation/quickstart/>Ruby in Twenty Minutes</a></li><li><a href=https://www.typescriptlang.org/docs/handbook/intro.html>The TypeScript Handbook</a><ul><li><a href=https://developer.mozilla.org/en-US/docs/Web/javascript>学 TypeScript 之前先学 JavaScript</a></li></ul></li><li><a href=https://beta.reactjs.org/learn>React JS Tutorial</a></li></ul><p>这篇博客主要记录一些写项目时学到的知识，不细谈语言本身的内容。</p><h2 id=项目设计>项目设计</h2><p>我的想法是不要在服务器跑自己写的 daemon，服务器只跑一个 sshd。
+然后再开一台机器，用 systemd timer 定时跑一个脚本，
+这个脚本 ssh 到服务器上跑 uptime 获取 load 信息。
+获取完信息后，把数据存进 sqlite，
+再用一个独立的脚本和 systemd timer 跑数据导出和上传。</p><p>前端则纯静态托管在 CloudFlare 上，用 client side routing 做路由。
+每次访问前端的时候从用户端向 GitHub 发出 raw 文件下载请求获取数据，
+然后在用户端渲染图表。</p><p>这样的设计有几个好处：</p><ol><li>sshd 稳</li><li>数据获取出问题只需要到一台机器上找问题</li><li>纯静态托管 CloudFlare 的好处不需要愁数据公开时的访问问题（带宽，DDOS&mldr;）</li><li>systemd-timer 比自己手写探测频率方便得多，也比 crontab 方便</li><li>可以利用一些已经有的轮子，专注于语言的使用学习上</li></ol><p>最后写出来的项目八百行出头，感觉还不错：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-text data-lang=text><span style=display:flex><span>===============================================================================
+</span></span><span style=display:flex><span> Language            Files        Lines         Code     Comments       Blanks
+</span></span><span style=display:flex><span>===============================================================================
+</span></span><span style=display:flex><span> Ruby                    3          297          202           41           54
+</span></span><span style=display:flex><span> TSX                     5          567          511            2           54
+</span></span><span style=display:flex><span> TypeScript              4          117          105            2           10
+</span></span><span style=display:flex><span>===============================================================================
+</span></span><span style=display:flex><span> Total                  12          981          818           45          118
+</span></span><span style=display:flex><span>===============================================================================
+</span></span></code></pre></div><h2 id=后端设计>后端设计</h2><h3 id=数据获取>数据获取</h3><p>这个脚本需要做这几件事情：</p><ol><li>开 ssh 跑 uptime 获取返回值</li><li>用 regex 拿到 load</li><li>计算实际使用率并塞进 sqlite 数据库</li></ol><p>Ruby 里面有一个很好用的 shell 交互语法糖，所以获取数据非常简单，
+在本地配好 ssh config 之后直接在脚本里遍历机器地址，然后执行</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-ruby data-lang=ruby><span style=display:flex><span>response<span style=color:#fe8019>=</span><span style=color:#b8bb26>`ssh </span><span style=color:#b8bb26>#{</span>machine<span style=color:#b8bb26>}</span><span style=color:#b8bb26> uptime`</span>
+</span></span></code></pre></div><p>这里的 <code>response</code> 将会拿到远程机器的 uptime 命令输出的 stdout 值。
+用反引号包住的字符会当做 command 传给 shell 执行，而 <code>#{machine}</code> 是
+模板语法，类似于 JS 的 <code>${var}</code>，可以把 machine 变量拼接进字符串里。</p><p>Uptime 命令的输出类似于：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-text data-lang=text><span style=display:flex><span>13:05:59 up  3:24,  2 users,  load average: 1.42, 1.33, 1.33
+</span></span></code></pre></div><p>其中 <code>2 users</code> 指代这台机器上目前已登录的用户数量，load average 后面
+的浮点数是这台机器前 1，5，15 分钟的平均负载。这个负载是实际上是正在
+等待 CPU 或者其他计算资源的程序数量。对于一个单核 CPU 的机器而言，
+load 1 意味着整个 CPU 都在被占用，而对于四核 CPU 而言，load 1 意味着
+75% 的时间 CPU 都在等待分配任务。</p><p>解压这些数据也很简单，ruby 自带 regex 支持，我用两个 capture groups
+分别获取登录的用户数和前 5 分钟的平均 load</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-ruby data-lang=ruby><span style=display:flex><span>result <span style=color:#fe8019>=</span> <span style=color:#b8bb26>/(?&lt;user&gt;\d+) users?,\s+load average: [\d.]+, (?&lt;load&gt;[\d.]+)/</span>
+</span></span><span style=display:flex><span>        <span style=color:#fe8019>.</span>match(response)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>return</span> <span style=color:#fe8019>[</span>result<span style=color:#fe8019>[</span><span style=color:#b8bb26>&#39;user&#39;</span><span style=color:#fe8019>]</span>, result<span style=color:#fe8019>[</span><span style=color:#b8bb26>&#39;load&#39;</span><span style=color:#fe8019>]]</span>
+</span></span></code></pre></div><p>Ruby 的 Regex 语法糖 <code>/{regex pattern}/</code> 可以创建一个新的 Regex object，
+塞入刚刚获取的 response 字符串，因为我给这两个 capture groups 都起了别名，
+match 方法会返回一个可以用字符串 index 的 capture groups object。</p><p>之后就可以下载 <code>ruby-sqlite3</code> 这个 gem 然后把获取到的数据加上时间戳塞进
+数据库里了。</p><h3 id=数据导出>数据导出</h3><p>数据导出需要做以下几件事情：</p><ol><li>从数据库获取数据</li><li>过滤数据并格式化数据</li><li>定时上传</li></ol><p>获取数据就是一些基础的 SQL query，就不展开说了。在过滤日期的时候 SQLite 有一个
+很好用的函数可以过滤掉非本月的记录：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-SQL data-lang=SQL><span style=display:flex><span><span style=color:#fe8019>SELECT</span> ttime, users, <span style=color:#fe8019>load</span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>FROM</span> record
+</span></span><span style=display:flex><span><span style=color:#fe8019>WHERE</span> machine<span style=color:#fe8019>=?</span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>AND</span> <span style=color:#fabd2f>DATE</span>(ttime, <span style=color:#b8bb26>&#39;unixepoch&#39;</span>)
+</span></span><span style=display:flex><span><span style=color:#fe8019>BETWEEN</span>
+</span></span><span style=display:flex><span>  <span style=color:#fabd2f>DATE</span>(<span style=color:#b8bb26>&#39;now&#39;</span>, <span style=color:#b8bb26>&#39;start of month&#39;</span>)
+</span></span><span style=display:flex><span><span style=color:#fe8019>AND</span>
+</span></span><span style=display:flex><span>  <span style=color:#fabd2f>DATE</span>(<span style=color:#b8bb26>&#39;now&#39;</span>, <span style=color:#b8bb26>&#39;start of month&#39;</span>, <span style=color:#b8bb26>&#39;+1 month&#39;</span>, <span style=color:#b8bb26>&#39;-1 day&#39;</span>)<span style=color:#b8bb26>&#34;
+</span></span></span></code></pre></div><p><code>DATE</code> 函数可以帮助调整日期 offset，而后面这一句 BETWEEN 可以很轻松的将日期调整到月初和月末来生成
+日期限制条件。</p><p>因为计划是每隔 5 分钟获取一次数据，但实际使用的时候其实只需要一个数据
+来代表这一天的使用量。这里我采用了 95th percentile 计算法。95th percentile
+是一个在集合里大于其他 95% 数值的值。这个计算法常用在带宽计算上，因为它
+去掉了 5% 极端数值，能相对准确的表现出一台机器最大需要多少的带宽，这个算法
+能比较直观的给用户反馈一台机器某个使用量的最大值，方便做预算计划。</p><p>这里的计算也很简单，将输入数值集合排序，取数组长度 * 0.95 作为 index。</p><p>Ruby 的实现：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-ruby data-lang=ruby><span style=display:flex><span>sorted <span style=color:#fe8019>=</span> records<span style=color:#fe8019>.</span>sort_by <span style=color:#fe8019>do</span> <span style=color:#fe8019>|</span>rec<span style=color:#fe8019>|</span>
+</span></span><span style=display:flex><span>  rec<span style=color:#fe8019>[</span><span style=color:#83a598>:machine_load</span><span style=color:#fe8019>]</span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>end</span>
+</span></span><span style=display:flex><span>index <span style=color:#fe8019>=</span> (sorted<span style=color:#fe8019>.</span>length <span style=color:#fe8019>*</span> <span style=color:#d3869b>0</span><span style=color:#fe8019>.</span><span style=color:#d3869b>95</span>)<span style=color:#fe8019>.</span>ceil <span style=color:#fe8019>-</span> <span style=color:#d3869b>1</span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>return</span> sorted<span style=color:#fe8019>[</span>index<span style=color:#fe8019>][</span><span style=color:#83a598>:machine_load</span><span style=color:#fe8019>]</span>
+</span></span></code></pre></div><p><code>:machine_load</code> 是 Ruby 用来表达 hash key 的语法糖，records 是一组
+序列化后的，以时间排序的 uptime 数据值。你可以把 <code>rec</code> 看成一个 HashMap。</p><p>我用 <code>:machine_load</code> 作为 key 重写排序，让记录以负载的大小来排序。
+然后向上取整数组长度乘以 0.95 的结果作为 index 值。
+Ruby 里的数组下标是从 0 开始的，所以要记得 -1 来获得正确的下标。
+最后返回这个第 95% 位的值就行。</p><h3 id=定时脚本>定时脚本</h3><p>两个脚本写完之后就要开始<del>献祭底裤了</del>。systemd 有 timer 服务，
+可以用来触发同名的 service 服务。比如假设 service 文件名为
+<code>load-exporter.service</code>，可以用 <code>load-exporter.timer</code> 来触发这个服务。
+这个 timer 文件支持类 crontab 的语法，而且因为是 systemd 的服务，
+可以隔离环境，隔离不同的任务，还有 journalctl 查日志，
+管理起来也非常方便，可以永远丢掉那个混乱且问题很多的 crontab 了。</p><p>因为脚本是执行一次获取一次获取一次类型的，这里用 oneshot 类型，
+让 systemd 每次起服务执行完就结束服务。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-systemd data-lang=systemd><span style=display:flex><span><span style=color:#fe8019>[Unit]</span>
+</span></span><span style=display:flex><span><span style=color:#b8bb26;font-weight:700>Description</span><span style=color:#fe8019>=</span><span style=color:#b8bb26>The CPU usage fetcher</span>
+</span></span><span style=display:flex><span><span style=color:#b8bb26;font-weight:700>After</span><span style=color:#fe8019>=</span><span style=color:#b8bb26>network.target</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>[Service]</span>
+</span></span><span style=display:flex><span><span style=color:#b8bb26;font-weight:700>Type</span><span style=color:#fe8019>=</span><span style=color:#b8bb26>oneshot</span>
+</span></span><span style=display:flex><span><span style=color:#b8bb26;font-weight:700>ExecStart</span><span style=color:#fe8019>=</span><span style=color:#b8bb26>/usr/bin/fetch</span>
+</span></span><span style=display:flex><span><span style=color:#b8bb26;font-weight:700>EnvironmentFile</span><span style=color:#fe8019>=</span><span style=color:#b8bb26>/etc/fetcher/runtime_env</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>[Install]</span>
+</span></span><span style=display:flex><span><span style=color:#b8bb26;font-weight:700>WantedBy</span><span style=color:#fe8019>=</span><span style=color:#b8bb26>multi-user.target</span>
+</span></span></code></pre></div><p>systemd 有 EnvironmentFile 属性，可以指定一个 env 文件，运行时将里面的键值对作为
+环境变量。这样就可以开发时用 dotenv + 一个开发用 env 文件，生产环境让 systemd 准备
+好生产环境需要的环境变量，无缝衔接非常方便。</p><p>timer 文件语法和 service 类似，但只需要设置好触发时机就行。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-systemd data-lang=systemd><span style=display:flex><span><span style=color:#fe8019>[Unit]</span>
+</span></span><span style=display:flex><span><span style=color:#b8bb26;font-weight:700>Description</span><span style=color:#fe8019>=</span><span style=color:#b8bb26>Scheduler for fetcher</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>[Timer]</span>
+</span></span><span style=display:flex><span><span style=color:#b8bb26;font-weight:700>OnCalendar</span><span style=color:#fe8019>=</span><span style=color:#b8bb26>*:1/5</span>
+</span></span><span style=display:flex><span><span style=color:#b8bb26;font-weight:700>Persistent</span><span style=color:#fe8019>=</span><span style=color:#b8bb26>true</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#fe8019>[Install]</span>
+</span></span><span style=display:flex><span><span style=color:#b8bb26;font-weight:700>WantedBy</span><span style=color:#fe8019>=</span><span style=color:#b8bb26>timers.target</span>
+</span></span></code></pre></div><p><code>OnCalendar</code> 根据实际时间来触发，这里的 <code>*</code> 指代每一天，后面的 <code>1/5</code> 指的是每过五分钟触发一次。
+<code>Persistent</code> 设置为 true 可以让服务在不知道上一次什么时候执行的时候立刻执行一次。</p><p>详细的时间解析语法可以看 <a href=https://man.archlinux.org/man/systemd.time.7#CALENDAR_EVENTS>systemd.time(7)</a>。
+systemd 的各种用法可以参考 <a href=https://wiki.archlinux.org/title/Systemd>Arch Wiki</a>。</p><p>定时上传也很简单，参照定时获取再写一个新的 systemd service 就行。</p><h2 id=前端>前端</h2><p>我使用的前端框架是 <a href=https://vitejs.dev/>vite</a> + <a href=https://reactjs.org/>React</a> +
+<a href=https://reactrouter.com/en/main>react-router</a>，其中 vite 用来创建开发环境，
+React 用来画前端，react-router 用来做客户端路由，数据获取则是用了 <a href=https://swr.vercel.app/>SWR</a>
+提供的 <code>useSWR</code> React Hook。</p><p>这里同样也不细谈他们的使用方法，这些框架的使用教程也很详尽很易读。
+主要讲一下我在写 React 时写的一些错误。</p><h3 id=react-hook-调用顺序>React Hook 调用顺序</h3><p>在 React 里有个很重要的 hook 使用规则：hook 调用一定要在函数组件的最顶层。
+因为 React 是通过 <code>useHook</code> 的调用顺序来判断每个 hook 的状态的。把 hook
+调用放在顶层可以确保所有的 hook 依次执行，保证不会有任何的条件跳转或者
+异常抛出，导致某个 hook 用到了其他 hook 的状态而产生渲染错误。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-javascript data-lang=javascript><span style=display:flex><span>useState(<span style=color:#fe8019>null</span>)              <span style=color:#928374;font-style:italic>//  1. 创建一个新的 state
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span>useEffect((...) =&gt; { ... }) <span style=color:#928374;font-style:italic>//  2. 创建一个新的 side effect
+</span></span></span><span style=display:flex><span><span style=color:#928374;font-style:italic></span>useState(selected)          <span style=color:#928374;font-style:italic>//  3. 创建一个新的 state
+</span></span></span></code></pre></div><p>像这样依次调用，React 可以将本地存储的状态和这些 hook 调用建立联系。
+但是假如我写了一点条件跳转呢？</p><pre tabindex=0><code>useState(null)
+if (maybeFalse) {
+  useEffect(...)
+}
+useState(selected)
+</code></pre><p>如果 init 的时候 if 条件是 true，那么状态依旧是依次生成的，
+但当某次渲染时条件为 false，那么第三行的 <code>useState</code> 就不能正确
+读取自己的状态，而会读取到 useEffect 存的状态。</p><p>所以其实这个规则有另一个更精准的解读：一定要保证每个 hook 在每次
+渲染都能被依次调用到。</p><h3 id=usestate-存放-map-类型的-state>useState 存放 Map 类型的 state</h3><p>在写数据日期选取的时候，因为不同的机器生成的数据时间不同，要给
+每个机器都存一个自己的可选日期状态。比如 A 机器有 10 月和 11 月
+的数据，B 机器只有 11 月的数据，混用 state 就会导致获取数据时出错。
+（我就犯了这个错）</p><p>这个需求听起来就很键值对，机器名作为键，一组日期作为值。于是我就
+想当然的写了下面这样的封装：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#fe8019>function</span> useDate(machID: <span style=color:#fabd2f>string</span>)<span style=color:#fe8019>:</span> [DateMenuOption <span style=color:#fe8019>|</span> <span style=color:#fe8019>null</span>, (opt: <span style=color:#fabd2f>DateMenuOption</span>) <span style=color:#fe8019>=&gt;</span> <span style=color:#fe8019>void</span>] {
+</span></span><span style=display:flex><span>  <span style=color:#fe8019>const</span> [storage, update] <span style=color:#fe8019>=</span> useState&lt;<span style=color:#fb4934>Map</span>&lt;<span style=color:#b8bb26;font-weight:700>string</span>, <span style=color:#b8bb26;font-weight:700>DateMenuOption</span>&gt;<span style=color:#fe8019>&gt;</span>(<span style=color:#fe8019>new</span> Map());
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#fe8019>const</span> setDate <span style=color:#fe8019>=</span> (opt: <span style=color:#fabd2f>DateMenuOption</span>) <span style=color:#fe8019>=&gt;</span> {
+</span></span><span style=display:flex><span>    <span style=color:#fe8019>const</span> latest <span style=color:#fe8019>=</span> storage.<span style=color:#fe8019>set</span>(machID, opt);
+</span></span><span style=display:flex><span>    update(latest);
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  <span style=color:#fe8019>return</span> [storage.<span style=color:#fe8019>get</span>(machID) <span style=color:#fe8019>||</span> <span style=color:#fe8019>null</span>, setDate];
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>实际执行的时候发现 <code>setDate</code> 函数在每次更改菜单的时候都能触发，
+但就是没有办法触发界面重渲染。</p><p>这是因为在 JavaScript 里，所有的 Object 都会传引用，而不是传值。
+这里调用 <code>storage.set()</code> 拿到的返回值 <code>latest</code> 和 <code>storage</code> 是
+同一个引用值。对于 React 而言，它只能看到用户传了一个和旧值
+一模一样的引用，它并不知道 Map 里面的数据值变化了。</p><p>所以为了强制触发重渲染，这里可以靠创建新的 Map 并传递新的引用：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-diff data-lang=diff><span style=display:flex><span>function useDate(machID: string): [DateMenuOption | null, (opt: DateMenuOption) =&gt; void] {
+</span></span><span style=display:flex><span>  const [storage, update] = useState&lt;Map&lt;string, DateMenuOption&gt;&gt;(new Map());
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  const setDate = (opt: DateMenuOption) =&gt; {
+</span></span><span style=display:flex><span><span style=color:#282828;background-color:#fb4934>-    const latest = storage.set(machID, opt);
+</span></span></span><span style=display:flex><span><span style=color:#282828;background-color:#fb4934></span><span style=color:#282828;background-color:#b8bb26>+    const latest = new Map(storage);
+</span></span></span><span style=display:flex><span><span style=color:#282828;background-color:#b8bb26>+    latest.set(machID, opt);
+</span></span></span><span style=display:flex><span><span style=color:#282828;background-color:#b8bb26></span>     update(latest);
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>  return [storage.get(machID) || null, setDate];
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Map 类的初始化函数可以接受一个 iterable 的对象用来作为初始化的
+数据来源，我们可以从旧的 Map 上创建新的 Map，更新值，传递给 React。</p><blockquote><p>Q：先改再创建和先创建再改有什么区别吗？</p><p>Jixun: react 的想法是，你这个对象既然传给我了，就不要再改了，你要是
+想改，给我个新的值。</p><p>尽量不要对原值做修改，每次修改都通过新值来覆盖。</p></blockquote><p>在用 Array 存 State 的时候则可以用 Array.prototype.slice() 创建一个
+新的 Array Object。</p><h3 id=css-限制滚动条>CSS 限制滚动条</h3><p>默认不加限制的话，超出可显示范围的内容会延长网页。滚动的时候像
+看一张长长的卷轴。但我想要画面保持固定长度，超出显示长度的页面依旧
+可以滚动查看。但视觉效果上更加稳定，看起来就像在使用一个 App 一样。</p><p>实现这个也很简单，需要从 HTML 的根节点 <code>&lt;body></code> 开始加一个</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-css data-lang=css><span style=display:flex><span><span style=color:#fe8019>...</span> {
+</span></span><span style=display:flex><span>  <span style=color:#fe8019>width</span>: <span style=color:#d3869b>100</span><span style=color:#fabd2f>%</span>;
+</span></span><span style=display:flex><span>  <span style=color:#fe8019>height</span>: <span style=color:#d3869b>100</span><span style=color:#fabd2f>%</span>;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>的长宽高限制。渲染时这个值会换算成实际外部 container 的大小。
+让这一个匹配上的节点大小和它父节点的大小保持一致。
+一层一层向子节点限制，最后就能让各个组件的大小都不会超过可显示区域。</p><h3 id=将-json-数据变成-map>将 JSON 数据变成 Map</h3><p>初学 JavaScript 的我因为没有认真研读 <code>JSON.parse</code> 的用法，先入为主
+的认为这个就是一个 Deserialize 的函数，可以把 JSON 字符串反序列化我想要的类型。</p><p>实际是这样吗？</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-typescript data-lang=typescript><span style=display:flex><span><span style=color:#fe8019>const</span> raw <span style=color:#fe8019>=</span> <span style=color:#b8bb26>&#39;{ &#34;a&#34;: &#34;foo&#34;, &#34;b&#34;: &#34;bar&#34;, &#34;c&#34;: &#34;baz&#34;}&#39;</span>;
+</span></span><span style=display:flex><span><span style=color:#fe8019>const</span> val <span style=color:#fe8019>=</span> JSON.parse(raw) <span style=color:#fe8019>as</span> Map&lt;<span style=color:#fb4934>string</span>, <span style=color:#b8bb26;font-weight:700>string</span>&gt;;
+</span></span><span style=display:flex><span>console.log(val.<span style=color:#fe8019>get</span>(<span style=color:#b8bb26>&#34;a&#34;</span>));
+</span></span></code></pre></div><p>上面这个代码块会报错 <code>val.get</code> is not a function。我对这个函数的期待
+是像 Rust 的 <code>serde_json::from_str::&lt;HashMap&lt;String, String>>(...)</code> 那样
+帮我把这一串 JSON 字符串反序列化成一个 Map，而 Map 是有 get 这个方法的。
+这中间发生了什么事情呢？</p><p>实际上这部分就是我不学无术了，<a href=https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse#return_value><code>JSON.parse</code></a>
+会将字符串解析成 JavaScript 的 Object，Array&mldr;类型，但它并不接收泛型，
+不会将 JSON 字符串反序列化用户强行 cast 的类型。</p><p>除此之外，<code>Map&lt;string, string></code> 也不是一个 Map 类型，而是一个函数类型，
+在上面的例子里，我错误地将一个 Object 类型强行转换成了 Map 的初始化函数类型，
+自然就不可能正常运行。</p><p>实际上想把 JSON Object 转换成 Map 应该使用 <code>Object.entries()</code> 将 object
+转换成可以枚举的键值对属性，再用 <code>new Map()</code> 将这个属性值转换成 Map。</p></section><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css integrity=sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js integrity=sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous onload=renderMathInElement(document.body)></script><nav class="mt-24 flex rounded-lg bg-black/[3%] text-lg dark:bg-white/[8%]"><a class="flex w-1/2 items-center rounded-l-md p-6 pr-3 font-semibold no-underline hover:bg-black/[2%] dark:hover:bg-white/[3%]" href=https://blog.sh1mar.in/post/coding/rust-builder/><span class=mr-1.5>←</span><span>Rust Builder pattern 学习总结</span></a>
+<a class="ml-auto flex w-1/2 items-center justify-end rounded-r-md p-6 pl-3 font-semibold no-underline hover:bg-black/[2%] dark:hover:bg-white/[3%]" href=https://blog.sh1mar.in/post/unmatched-bootloader-ci/><span>给 Unmatched Bootloader 写个自动化！</span><span class=ml-1.5>→</span></a></nav></article></main><footer class="opaco mx-auto flex h-[4.5rem] max-w-3xl items-center px-8 text-[0.9em] opacity-60"><div class=mr-auto>&copy; 2024
+<a class=link href=https://blog.sh1mar.in>sh1marin's blog</a></div><a class="link mx-6" href=https://gohugo.io/ rel=noopener target=_blank>Powered by Hugo️️</a>️
+<a class=link href=https://github.com/nanxiaobei/hugo-paper rel=noopener target=_blank>✎ Paper</a></footer></body></html>

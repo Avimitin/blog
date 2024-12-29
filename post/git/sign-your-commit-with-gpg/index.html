@@ -1,0 +1,152 @@
+<!doctype html><html class="not-ready lg:text-base" style=--bg:#faf8f1 lang=zh><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><title>Sign Your Commit With GPG - sh1marin's blog</title><meta name=theme-color><meta name=description content="使用 GPG 来签名 Commit 前几天一个朋友在群里提出了一个我从未考虑过的问题： “如果我在一个项目里用你的邮箱 commit，你会知道吗？”。 这个问题把我问住"><meta name=author content="avimitin"><link rel="preload stylesheet" as=style href=https://blog.sh1mar.in/main.min.css><script defer src=https://blog.sh1mar.in/highlight.min.js onload=hljs.initHighlightingOnLoad()></script>
+<link rel=preload as=image href=https://blog.sh1mar.in/theme.png><link rel=preload as=image href=https://blog.sh1mar.in/github.svg><link rel=preload as=image href=https://blog.sh1mar.in/rss.svg><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css integrity=sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js integrity=sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous onload=renderMathInElement(document.body)></script>
+<link rel=icon href=https://blog.sh1mar.in/favicon.ico><link rel=apple-touch-icon href=https://blog.sh1mar.in/apple-touch-icon.png><meta name=generator content="Hugo 0.112.3"><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css integrity=sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js integrity=sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous onload=renderMathInElement(document.body)></script><meta property="og:title" content="Sign Your Commit With GPG"><meta property="og:description" content="使用 GPG 来签名 Commit 前几天一个朋友在群里提出了一个我从未考虑过的问题： “如果我在一个项目里用你的邮箱 commit，你会知道吗？”。 这个问题把我问住"><meta property="og:type" content="article"><meta property="og:url" content="https://blog.sh1mar.in/post/git/sign-your-commit-with-gpg/"><meta property="article:section" content="post"><meta property="article:published_time" content="2021-07-06T00:00:00+08:00"><meta property="article:modified_time" content="2021-07-06T00:00:00+08:00"><meta itemprop=name content="Sign Your Commit With GPG"><meta itemprop=description content="使用 GPG 来签名 Commit 前几天一个朋友在群里提出了一个我从未考虑过的问题： “如果我在一个项目里用你的邮箱 commit，你会知道吗？”。 这个问题把我问住"><meta itemprop=datePublished content="2021-07-06T00:00:00+08:00"><meta itemprop=dateModified content="2021-07-06T00:00:00+08:00"><meta itemprop=wordCount content="3056"><meta itemprop=keywords content><meta name=twitter:card content="summary"><meta name=twitter:title content="Sign Your Commit With GPG"><meta name=twitter:description content="使用 GPG 来签名 Commit 前几天一个朋友在群里提出了一个我从未考虑过的问题： “如果我在一个项目里用你的邮箱 commit，你会知道吗？”。 这个问题把我问住"></head><body class="text-black duration-200 ease-out dark:text-white"><header class="mx-auto flex h-[4.5rem] max-w-3xl px-8 lg:justify-center"><div class="relative z-50 mr-auto flex items-center"><a class="-translate-x-[1px] -translate-y-[1px] text-2xl font-semibold" href=https://blog.sh1mar.in>sh1marin's blog</a><div class="btn-dark text-[0] ml-4 h-6 w-6 shrink-0 cursor-pointer [background:url(./theme.svg)_left_center/cover_no-repeat] dark:invert dark:[background-position:right]" role=button aria-label=Dark></div></div><div class="btn-menu relative z-50 -mr-8 flex h-[4.5rem] w-[5rem] shrink-0 cursor-pointer flex-col items-center justify-center gap-2.5 lg:hidden" role=button aria-label=Menu></div><script>const htmlClass=document.documentElement.classList;setTimeout(()=>{htmlClass.remove("not-ready")},10);const btnMenu=document.querySelector(".btn-menu");btnMenu.addEventListener("click",()=>{htmlClass.toggle("open")});const metaTheme=document.querySelector('meta[name="theme-color"]'),lightBg="#faf8f1".replace(/"/g,""),setDark=e=>{metaTheme.setAttribute("content",e?"#000":lightBg),htmlClass[e?"add":"remove"]("dark"),localStorage.setItem("dark",e)},darkScheme=window.matchMedia("(prefers-color-scheme: dark)");if(htmlClass.contains("dark"))setDark(!0);else{const e=localStorage.getItem("dark");setDark(e?e==="true":darkScheme.matches)}darkScheme.addEventListener("change",e=>{setDark(e.matches)});const btnDark=document.querySelector(".btn-dark");btnDark.addEventListener("click",()=>{setDark(localStorage.getItem("dark")!=="true")})</script><div class="nav-wrapper fixed inset-x-0 top-full z-40 flex h-full select-none flex-col justify-center pb-16 duration-200 dark:bg-black lg:static lg:h-auto lg:flex-row lg:!bg-transparent lg:pb-0 lg:transition-none"><nav class="lg:ml-12 lg:flex lg:flex-row lg:items-center lg:space-x-6"><a class="block text-center text-2xl leading-[5rem] lg:text-base lg:font-normal" href=/about/>About</a></nav><nav class="mt-12 flex justify-center space-x-10 dark:invert lg:ml-12 lg:mt-0 lg:items-center lg:space-x-6"><a class="h-8 w-8 text-[0] [background:var(--url)_center_center/cover_no-repeat] lg:h-6 lg:w-6" style=--url:url(./github.svg) href=https://github.com/Avimitin target=_blank rel=me>github</a>
+<a class="h-8 w-8 text-[0] [background:var(--url)_center_center/cover_no-repeat] lg:h-6 lg:w-6" style=--url:url(./rss.svg) href=https://blog.sh1mar.in/index.xml target=_blank rel=alternate>rss</a></nav></div></header><main class="prose prose-neutral relative mx-auto min-h-[calc(100%-9rem)] max-w-3xl px-8 pb-16 pt-12 dark:prose-invert"><article><header class=mb-16><h1 class="!my-0 pb-2.5">Sign Your Commit With GPG</h1><div class="text-sm antialiased opacity-60"><time>Jul 6, 2021</time>
+<span class=mx-1>&#183;</span>
+<span>avimitin</span></div></header><section><h1 id=使用-gpg-来签名-commit>使用 GPG 来签名 Commit</h1><p>前几天一个朋友在群里提出了一个我从未考虑过的问题：
+“如果我在一个项目里用你的邮箱 commit，你会知道吗？”。</p><p>这个问题把我问住了。众所周知，在第一次使用 <code>git</code>
+的时候，我们需要填写以下两个信息：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-console data-lang=console><span style=display:flex><span><span style=color:#504945>git config --global user.name &#34;tom&#34;
+</span></span></span><span style=display:flex><span><span style=color:#504945>git config --global user.email &#34;tom@example.com&#34;
+</span></span></span></code></pre></div><p>当你进行项目开源或者和他人合作时，别人就可以在 commit
+历史里用这些信息查询到是你提交的这条 commit 。你所
+使用的代码托管平台甚至还会依据你填写的这些作者信息，
+让你荣登 Contributor 之列。</p><p>似乎没什么问题的样子，为什么我还要大费周章的写一篇
+《使用 GPG 签名 Commit》，上面提到的逻辑究竟发生了
+什么问题呢。</p><h2 id=小剧场>小剧场</h2><p>想象这么一个场景：现在是凌晨两点，你奋战了一天，终于
+把一个顽固的代码 Bug 修好了。你感觉到一阵昏昏欲睡，想
+赶紧上床好好休息一下。带着对自己代码的满足感，你 commit
+了自己的心血： <code>"fix: fixed the security valnerability"</code>
+你推送到了自己的代码托管平台，等待明早的新版本推送前，
+大家对你进展的检查和评价。你爬上床，关好灯，困意逐渐
+渗透，你开始意识模糊了起来&mldr;&mldr;</p><p>突然，邮件和各种通讯软件的通知声把你轰炸了起来，你
+困惑的思考着似乎自己才刚进入梦乡，怎会这么快就到白天。
+而接下来屏幕里的内容，更让你震撼的坚信自己还未睡醒：
+大家都在责怪你的新 commit 让整个项目都混乱了。</p><p>你赶忙打开电脑，检查起 git log。你一行一行的查看 commit
+哈希值，你找到了让项目崩坏的 patch，你不认识它，你从未
+写过任何一行存在在 patch 里的改动，但令你绝望的是，这个
+patch 上签署着你的名字，你的邮箱。毫无疑问，就是你，提交
+的这个 commit。</p><blockquote><p>以上小剧场改写自
+<a href=https://mikegerwitz.com/2012/05/a-git-horror-story-repository-integrity-with-signed-commits>Mike Gerwitz: A Git Horror Story: Repository Integrity With Signed Commits</a></p></blockquote><h2 id=问题>问题</h2><p>我们都能知道自己做了啥，但是怎样才能让别人知道，我，
+真的做过这么个事情。要怎样才能让别人知道，写这些修改
+，签署这个修改，提交这些修改的人，真的是我。</p><p>所以问题就在于虽然 git 可以证明这是你写的 commit，
+但是它缺少了另一个抵抗恶意的环节：应该如何证明这个签
+着我的名提交了 commit 的人真的就是我本人？</p><p>可能也有人觉得这并不重要：我基本只写个人项目，团队
+项目也都是认识的人，搞破坏的人他们没有写权限。那我们
+从另外一个角度出发。在 GitHub 上有些项目，我不好说，但
+是是政治敏感项目。假设有人冒用你的名字你的邮箱，在这
+些项目 “做贡献”，等秋后算账之时，警察叔叔按图索骥找
+上你家的门，你应当如何证明你的清白？吃着火锅唱着歌儿，
+结果突然背黑锅了，这可如何是好？</p><h2 id=解决方案>解决方案</h2><p>在这里我们将采用 GPG 生成 RSA 公私钥，并使用私钥对你的所
+有 commit 进行签名。</p><blockquote><p>GPG 是什么：</p><ul><li><a href=https://gnupg.org/>GnuPG</a></li></ul><p>公私钥的实现原理以及其如何保护我：</p><ul><li><a href=https://privacy.n0ar.ch/Encryption/Pubkey/Pubkey>公钥加密简介</a></li></ul></blockquote><h3 id=生成公私钥>生成公私钥</h3><p>首先应当确认你的电脑上已经安装好了 GnuPG，你可以运行
+下面的命令来确认：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-console data-lang=console><span style=display:flex><span><span style=color:#504945>gpg --version
+</span></span></span></code></pre></div><p>在开始生成密钥前，最好检查一下你的系统是否生成足够多
+的熵来生成随机数：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-console data-lang=console><span style=display:flex><span><span style=color:#504945>cat /proc/sys/kernel/random/entropy_avail
+</span></span></span><span style=display:flex><span><span style=color:#504945></span>
+</span></span><span style=display:flex><span>#--possible output--
+</span></span><span style=display:flex><span>#<span style=color:#d3869b>3718</span>
+</span></span></code></pre></div><p>这个数尽量要大于 3000，如果不够 3000 你可以随便敲敲键盘
+，点点鼠标，到处上网冲浪一下。</p><p>然后我们开始生成密钥：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-console data-lang=console><span style=display:flex><span><span style=color:#504945>gpg --full-generate-key
+</span></span></span></code></pre></div><p>终端会提示你选择密钥类型：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-text data-lang=text><span style=display:flex><span>Please select what kind of key you want:
+</span></span><span style=display:flex><span>   (1) RSA and RSA (default)
+</span></span><span style=display:flex><span>   (2) DSA and Elgamal
+</span></span><span style=display:flex><span>   (3) DSA (sign only)
+</span></span><span style=display:flex><span>   (4) RSA (sign only)
+</span></span><span style=display:flex><span>Your selection?
+</span></span></code></pre></div><p>如果没有别的需求，选择默认的 <code>RSA and RSA</code> 即可。</p><p>接下来就选择密钥大小。因为现代算力的增强，大部分的报
+告推荐选择 2048 及以上的密钥大小。这里我选择了 4096 bits。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-text data-lang=text><span style=display:flex><span>Please specify how long the key should be valid.
+</span></span><span style=display:flex><span>         0 = key does not expire
+</span></span><span style=display:flex><span>      &lt;n&gt;  = key expires in n days
+</span></span><span style=display:flex><span>      &lt;n&gt;w = key expires in n weeks
+</span></span><span style=display:flex><span>      &lt;n&gt;m = key expires in n months
+</span></span><span style=display:flex><span>      &lt;n&gt;y = key expires in n years
+</span></span><span style=display:flex><span>Key is valid for? (0)
+</span></span></code></pre></div><p>下一步是选择该密钥何时过期，我选择的是一年后过期。选
+择不过期也是可以的，但是如果你想撤销以前发布的公钥会
+比较麻烦，因为不会自动过期，保存旧公钥的用户可能不会
+知道公钥已经被撤销了。</p><p>最后一步就是填写身份信息，根据需要发布的身份填写即可。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-text data-lang=text><span style=display:flex><span>GnuPG needs to construct a user ID to identify your key.
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Real name: sh1marin
+</span></span><span style=display:flex><span>Email address: sh1marin@example.com
+</span></span><span style=display:flex><span>Comment: code signing
+</span></span><span style=display:flex><span>You selected this USER-ID:
+</span></span><span style=display:flex><span>    &#34;sh1marin (code signing) &lt;sh1marin@example.com&gt;&#34;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit?
+</span></span></code></pre></div><p>如果填错了，输入提示的大写字母重新填写即可。最后输入
+O 结束录入。确认身份之后，gpg 会弹出一个窗口让你输入
+私钥密码。非常建议你填写上，防止被人偷窃私钥盗用。</p><p>输入下面的命令来查看你刚刚生成的密钥：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-console data-lang=console><span style=display:flex><span><span style=color:#504945>gpg --list-keys
+</span></span></span></code></pre></div><h3 id=修改密钥>修改密钥</h3><p>你可以对已生成的密钥进行编辑管理：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-console data-lang=console><span style=display:flex><span><span style=color:#504945>gpg --edit-key mail@example.com
+</span></span></span></code></pre></div><p>在弹出的新的提示符后输入 help 查看帮助信息。</p><p>下面的例子演示了如何在密钥内加入另一个身份信息：</p><pre tabindex=0><code class=language-gpg data-lang=gpg>gpg&gt; adduid
+Real name: sh1marin
+Email address: sh1marin@school.edu
+Comment: Student account
+You selected this USER-ID:
+    &#34;sh1marin (Student account) &lt;bestuser@school.edu&gt;&#34;
+
+Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit? O
+</code></pre><p>最后输入 save 保存退出。</p><h3 id=新增子密钥>新增子密钥</h3><p>输入 <code>gpg --list-secret-keys</code>，你可以看到自己的私钥。
+带 Sec 开头的私钥就是你的主密钥，而你不应该日常使用主密钥。
+主密钥在 PGP 中应当只起着创建子密钥的作用。所以我们需要
+生成子密钥。</p><p>输入 <code>gpg --edit-key YOUR_KEY</code>，将 YOUR_KEY 替换成你的私钥
+ID。等待 gpg 的提示符弹出后，输入 <code>addkey</code> 创建新的子密钥。</p><p>虽然我并不推荐，但你可以创建无数个子密钥。一般情况来说，密钥
+有 4 个功能，分别是:</p><ul><li>Sign Data [S]</li><li>Key Certification [C]</li><li>Encrypt [E]</li><li>Authentication [A]</li></ul><p>比如你的主密钥后面应该会有 [SC] 的标识，说明你的主密钥可以
+用来签名和认证。这也是为什么主密钥如此重要。</p><p>下面我以 sign data 子密钥的新建为例：</p><pre tabindex=0><code class=language-gpg data-lang=gpg>gpg&gt; addkey
+Key is protected.
+ 
+You need a passphrase to unlock the secret key for
+user: &#34;avimitin &lt;avimitin@example.com&gt;&#34;
+4096-bit RSA key, ID 144A027B, created 2013-11-04
+ 
+Enter passphrase:
+</code></pre><p>输入密码后，选择 RSA (sign only)，然后选择 4096 强度，
+选择年份长度之后，确认创建，并输入 <code>save</code> 保存退出。</p><h3 id=备份>备份</h3><p>你可以选择使用一个带加密的 U 盘，将你家目录下的整个 gpg 数据库
+拷贝到 U 盘里，并放到一个自己认为绝对安全的地方。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-console data-lang=console><span style=display:flex><span><span style=color:#504945>cp -r ~/.gnupg /mnt/gnupg_backup
+</span></span></span></code></pre></div><h3 id=导出子钥>导出子钥</h3><p>输入命令：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-console data-lang=console><span style=display:flex><span><span style=color:#504945>gpg -a --export-secret-subkeys YOUR_KEY_ID &gt; secret_subkeys.gpg
+</span></span></span></code></pre></div><p>然后找一个新的 U盘，把这个子钥放进去。</p><h3 id=导出公钥>导出公钥</h3><p>公钥可以用来加密信息，同时也可以用来验证你的私钥签名
+。公钥就是被设计出来用作四处分享的。</p><p>使用下面的命令来导出你的公钥：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-console data-lang=console><span style=display:flex><span><span style=color:#504945>gpg --export --armor --output anyname.pub
+</span></span></span></code></pre></div><p>同时为了防止被篡改，你还可以在你的主页或者任何你可以
+信赖的平台发布你的指纹信息，让他人验证公钥正确性和完
+整性。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-console data-lang=console><span style=display:flex><span><span style=color:#504945>gpg --fingerprint
+</span></span></span></code></pre></div><p>你可以在自己的主页放上指纹和公钥，也可以发布到诸如
+<a href=https://keyserver.ubuntu.com/>OpenPGP keyserver</a>
+等公钥托管网站，你甚至可以丢到 GitHub 上用 raw 来
+分享。</p><blockquote><p>上述公私钥生成部分参考自：
+<a href=https://www.redhat.com/sysadmin/creating-gpg-keypairs>Red Hat: How to create GPG keypairs</a></p></blockquote><h3 id=生成吊销执照>生成吊销执照</h3><p>这一步非常重要，一份吊销执照可以通知他人你的公钥已经被弃用。
+在你的密钥丢失时，吊销执照可以帮助你收回对正在传播的公钥的认证。
+因此它也十分机密，如果给人悄悄窃取并私自发布，你的公钥就被迫
+无效了。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-console data-lang=console><span style=display:flex><span><span style=color:#504945>gpg -a --gen-revoke YOUR_KEY_ID &gt; revocation_cert.gpg
+</span></span></span></code></pre></div><p>将生成的文件移动到和你备份的同个 U 盘或独立的 U 盘并妥善保存。</p><h3 id=清空数据库并导入子钥>清空数据库并导入子钥</h3><p>确认备份完成之后，将你的 gpg 数据库 (默认 ~/.gnupg) 完全删除。在
+新的数据库里输入：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-console data-lang=console><span style=display:flex><span><span style=color:#504945>gpg --import secret_subkeys.gpg
+</span></span></span></code></pre></div><p>导入刚刚导出的子密钥。然后使用 <code>trust</code> 修改该密钥的可信度：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-console data-lang=console><span style=display:flex><span>$ gpg --edit-key YOUR_KEY_ID
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#504945>gpg&gt; trust
+</span></span></span></code></pre></div><p>这里我选择 ultimate 信任度。</p><p>保存后退出 gpg 终端，输入 <code>gpg --list-keys</code> ，你会发现在主密钥
+那一行的 <code>sec</code> 多了一个 <code>#</code>，表示主密钥不存在。平常使用子密钥
+的 key id 即可。</p><h3 id=使用主密钥>使用主密钥</h3><p>刚刚复制到 U 盘的整个 gpg 数据库文件夹可以直接被挂载，加上参数
+即可，挂载上你的 U 盘，假设你挂载在 <code>/mnt</code> 目录：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-console data-lang=console><span style=display:flex><span><span style=color:#504945>gpg --homedir=/mnt/gnupg_backup --list-keys
+</span></span></span></code></pre></div><h3 id=签名-commit>签名 commit</h3><p>长篇大论之后，终于来到最重要的这一步了。首先，你需要
+用以下命令取得私钥的 ID：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-console data-lang=console><span style=display:flex><span><span style=color:#504945>gpg --list-secret-keys --keyid-format=long
+</span></span></span></code></pre></div><p>在下述例子中，假设你的私钥 Key ID 是 <code>3AA5C34371567BD2</code>。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-console data-lang=console><span style=display:flex><span>$ gpg --list-secret-keys --keyid-format<span style=color:#fe8019>=</span>long
+</span></span><span style=display:flex><span><span style=color:#504945>/Users/hubot/.gnupg/secring.gpg
+</span></span></span><span style=display:flex><span><span style=color:#504945>------------------------------------
+</span></span></span><span style=display:flex><span><span style=color:#504945>sec   4096R/3AA5C34371567BD2 2016-03-10 [expires: 2017-03-10]
+</span></span></span><span style=display:flex><span><span style=color:#504945>uid                          Hubot 
+</span></span></span><span style=display:flex><span><span style=color:#504945>ssb   4096R/42B317FD4BA89E7A 2016-03-10
+</span></span></span></code></pre></div><p>接着需要告诉 Git 你要用这个私钥来签名：</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-console data-lang=console><span style=display:flex><span><span style=color:#504945>git config --global user.signingkey 3AA5C34371567BD2
+</span></span></span></code></pre></div><p>设置好之后，在每次 commit 时加上 <code>-S</code> 参数来签名 commit。</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-console data-lang=console><span style=display:flex><span><span style=color:#504945>git commit -S -m &#34;feat: some fancy new feature&#34;
+</span></span></span></code></pre></div><blockquote><p>也可以在 git config 中加入：
+<code>git config --global commit.gpgsign true</code>
+来默认打开签名，就不用每次自己手动输入 <code>-S</code> 参数了。</p></blockquote><p>最后 Push 到你使用的远程托管仓库。</p><blockquote><p>参考自：
+<a href=https://docs.github.com/en/github/authenticating-to-github/managing-commit-signature-verification/signing-commits>GitHub: Signing commits</a></p></blockquote><h3 id=上传公钥>上传公钥</h3><ul><li>GitHub</li></ul><p>点击右上角的头像 -> Settings -> SSH and GPG keys -> GPG keys -> New GPG
+key</p><ul><li>Gitea</li></ul><p>右上角头像 -> Settings -> SSH/GPG Keys -> Manage GPG Keys -> Add Key</p><h2 id=附>附</h2><p>逻辑上说，好像我也可以在举证时再去签名，只要签名不对
+那就不是我干的。但是实际上要让社区信任公钥确实来自于
+我，也是一个很重要的步骤。如果不先把自己和公钥联系起
+来，如何证明公钥是我的呢？</p><p>Web of trust 还是基于人的信任机制，漏洞诸多。(By Blare)
+理论和应用和现实有很大差别，希望各位读者不会遇到恶意，
+也不要成为恶。</p></section><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css integrity=sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js integrity=sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous onload=renderMathInElement(document.body)></script><nav class="mt-24 flex rounded-lg bg-black/[3%] text-lg dark:bg-white/[8%]"><a class="flex w-1/2 items-center rounded-l-md p-6 pr-3 font-semibold no-underline hover:bg-black/[2%] dark:hover:bg-white/[3%]" href=https://blog.sh1mar.in/post/git/how-to-write-commit/><span class=mr-1.5>←</span><span>How to write commit</span></a>
+<a class="ml-auto flex w-1/2 items-center justify-end rounded-r-md p-6 pl-3 font-semibold no-underline hover:bg-black/[2%] dark:hover:bg-white/[3%]" href=https://blog.sh1mar.in/post/coding/circulate_job_gurdian_in_go/><span>Golang Polling Control Flow</span><span class=ml-1.5>→</span></a></nav></article></main><footer class="opaco mx-auto flex h-[4.5rem] max-w-3xl items-center px-8 text-[0.9em] opacity-60"><div class=mr-auto>&copy; 2024
+<a class=link href=https://blog.sh1mar.in>sh1marin's blog</a></div><a class="link mx-6" href=https://gohugo.io/ rel=noopener target=_blank>Powered by Hugo️️</a>️
+<a class=link href=https://github.com/nanxiaobei/hugo-paper rel=noopener target=_blank>✎ Paper</a></footer></body></html>

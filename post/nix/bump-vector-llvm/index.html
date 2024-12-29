@@ -1,0 +1,190 @@
+<!doctype html><html class="not-ready lg:text-base" style=--bg:#faf8f1 lang=zh><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><title>Using latest LLVM in nix - sh1marin's blog</title><meta name=theme-color><meta name=description content="The vector project is a RISC-V Vector compliant hardware generator. They use Nix to setup the environment. In the vector project, they use buddy-mlir to write the test case which required LLVM. And this post record what problem have I met to just bump the buddy-mlir to the mainline.
+The beginning A couple of weeks ago, I started to learn in how to integrate the buddy-mlir into the vector project. Just like other languages, MLIR has a built-in language server (the mlir-lsp-server)."><meta name=author content="sh1marin"><link rel="preload stylesheet" as=style href=https://blog.sh1mar.in/main.min.css><script defer src=https://blog.sh1mar.in/highlight.min.js onload=hljs.initHighlightingOnLoad()></script>
+<link rel=preload as=image href=https://blog.sh1mar.in/theme.png><link rel=preload as=image href=https://blog.sh1mar.in/github.svg><link rel=preload as=image href=https://blog.sh1mar.in/rss.svg><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css integrity=sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js integrity=sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous onload=renderMathInElement(document.body)></script>
+<link rel=icon href=https://blog.sh1mar.in/favicon.ico><link rel=apple-touch-icon href=https://blog.sh1mar.in/apple-touch-icon.png><meta name=generator content="Hugo 0.112.3"><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css integrity=sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js integrity=sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous onload=renderMathInElement(document.body)></script><meta property="og:title" content="Using latest LLVM in nix"><meta property="og:description" content="The vector project is a RISC-V Vector compliant hardware generator. They use Nix to setup the environment. In the vector project, they use buddy-mlir to write the test case which required LLVM. And this post record what problem have I met to just bump the buddy-mlir to the mainline.
+The beginning A couple of weeks ago, I started to learn in how to integrate the buddy-mlir into the vector project. Just like other languages, MLIR has a built-in language server (the mlir-lsp-server)."><meta property="og:type" content="article"><meta property="og:url" content="https://blog.sh1mar.in/post/nix/bump-vector-llvm/"><meta property="article:section" content="post"><meta property="article:published_time" content="2023-06-29T00:00:00+08:00"><meta property="article:modified_time" content="2023-06-29T00:00:00+08:00"><meta itemprop=name content="Using latest LLVM in nix"><meta itemprop=description content="The vector project is a RISC-V Vector compliant hardware generator. They use Nix to setup the environment. In the vector project, they use buddy-mlir to write the test case which required LLVM. And this post record what problem have I met to just bump the buddy-mlir to the mainline.
+The beginning A couple of weeks ago, I started to learn in how to integrate the buddy-mlir into the vector project. Just like other languages, MLIR has a built-in language server (the mlir-lsp-server)."><meta itemprop=datePublished content="2023-06-29T00:00:00+08:00"><meta itemprop=dateModified content="2023-06-29T00:00:00+08:00"><meta itemprop=wordCount content="1928"><meta itemprop=keywords content><meta name=twitter:card content="summary"><meta name=twitter:title content="Using latest LLVM in nix"><meta name=twitter:description content="The vector project is a RISC-V Vector compliant hardware generator. They use Nix to setup the environment. In the vector project, they use buddy-mlir to write the test case which required LLVM. And this post record what problem have I met to just bump the buddy-mlir to the mainline.
+The beginning A couple of weeks ago, I started to learn in how to integrate the buddy-mlir into the vector project. Just like other languages, MLIR has a built-in language server (the mlir-lsp-server)."></head><body class="text-black duration-200 ease-out dark:text-white"><header class="mx-auto flex h-[4.5rem] max-w-3xl px-8 lg:justify-center"><div class="relative z-50 mr-auto flex items-center"><a class="-translate-x-[1px] -translate-y-[1px] text-2xl font-semibold" href=https://blog.sh1mar.in>sh1marin's blog</a><div class="btn-dark text-[0] ml-4 h-6 w-6 shrink-0 cursor-pointer [background:url(./theme.svg)_left_center/cover_no-repeat] dark:invert dark:[background-position:right]" role=button aria-label=Dark></div></div><div class="btn-menu relative z-50 -mr-8 flex h-[4.5rem] w-[5rem] shrink-0 cursor-pointer flex-col items-center justify-center gap-2.5 lg:hidden" role=button aria-label=Menu></div><script>const htmlClass=document.documentElement.classList;setTimeout(()=>{htmlClass.remove("not-ready")},10);const btnMenu=document.querySelector(".btn-menu");btnMenu.addEventListener("click",()=>{htmlClass.toggle("open")});const metaTheme=document.querySelector('meta[name="theme-color"]'),lightBg="#faf8f1".replace(/"/g,""),setDark=e=>{metaTheme.setAttribute("content",e?"#000":lightBg),htmlClass[e?"add":"remove"]("dark"),localStorage.setItem("dark",e)},darkScheme=window.matchMedia("(prefers-color-scheme: dark)");if(htmlClass.contains("dark"))setDark(!0);else{const e=localStorage.getItem("dark");setDark(e?e==="true":darkScheme.matches)}darkScheme.addEventListener("change",e=>{setDark(e.matches)});const btnDark=document.querySelector(".btn-dark");btnDark.addEventListener("click",()=>{setDark(localStorage.getItem("dark")!=="true")})</script><div class="nav-wrapper fixed inset-x-0 top-full z-40 flex h-full select-none flex-col justify-center pb-16 duration-200 dark:bg-black lg:static lg:h-auto lg:flex-row lg:!bg-transparent lg:pb-0 lg:transition-none"><nav class="lg:ml-12 lg:flex lg:flex-row lg:items-center lg:space-x-6"><a class="block text-center text-2xl leading-[5rem] lg:text-base lg:font-normal" href=/about/>About</a></nav><nav class="mt-12 flex justify-center space-x-10 dark:invert lg:ml-12 lg:mt-0 lg:items-center lg:space-x-6"><a class="h-8 w-8 text-[0] [background:var(--url)_center_center/cover_no-repeat] lg:h-6 lg:w-6" style=--url:url(./github.svg) href=https://github.com/Avimitin target=_blank rel=me>github</a>
+<a class="h-8 w-8 text-[0] [background:var(--url)_center_center/cover_no-repeat] lg:h-6 lg:w-6" style=--url:url(./rss.svg) href=https://blog.sh1mar.in/index.xml target=_blank rel=alternate>rss</a></nav></div></header><main class="prose prose-neutral relative mx-auto min-h-[calc(100%-9rem)] max-w-3xl px-8 pb-16 pt-12 dark:prose-invert"><article><header class=mb-16><h1 class="!my-0 pb-2.5">Using latest LLVM in nix</h1><div class="text-sm antialiased opacity-60"><time>Jun 29, 2023</time>
+<span class=mx-1>&#183;</span>
+<span>sh1marin</span></div></header><section><p>The <a href=https://github.com/sequencer/vector>vector project</a> is a <a href=https://github.com/riscv/riscv-v-spec>RISC-V Vector</a>
+compliant hardware generator.
+They use <a href=https://nixos.org/>Nix</a> to setup the environment.
+In the vector project, they use <a href=https://github.com/buddy-compiler/buddy-mlir>buddy-mlir</a> to write the test case which required LLVM.
+And this post record what problem have I met to just bump the buddy-mlir to the mainline.</p><h2 id=the-beginning>The beginning</h2><p>A couple of weeks ago, I started to learn in how to integrate the buddy-mlir into the vector project.
+Just like other languages, MLIR has a built-in language server (the mlir-lsp-server).
+The buddy-mlir project extends it to have RVV Dialect support in a newer commit than the one
+vector project currently using. So I decide to bump the buddy-mlir git rev to the latest commit.</p><p>This should be a simple copy-paste task right? Well, it is not.
+The maintainer of buddy-mlir bumped the LLVM to the mainline in history commit.
+And this brings in a massive of dependency hell.</p><p>So first thing I need to do is to replace the git rev in buddy-mlir derivation.
+It is easy, just replace the <code>rev</code> and <code>hash</code> attributes:</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-diff data-lang=diff><span style=display:flex><span># LLVM derivation
+</span></span><span style=display:flex><span><span style=color:#282828;background-color:#fb4934>-rev = &#34;e31d27e46048ccc3294d6b215dc778b3390e7834&#34;;
+</span></span></span><span style=display:flex><span><span style=color:#282828;background-color:#fb4934>-hash = &#34;sha256-CM3+amf2SpOiUBzdnO7sryTwmGcC0NVabNNvuatcCDQ=&#34;;
+</span></span></span><span style=display:flex><span><span style=color:#282828;background-color:#fb4934></span><span style=color:#282828;background-color:#b8bb26>+rev = &#34;8f966cedea594d9a91e585e88a80a42c04049e6c&#34;;
+</span></span></span><span style=display:flex><span><span style=color:#282828;background-color:#b8bb26>+hash = &#34;sha256-g2cYk3/iyUvmIG0QCQpYmWj4L2H4znx9KbuA5TvIjrc=&#34;;
+</span></span></span><span style=display:flex><span><span style=color:#282828;background-color:#b8bb26></span># buddy-mlir derivation
+</span></span><span style=display:flex><span><span style=color:#282828;background-color:#fb4934>-rev = &#34;2900b35cfd5ff34e1608b90d04f9dd9f41296f91&#34;;
+</span></span></span><span style=display:flex><span><span style=color:#282828;background-color:#fb4934>-hash = &#34;sha256-3qduRyjOQKTDRdOpTJirD0Wm14BuvdJLx2IIWHDMD0g=&#34;;
+</span></span></span><span style=display:flex><span><span style=color:#282828;background-color:#fb4934></span><span style=color:#282828;background-color:#b8bb26>+rev = &#34;74c18e6963cf4781be254d3c5d963b36c0642ba4&#34;;
+</span></span></span><span style=display:flex><span><span style=color:#282828;background-color:#b8bb26>+hash = &#34;sha256-Wx/QQrELfOT0h4B8hF9EPZKn4yVHBZeYh3Wm85Jpq60=&#34;;
+</span></span></span></code></pre></div><p>And it was built successfully. But after I created a GitHub PR for the vector project,
+I noticed that almost all the tests failed with an error:</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-text data-lang=text><span style=display:flex><span>*.mlir.S:3:16: error: invalid arch name &#39;rv32i2p1_m2p0_f2p2_d2p2_v1p0_zicsr2p0_zve32f1p0_zve32x1p0_zve64d1p0_zve64f1p0_zve64x1p0_zvl128b1p0_zvl32b1p0_zvl64b1p0&#39;, unsupported version number 2.1 for extension &#39;i&#39;
+</span></span><span style=display:flex><span> .attribute 5, &#34;rv32i2p1_m2p0_f2p2_d2p2_v1p0_zicsr2p0_zve32f1p0_zve32x1p0_zve64d1p0_zve64f1p0_zve64x1p0_zvl128b1p0_zvl32b1p0_zvl64b1p0&#34;
+</span></span><span style=display:flex><span>               ^
+</span></span><span style=display:flex><span>*rvv-vp-intrinsic-add*.mlir.S:13:2: error: instruction requires the following: &#39;V&#39; (Vector Extension for Application Processors), &#39;Zve32x&#39; or &#39;Zve64x&#39; (Vector Extensions for Embedded Processors)
+</span></span><span style=display:flex><span> vsetivli zero, 16, e32, m4, ta, ma
+</span></span><span style=display:flex><span> ^
+</span></span></code></pre></div><p>After discussing this with my teammates and mentor, we came up with a possible reason:
+the llvm used by buddy-mlir is compatible with the execution environment.
+The vector repo has a customi clang using llvm14 for the riscv 32bit environment. There must be a lot of changes since the llvm 14 to the mainline.
+I tried to replace the <code>llvmPackage_14</code> with <code>llvmPackages16</code>, but the problem is not solved.
+I need to dig deeper into the problem deeper.</p><p>First I need to find out what the error message means.
+What does &ldquo;unsupported version number 2.1 for extension &lsquo;i&rsquo;&rdquo; mean?
+Reading the message letter by letter, I found that the generated assembly code has an attribute <code>rv32i2p1_.....</code>,
+which indicates that the target architecture uses riscv i extension version 2.1.
+This <code>.mlir.S</code> file <a href=https://github.com/sequencer/vector/blob/abf222c57576cea1bd4776960e562367930bf6d7/build.sc#L520-L526>is generated</a> by the <code>buddy-llc</code> tool.
+As this error is prompted when converting assembly code into machine code,
+it means that the assembler in execution environment is incompatible with the assembly code generated by buddy-mlir.
+Searching through the llvm repository, we find that the extension version support is hard-coded in the
+<a href=https://github.com/llvm/llvm-project/blob/ac1b69b9db5ceaba1d168de47509ab4cf190a93c/llvm/lib/Support/RISCVISAInfo.cpp#L59>llvm/lib/Support/RISCVISAInfo.cpp file</a>.
+And the <code>i</code> extension version 2.1 support is not in
+<a href=https://github.com/llvm/llvm-project/blob/f28c006a5895fc0e329fe15fead81e37457cb1d1/llvm/lib/Support/RISCVISAInfo.cpp#L43>llvm14</a>,
+<a href=https://github.com/llvm/llvm-project/blob/7cbf1a2591520c2491aa35339f227775f4d3adf6/llvm/lib/Support/RISCVISAInfo.cpp#L43>llvm16</a>,
+or even <a href=https://github.com/llvm/llvm-project/blob/603c286334b07f568d39f6706c848f576914f323/llvm/lib/Support/RISCVISAInfo.cpp#L43>llvm17 pre-release</a>.
+This means that I have to replace the whole toolchain to the latest llvm.</p><h2 id=the-nix-magic>The Nix magic</h2><p>The nixpkgs have llvmPackages_16 provided, so it is redundant to re-packaged the llvm derivation myself.
+And nixpkgs also provides simple way to override the download source.
+We can pass in <code>gitRelease</code> attribute set or <code>officialRelease</code> attribute set to replace the source.</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-nix data-lang=nix><span style=display:flex><span><span style=color:#928374;font-style:italic># ...</span>
+</span></span><span style=display:flex><span><span style=color:#928374;font-style:italic># LLVM release information; specify one of these but not both:</span>
+</span></span><span style=display:flex><span>, gitRelease <span style=color:#fe8019>?</span> <span style=color:#d3869b>null</span>
+</span></span><span style=display:flex><span>  <span style=color:#928374;font-style:italic># i.e.:</span>
+</span></span><span style=display:flex><span>  <span style=color:#928374;font-style:italic># {</span>
+</span></span><span style=display:flex><span>  <span style=color:#928374;font-style:italic>#   version = /* i.e. &#34;15.0.0&#34; */;</span>
+</span></span><span style=display:flex><span>  <span style=color:#928374;font-style:italic>#   rev = /* commit SHA */;</span>
+</span></span><span style=display:flex><span>  <span style=color:#928374;font-style:italic>#   rev-version = /* human readable version; i.e. &#34;unstable-2022-26-07&#34; */;</span>
+</span></span><span style=display:flex><span>  <span style=color:#928374;font-style:italic>#   sha256 = /* checksum for this release, can omit if specifying your own `monorepoSrc` */;</span>
+</span></span><span style=display:flex><span>  <span style=color:#928374;font-style:italic># }</span>
+</span></span><span style=display:flex><span>, officialRelease <span style=color:#fe8019>?</span> { version <span style=color:#fe8019>=</span> <span style=color:#b8bb26>&#34;16.0.6&#34;</span>; sha256 <span style=color:#fe8019>=</span> <span style=color:#b8bb26>&#34;sha256-fspqSReX+VD+Nl/Cfq+tDcdPtnQPV1IRopNDfd5VtUs=&#34;</span>; }
+</span></span><span style=display:flex><span>  <span style=color:#928374;font-style:italic># i.e.:</span>
+</span></span><span style=display:flex><span>  <span style=color:#928374;font-style:italic># {</span>
+</span></span><span style=display:flex><span>  <span style=color:#928374;font-style:italic>#   version = /* i.e. &#34;15.0.0&#34; */;</span>
+</span></span><span style=display:flex><span>  <span style=color:#928374;font-style:italic>#   candidate = /* optional; if specified, should be: &#34;rcN&#34; */</span>
+</span></span><span style=display:flex><span>  <span style=color:#928374;font-style:italic>#   sha256 = /* checksum for this release, can omit if specifying your own `monorepoSrc` */;</span>
+</span></span><span style=display:flex><span>  <span style=color:#928374;font-style:italic># }</span>
+</span></span><span style=display:flex><span> <span style=color:#928374;font-style:italic># ...</span>
+</span></span></code></pre></div><p>It is set to 16.0.6 from GitHub Archive by default, but we can set the <code>officialRelease</code> to null
+and pass in <code>gitRelease</code> attribute to let the llvmPackage use the latest llvm source.</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-nix data-lang=nix><span style=display:flex><span>llvmPackages_16<span style=color:#fe8019>.</span>override {
+</span></span><span style=display:flex><span>   gitRelease <span style=color:#fe8019>=</span> {
+</span></span><span style=display:flex><span>     version <span style=color:#fe8019>=</span> <span style=color:#b8bb26>&#34;17.0.0&#34;</span>;
+</span></span><span style=display:flex><span>     rev <span style=color:#fe8019>=</span> <span style=color:#b8bb26>&#34;8f966cedea594d9a91e585e88a80a42c04049e6c&#34;</span>;
+</span></span><span style=display:flex><span>     rev-version <span style=color:#fe8019>=</span> <span style=color:#b8bb26>&#34;unstable-2023-05-02&#34;</span>;
+</span></span><span style=display:flex><span>     sha256 <span style=color:#fe8019>=</span> <span style=color:#b8bb26>&#34;sha256-g2cYk3/iyUvmIG0QCQpYmWj4L2H4znx9KbuA5TvIjrc=&#34;</span>;
+</span></span><span style=display:flex><span>   };
+</span></span><span style=display:flex><span>   officialRelease <span style=color:#fe8019>=</span> <span style=color:#d3869b>null</span>;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Nixpkgs contains some custom patches that needed to be applied to LLVM.
+And the LLVM mainline contains many breaking changes that I need to fix in the original patch.
+These patches are used in the <code>libllvm</code> attribute in the <code>llvmPackages_16</code> set.
+And the <code>llvmPackage_16</code> is a huge set of attributes containing several llvm tools and libraries.
+There is no conventional <code>overrideAttrs</code> to change any part of it.
+This confused me for a long time until Sharzy told me that <a href=https://nixos.wiki/wiki/Overlays#Overriding_a_package_inside_an_extensible_attribute_set>the correct way</a> is to <code>extend</code> it.</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-nix data-lang=nix><span style=display:flex><span>myLLVM = (llvmPackages_16<span style=color:#fe8019>.</span>override {
+</span></span><span style=display:flex><span>  gitRelease <span style=color:#fe8019>=</span> {
+</span></span><span style=display:flex><span>    version <span style=color:#fe8019>=</span> <span style=color:#b8bb26>&#34;17.0.0&#34;</span>;
+</span></span><span style=display:flex><span>    rev <span style=color:#fe8019>=</span> <span style=color:#b8bb26>&#34;8f966cedea594d9a91e585e88a80a42c04049e6c&#34;</span>;
+</span></span><span style=display:flex><span>    rev-version <span style=color:#fe8019>=</span> <span style=color:#b8bb26>&#34;unstable-2023-05-02&#34;</span>;
+</span></span><span style=display:flex><span>    sha256 <span style=color:#fe8019>=</span> <span style=color:#b8bb26>&#34;sha256-g2cYk3/iyUvmIG0QCQpYmWj4L2H4znx9KbuA5TvIjrc=&#34;</span>;
+</span></span><span style=display:flex><span>  };
+</span></span><span style=display:flex><span>  officialRelease <span style=color:#fe8019>=</span> <span style=color:#d3869b>null</span>;
+</span></span><span style=display:flex><span>})<span style=color:#fe8019>.</span>extend (lfinal: lprev: {
+</span></span><span style=display:flex><span>  llvm <span style=color:#fe8019>=</span> lprev<span style=color:#fe8019>.</span>llvm<span style=color:#fe8019>.</span>overrideAttrs (oldAttrs: {
+</span></span><span style=display:flex><span>    patches <span style=color:#fe8019>=</span> (<span style=color:#fabd2f>builtins</span><span style=color:#fe8019>.</span>filter (p: <span style=color:#fabd2f>builtins</span><span style=color:#fe8019>.</span><span style=color:#fabd2f>baseNameOf</span> p <span style=color:#fe8019>!=</span> <span style=color:#b8bb26>&#34;gnu-install-dirs.patch&#34;</span>) oldAttrs<span style=color:#fe8019>.</span>patches) <span style=color:#fe8019>++</span> [
+</span></span><span style=display:flex><span>      <span style=color:#b8bb26>./nix/gnu-install-dirs.patch</span>
+</span></span><span style=display:flex><span>    ];
+</span></span><span style=display:flex><span>  });
+</span></span><span style=display:flex><span>});
+</span></span></code></pre></div><p>The code example above is hard to understand the first time you read it, right?
+And if you have never written functional programming language, it will be ever harder to understand.
+So what it does is to pass a function into the <code>extend</code> attribute.
+The function takes two arguments: the <code>lfinal</code> argument, which represents the state after overriding,
+and the <code>lprev</code> argument represents the state before the override.
+The function returns an attribute set with the <code>llvm</code> field.
+This attribute set will eventually replace the original <code>llvm</code> field declare in <code>llvmPackages_16</code>.
+The <code>llvm</code> attribute set in <code>llvmPackages_16</code> allows overriding attributes,
+so the next step is to pass a function with the <code>oldAttrs</code> argument to the <code>overrideAttrs</code> function.
+Finally, I can start modifing the <code>patches</code> attr for <code>llvm</code>. The <code>filter</code> function will filter out the <code>gnu-install-dirs.patch</code> file
+and replace it with my updated patch.</p><p>So, this is the end right? No, not yet! I am still far from a successful build.
+Nix even fail to evaluate the derivation in flake.nix:</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-text data-lang=text><span style=display:flex><span>error: attribute &#39;stdenv&#39; missing
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>at /nix/store/some-hash-path/flake.nix:
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>devShell = pkgs.mkShell.override { stdenv = pkg.myLLVM.stdenv; }
+</span></span><span style=display:flex><span>                                                       ^
+</span></span></code></pre></div><p><code>stdenv</code> is a package that contains necessary build tools and library to build a basic package with makefile or other build system.
+The stdenv provided in llvmPackages has complete build tools for building the LLVM project,
+which is required for the vector repository development.</p><p>Why is it missing? This is because the indentation f**k up.
+I don&rsquo;t know the llvmPackages_16 is actually a set with the following hierachy:</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-nix data-lang=nix><span style=display:flex><span><span style=color:#fe8019>let</span>
+</span></span><span style=display:flex><span>  tools <span style=color:#fe8019>=</span> lib<span style=color:#fe8019>.</span>makeExtensible ( <span style=color:#fe8019>...</span> )
+</span></span><span style=display:flex><span>  libraries <span style=color:#fe8019>=</span> lib<span style=color:#fe8019>.</span>makeExtensible ( <span style=color:#fe8019>...</span> )
+</span></span><span style=display:flex><span><span style=color:#fe8019>in</span>
+</span></span><span style=display:flex><span>  { <span style=color:#fe8019>inherit</span> tools libraries release_version; }
+</span></span></code></pre></div><p>The <code>lib.makeExtensible</code> function will add <code>extend</code> attrs to the given set.
+And because of <code>llvmPackages_16</code>, with both <code>tools</code> and <code>library</code> sets inherit,
+when I call the <code>llvmPackages_16.extend</code> function, it is actually calls the <code>llvmPackages_16.tools.extend</code> function.
+Because the <code>extend</code> function will only return the modified set it is in, so after I called the <code>llvmPackages_16.extend</code> function,
+there is only <code>llvmPackages_16.tools</code> attr set left, no more <code>libraries</code> set. And coincidently, the <code>stdenv</code> set came
+from <code>libraries</code> set. That&rsquo;s why the error occurs.</p><p>This is an internal bug of nixpkgs. But since <code>stdenv</code> is just a basic build environment,
+we can use the old <code>stdenv</code> in the unmodified version of the <code>llvmPackage</code>.</p><p>The overriden <code>llvmPackages_16</code> package was successfully built, but the patch still mismatches when I build clang.
+And a confusing problem arise: the <code>patch.rej</code> shows that I am applying the new patch to the old sources!
+This is because the <code>llvm</code> attr in <code>llvmPackages_16</code> is just an alias for the <code>libllvm</code>.</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-nix data-lang=nix><span style=display:flex><span>libllvm = callPackage <span style=color:#b8bb26>./llvm</span> {
+</span></span><span style=display:flex><span>  <span style=color:#fe8019>inherit</span> llvm_meta;
+</span></span><span style=display:flex><span>};
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>llvm = tools<span style=color:#fe8019>.</span>libllvm;
+</span></span></code></pre></div><p>However <code>clang</code> uses the <code>libllvm</code> attr, so when clang builds, it will try to apply the new patch to the old sources.
+So the correct way is to extend the <code>libllvm</code> attrs.</p><h2 id=my-first-llvm-contribution>My First LLVM contribution</h2><p>There is also a story when I try to build clang.
+In the llvm mainline, they force the <code>llvm-gtest</code> build target when you set <code>LLVM_INCLUDE_TESTS=ON</code>.
+However if I set <code>LLVM_INCLUDE_TESTS=OFF</code>, the build process still fails.</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-text data-lang=text><span style=display:flex><span>/build/.../clang/lib/Analysis/FlowSensitive/HTMLLogger.cpp: fatal error: HTMLLogger.inc: No such file or directory
+</span></span></code></pre></div><p>The HTMLLogger.inc file is a bunch of HTML/JS/CSS code wrapped in <code>char[]</code> to be used at runtime to generate web logger.
+It is generated by a bundler script written in Python. It is wrapped in the <code>add_custom_command</code> function
+provided by CMake, and is executed at build time.</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-cmake data-lang=cmake><span style=display:flex><span><span style=color:#fabd2f>add_custom_command</span>(<span style=color:#b8bb26>OUTPUT</span> <span style=color:#b8bb26>HTMLLogger.inc</span>
+</span></span><span style=display:flex><span>  <span style=color:#b8bb26>COMMAND</span> <span style=color:#b8bb26>&#34;${Python3_EXECUTABLE}&#34;</span> <span style=color:#fe8019>${</span>CLANG_SOURCE_DIR<span style=color:#fe8019>}</span><span style=color:#b8bb26>/utils/bundle_resources.py</span>
+</span></span><span style=display:flex><span>  <span style=color:#fe8019>${</span>CMAKE_CURRENT_BINARY_DIR<span style=color:#fe8019>}</span><span style=color:#b8bb26>/HTMLLogger.inc</span>
+</span></span><span style=display:flex><span>  <span style=color:#b8bb26>HTMLLogger.html</span> <span style=color:#b8bb26>HTMLLogger.css</span> <span style=color:#b8bb26>HTMLLogger.js</span>
+</span></span><span style=display:flex><span>  <span style=color:#b8bb26>WORKING_DIRECTORY</span> <span style=color:#fe8019>${</span>CMAKE_CURRENT_SOURCE_DIR<span style=color:#fe8019>}</span>
+</span></span><span style=display:flex><span>  <span style=color:#b8bb26>COMMENT</span> <span style=color:#b8bb26>&#34;Bundling HTMLLogger resources&#34;</span>
+</span></span><span style=display:flex><span>  <span style=color:#b8bb26>DEPENDS</span> <span style=color:#fe8019>${</span>CLANG_SOURCE_DIR<span style=color:#fe8019>}</span><span style=color:#b8bb26>/utils/bundle_resources.py</span> <span style=color:#b8bb26>HTMLLogger.html</span> <span style=color:#b8bb26>HTMLLogger.css</span> <span style=color:#b8bb26>HTMLLogger.js</span>
+</span></span><span style=display:flex><span>  <span style=color:#b8bb26>VERBATIM</span>)
+</span></span></code></pre></div><p>There must be some error logging during the build time, I thought. But I cannot find any.
+I also tried adding more verbose logging, thinking that the stdout/stderr might be captured by CMake.
+But it was still as silent as the wilderness, and I could not see a message.
+So I tried to verify that the bundle script was actually running.
+To avoid the possibility of stdout/stderr being captured by the parent process,
+I add a logging to file script snippet to the bundler. And there is no such logging file exist.</p><p>Why isn&rsquo;t bundler script running? I opened up the <code>build.ninja</code> file and found out why:</p><pre tabindex=0><code class=language-ninja data-lang=ninja>build lib/Analysis/FlowSensitive/HTMLLogger.inc | ...: CUSTOM_COMMAND ...
+  COMMAND = cd /build/clang-src-unstable-2023-05-02/clang/lib/Analysis/FlowSensitive
+  DESC = Bundling HTMLLogger resources
+  restat = 1
+</code></pre><p>There is only a <code>cd</code> command left in the <code>COMMAND</code>!
+This shouldn&rsquo;t be a bug in ninja, as it generated other build commands correctly.
+So I add a debug logging to the CMakefile, and find that the Python interpreter is missing!
+The <code>"${Python3_EXECUTABLE}"</code> variable has no value.</p><p>But why? If this is a runtime component, then if I missing python3 is missing, the configure process must fail before I can start the build.
+Searching through the <code>CMakelist.txt</code> files, I finally come to the core problem. In clang CMakefile, it only finds python3 executable
+when <code>LLVM_INCLUDE_TESTS=ON</code>. So if I set the option to off, configure process will pass, but the <code>Python3_EXECUTABLE</code> variable will not be set.
+Since ninja gets an empty string as command, it doesn&rsquo;t generate the actual build command and just leaves <code>cd</code>.</p><p>So I send a patch to llvm to fix the issue and get my first LLVM contribution: <a href=https://reviews.llvm.org/D152418>https://reviews.llvm.org/D152418</a>.</p><blockquote><p>My reaction <code>:)</code>
+<img src=./img-1.png alt=image></p></blockquote><h2 id=it-compiles-but-it-does-not-work>It compiles, but it does not work</h2><p>I am exhausted, but the challenge continues. After I finally compiling all the whole thing successfully and entering the devshell,
+I found that the lld was broken:</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-text data-lang=text><span style=display:flex><span>error while loding shared libraries: libLLVM-17git.so: cannot open object: no such file or directory
+</span></span></code></pre></div><p>The shared library is built correctly and placed in the correct path, so there must be something wrong in the lld rpath.
+I didn&rsquo;t suffer much with the help from NickCao, who found LLVM introduces a <a href=https://github.com/llvm/llvm-project/commit/8f833f88ab78265a8e0ebb0d1522771d67c708a9#diff-f60dae8e82f67fa5e534e9ea566430d5b79f36119020865dc37b95d9a3635c5eL2357-R2364>breaking change</a>
+when installing build tools. In preFixup stage, CMake set runtime path:</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-text data-lang=text><span style=display:flex><span>lld-unstable&gt; -- Set runtime path of &#34;/nix/store/qm4w9bxjc6xiixrbdrdzjxgr487yphx7-lld-unstable-2023-05-02/bin/lld&#34; to &#34;$ORIGIN/..//nix/store/5l99zwgmjiynkpb6p4hmqndssz41q98i-lld-unstable-2023-05-02-lib/lib&#34;
+</span></span></code></pre></div><p>So I <a href=https://github.com/sequencer/vector/commit/31488a03e3534971bb8e8dfe83801b4b2eb44711#diff-f9ef770a28e5abac1184edc7fce5682df60d98d4982f6502f14513761a0350ecR59-R68>add a patch</a>
+to remove the changes.</p><p>And after the clang work, spike failed to build.</p><div class=highlight><pre tabindex=0 style=color:#ebdbb2;background-color:#282828;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-text data-lang=text><span style=display:flex><span>/nix/store/shw0b6wv2xdvyj71b1fj147i83awrqfz-binutils-2.40/bin/ld: /nix/store/kf147vkmb7a7z17lkpgj2d6y7w75nf7v-gcc-12.2.0//lib/libatomic.a(glfree.o): relocation R_X86_64_32S against `.rodata&#39; can not be used when making a PIE object; recompile with -fPIE
+</span></span><span style=display:flex><span>/nix/store/shw0b6wv2xdvyj71b1fj147i83awrqfz-binutils-2.40/bin/ld: failed to set dynamic section sizes: bad value
+</span></span><span style=display:flex><span>clang-16: error: linker command failed with exit code 1 (use -v to see invocation)
+</span></span></code></pre></div><p>This is because the <code>ld</code> executable in the provided <code>stdenv</code> is not compatible with the latest LLVM.
+After discussion with the teammates, we decide to keep the <code>llvmPackages_14</code> toolchain in devshell,
+and add a script called <code>clang-rv32</code> as wrapper to use clang in the latest LLVM.
+And there it is, the final working version: <a href=https://github.com/sequencer/vector/pull/230>https://github.com/sequencer/vector/pull/230</a>.</p></section><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css integrity=sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js integrity=sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js integrity=sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05 crossorigin=anonymous onload=renderMathInElement(document.body)></script><nav class="mt-24 flex rounded-lg bg-black/[3%] text-lg dark:bg-white/[8%]"><a class="flex w-1/2 items-center rounded-l-md p-6 pr-3 font-semibold no-underline hover:bg-black/[2%] dark:hover:bg-white/[3%]" href=https://blog.sh1mar.in/post/mlir/sparse-storage-scheme/><span class=mr-1.5>←</span><span>Sparse storage scheme used in MLIR</span></a>
+<a class="ml-auto flex w-1/2 items-center justify-end rounded-r-md p-6 pl-3 font-semibold no-underline hover:bg-black/[2%] dark:hover:bg-white/[3%]" href=https://blog.sh1mar.in/post/mlir/tensor/><span>Tensor concept</span><span class=ml-1.5>→</span></a></nav></article></main><footer class="opaco mx-auto flex h-[4.5rem] max-w-3xl items-center px-8 text-[0.9em] opacity-60"><div class=mr-auto>&copy; 2024
+<a class=link href=https://blog.sh1mar.in>sh1marin's blog</a></div><a class="link mx-6" href=https://gohugo.io/ rel=noopener target=_blank>Powered by Hugo️️</a>️
+<a class=link href=https://github.com/nanxiaobei/hugo-paper rel=noopener target=_blank>✎ Paper</a></footer></body></html>
